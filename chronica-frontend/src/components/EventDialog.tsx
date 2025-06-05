@@ -23,6 +23,18 @@ import {
 import { useEventStore, Event, RecurrenceRule } from '@/store/eventStore';
 import { useAuthStore } from '@/store/authStore';
 import { format } from 'date-fns';
+import { 
+  Calendar, 
+  Clock, 
+  MapPin, 
+  Palette, 
+  Repeat, 
+  Settings,
+  Save,
+  X,
+  CalendarDays,
+  Timer
+} from 'lucide-react';
 
 interface EventDialogProps {
   isOpen: boolean;
@@ -33,23 +45,50 @@ interface EventDialogProps {
 }
 
 const colorOptions = [
-  { value: '#3b82f6', label: 'Biru', color: 'bg-blue-500' },
-  { value: '#ef4444', label: 'Merah', color: 'bg-red-500' },
-  { value: '#10b981', label: 'Hijau', color: 'bg-green-500' },
-  { value: '#f59e0b', label: 'Kuning', color: 'bg-yellow-500' },
-  { value: '#8b5cf6', label: 'Ungu', color: 'bg-purple-500' },
-  { value: '#06b6d4', label: 'Cyan', color: 'bg-cyan-500' },
+  { value: '#3b82f6', label: 'Biru Ocean', color: 'bg-blue-500', preview: 'from-blue-400 to-blue-600' },
+  { value: '#ef4444', label: 'Merah Cherry', color: 'bg-red-500', preview: 'from-red-400 to-red-600' },
+  { value: '#10b981', label: 'Hijau Forest', color: 'bg-emerald-500', preview: 'from-emerald-400 to-emerald-600' },
+  { value: '#f59e0b', label: 'Kuning Sunshine', color: 'bg-amber-500', preview: 'from-amber-400 to-amber-600' },
+  { value: '#8b5cf6', label: 'Ungu Galaxy', color: 'bg-violet-500', preview: 'from-violet-400 to-violet-600' },
+  { value: '#06b6d4', label: 'Cyan Ocean', color: 'bg-cyan-500', preview: 'from-cyan-400 to-cyan-600' },
+  { value: '#ec4899', label: 'Pink Bloom', color: 'bg-pink-500', preview: 'from-pink-400 to-pink-600' },
+  { value: '#84cc16', label: 'Lime Fresh', color: 'bg-lime-500', preview: 'from-lime-400 to-lime-600' },
 ];
 
+// Helper function to format datetime for input
+const formatDateTimeForInput = (date: Date): string => {
+  const rounded = new Date(date);
+  const minutes = rounded.getMinutes();
+  const remainder = minutes % 15;
+  
+  if (remainder !== 0) {
+    if (remainder >= 7.5) {
+      // Round up
+      rounded.setMinutes(minutes + (15 - remainder));
+    } else {
+      // Round down
+      rounded.setMinutes(minutes - remainder);
+    }
+  }
+  
+  rounded.setSeconds(0);
+  rounded.setMilliseconds(0);
+  return format(rounded, "yyyy-MM-dd'T'HH:mm");
+};
+
 export function EventDialog({ isOpen, onClose, event, userId, selectedDate }: EventDialogProps) {
-  const { createEvent, editEvent } = useEventStore();
+  const { createEvent, editEvent, fetchEvents } = useEventStore();
   const { token } = useAuthStore();
   
   const [formData, setFormData] = useState({
     title: '',
     description: '',
-    startTime: '',
-    endTime: '',
+    startDate: '',
+    startHour: '09',
+    startMinute: '00',
+    endDate: '',
+    endHour: '10',
+    endMinute: '00',
     allDay: false,
     location: '',
     color: '#3b82f6',
@@ -67,14 +106,59 @@ export function EventDialog({ isOpen, onClose, event, userId, selectedDate }: Ev
 
   const [endType, setEndType] = useState<'never' | 'date' | 'count'>('never');
 
+  // Helper options for dropdowns
+  const hourOptions = Array.from({ length: 24 }, (_, i) => ({
+    value: i.toString().padStart(2, '0'),
+    label: i.toString().padStart(2, '0')
+  }));
+
+  const minuteOptions = [
+    { value: '00', label: '00' },
+    { value: '15', label: '15' },
+    { value: '30', label: '30' },
+    { value: '45', label: '45' }
+  ];
+
+  // Helper function to combine date and time
+  const combineDateTime = (date: string, hour: string, minute: string): Date => {
+    // Create a proper ISO string and then create Date object
+    const isoString = `${date}T${hour}:${minute}:00.000`;
+    const dateObj = new Date(isoString);
+    
+    // Validate the date
+    if (isNaN(dateObj.getTime())) {
+      throw new Error(`Invalid date created from: ${date}, ${hour}:${minute}`);
+    }
+    
+    return dateObj;
+  };
+
+  // Helper function to format date for input
+  const formatDateForInput = (date: Date): string => {
+    return format(date, 'yyyy-MM-dd');
+  };
+
   useEffect(() => {
     if (event) {
       // Edit mode
+      const startTime = new Date(event.startTime);
+      const endTime = new Date(event.endTime);
+      
+      // Round minutes to nearest 15-minute interval for display
+      const roundMinutes = (minutes: number) => {
+        const rounded = Math.round(minutes / 15) * 15;
+        return rounded.toString().padStart(2, '0');
+      };
+      
       setFormData({
         title: event.title,
         description: event.description || '',
-        startTime: format(event.startTime, "yyyy-MM-dd'T'HH:mm"),
-        endTime: format(event.endTime, "yyyy-MM-dd'T'HH:mm"),
+        startDate: formatDateForInput(startTime),
+        startHour: startTime.getHours().toString().padStart(2, '0'),
+        startMinute: roundMinutes(startTime.getMinutes()),
+        endDate: formatDateForInput(endTime),
+        endHour: endTime.getHours().toString().padStart(2, '0'),
+        endMinute: roundMinutes(endTime.getMinutes()),
         allDay: event.allDay,
         location: event.location || '',
         color: event.color,
@@ -94,16 +178,17 @@ export function EventDialog({ isOpen, onClose, event, userId, selectedDate }: Ev
       }
     } else {
       // Create mode
-      const defaultStart = new Date(selectedDate);
-      defaultStart.setHours(9, 0, 0, 0);
-      const defaultEnd = new Date(selectedDate);
-      defaultEnd.setHours(10, 0, 0, 0);
+      const today = formatDateForInput(selectedDate);
       
       setFormData({
         title: '',
         description: '',
-        startTime: format(defaultStart, "yyyy-MM-dd'T'HH:mm"),
-        endTime: format(defaultEnd, "yyyy-MM-dd'T'HH:mm"),
+        startDate: today,
+        startHour: '09',
+        startMinute: '00',
+        endDate: today,
+        endHour: '10',
+        endMinute: '00',
         allDay: false,
         location: '',
         color: '#3b82f6',
@@ -129,17 +214,35 @@ export function EventDialog({ isOpen, onClose, event, userId, selectedDate }: Ev
       console.error('No authentication token');
       return;
     }
+
+    
+    // Ensure we have valid dates
+    if (!formData.startDate || !formData.endDate) {
+      console.error('Missing date information');
+      return;
+    }
+    
+    const startTime = combineDateTime(formData.startDate, formData.startHour, formData.startMinute);
+    const endTime = combineDateTime(formData.endDate, formData.endHour, formData.endMinute);
+    
     
     const eventData = {
-      ...formData,
-      startTime: new Date(formData.startTime),
-      endTime: new Date(formData.endTime),
+      title: formData.title,
+      description: formData.description,
+      startTime,
+      endTime,
+      allDay: formData.allDay,
+      location: formData.location,
+      color: formData.color,
+      isRecurring: formData.isRecurring,
+      allowOverlap: formData.allowOverlap,
       recurrenceRule: formData.isRecurring ? {
         ...recurrenceRule,
         endDate: endType === 'date' ? recurrenceRule.endDate : undefined,
         count: endType === 'count' ? recurrenceRule.count : undefined,
       } as RecurrenceRule : undefined,
     };
+
 
     try {
       if (event) {
@@ -148,8 +251,17 @@ export function EventDialog({ isOpen, onClose, event, userId, selectedDate }: Ev
         await createEvent(token, eventData);
       }
       onClose();
+      
+      // Refresh events list
+      if (token) {
+        const startOfMonth = new Date(selectedDate.getFullYear(), selectedDate.getMonth(), 1);
+        const endOfMonth = new Date(selectedDate.getFullYear(), selectedDate.getMonth() + 1, 0);
+        await fetchEvents(token, startOfMonth, endOfMonth);
+      }
     } catch (error) {
       console.error('Error saving event:', error);
+      // Show error to user
+      alert('Gagal menyimpan event: ' + (error as Error).message);
     }
   };
 
@@ -166,241 +278,429 @@ export function EventDialog({ isOpen, onClose, event, userId, selectedDate }: Ev
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
-        <DialogHeader>
-          <DialogTitle>
-            {event ? 'Edit Event' : 'Tambah Event Baru'}
-          </DialogTitle>
-          <DialogDescription>
-            {event 
-              ? 'Ubah detail event yang sudah ada atau atur pengulangan event.'
-              : 'Buat event baru dengan detail lengkap dan atur pengulangan jika diperlukan.'
-            }
-          </DialogDescription>
-        </DialogHeader>
-        
-        <form onSubmit={handleSubmit} className="space-y-6">
-          {/* Basic Information */}
-          <div className="space-y-4">
-            <div>
-              <Label htmlFor="title">Judul Event *</Label>
-              <Input
-                id="title"
-                value={formData.title}
-                onChange={(e) => setFormData({ ...formData, title: e.target.value })}
-                placeholder="Masukkan judul event"
-                required
-              />
-            </div>
-
-            <div>
-              <Label htmlFor="description">Deskripsi</Label>
-              <Textarea
-                id="description"
-                value={formData.description}
-                onChange={(e) => setFormData({ ...formData, description: e.target.value })}
-                placeholder="Deskripsi event (opsional)"
-                rows={3}
-              />
-            </div>
-
-            <div>
-              <Label htmlFor="location">Lokasi</Label>
-              <Input
-                id="location"
-                value={formData.location}
-                onChange={(e) => setFormData({ ...formData, location: e.target.value })}
-                placeholder="Lokasi event (opsional)"
-              />
-            </div>
-          </div>
-
-          {/* Time Settings */}
-          <div className="space-y-4">
-            <div className="flex items-center space-x-2">
-              <Checkbox
-                id="allDay"
-                checked={formData.allDay}
-                onCheckedChange={(checked) => setFormData({ ...formData, allDay: !!checked })}
-              />
-              <Label htmlFor="allDay">Sepanjang hari</Label>
-            </div>
-
-            {!formData.allDay && (
-              <div className="grid grid-cols-2 gap-4">
-                <div>
-                  <Label htmlFor="startTime">Waktu Mulai</Label>
-                  <Input
-                    id="startTime"
-                    type="datetime-local"
-                    value={formData.startTime}
-                    onChange={(e) => setFormData({ ...formData, startTime: e.target.value })}
-                    required
-                  />
+      <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto p-0 bg-white/95 backdrop-blur-md border-0 shadow-2xl rounded-3xl">
+        <div className="relative">
+          {/* Header with gradient */}
+          <div className="bg-gradient-to-r from-blue-50 via-purple-50 to-pink-50 p-8 border-b border-gray-100">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-4">
+                <div className="p-3 bg-gradient-to-br from-blue-500 to-purple-600 rounded-2xl shadow-lg">
+                  <Calendar className="h-6 w-6 text-white" />
                 </div>
                 <div>
-                  <Label htmlFor="endTime">Waktu Selesai</Label>
-                  <Input
-                    id="endTime"
-                    type="datetime-local"
-                    value={formData.endTime}
-                    onChange={(e) => setFormData({ ...formData, endTime: e.target.value })}
-                    required
-                  />
+                  <DialogTitle className="text-2xl font-bold bg-gradient-to-r from-gray-900 to-gray-700 bg-clip-text text-transparent">
+                    {event ? 'Edit Event' : 'Buat Event Baru'}
+                  </DialogTitle>
+                  <DialogDescription className="text-gray-600 mt-1">
+                    {event 
+                      ? 'Perbarui detail event yang sudah ada'
+                      : 'Tambahkan event baru ke kalender Anda'
+                    }
+                  </DialogDescription>
                 </div>
               </div>
-            )}
+              <Button
+                variant="ghost"
+                onClick={onClose}
+                className="h-10 w-10 p-0 rounded-xl hover:bg-white/50"
+              >
+                <X className="h-5 w-5" />
+              </Button>
+            </div>
           </div>
+          
+          <form onSubmit={handleSubmit} className="p-8 space-y-8">
+            {/* Basic Information */}
+            <div className="space-y-6">
+              <div className="flex items-center gap-3 mb-4">
+                <div className="p-2 bg-blue-50 rounded-lg">
+                  <CalendarDays className="h-4 w-4 text-blue-600" />
+                </div>
+                <h3 className="text-lg font-semibold text-gray-800">Informasi Dasar</h3>
+              </div>
 
-          {/* Color Selection */}
-          <div>
-            <Label>Warna Event</Label>
-            <div className="flex flex-wrap gap-2 mt-2">
-              {colorOptions.map((option) => (
-                <button
-                  key={option.value}
-                  type="button"
-                  onClick={() => setFormData({ ...formData, color: option.value })}
-                  className={`w-8 h-8 rounded-full border-2 ${option.color} ${
-                    formData.color === option.value ? 'border-gray-800' : 'border-gray-300'
-                  }`}
-                  title={option.label}
+              <div className="space-y-2">
+                <Label htmlFor="title" className="text-sm font-medium text-gray-700">
+                  Judul Event *
+                </Label>
+                <Input
+                  id="title"
+                  value={formData.title}
+                  onChange={(e) => setFormData({ ...formData, title: e.target.value })}
+                  placeholder="Masukkan judul event yang menarik"
+                  className="h-12 rounded-xl border-gray-200 focus:border-blue-500 focus:ring-blue-500 text-lg"
+                  required
                 />
-              ))}
+              </div>
+
+              <div className="space-y-2">
+                <Label htmlFor="description" className="text-sm font-medium text-gray-700">
+                  Deskripsi
+                </Label>
+                <Textarea
+                  id="description"
+                  value={formData.description}
+                  onChange={(e) => setFormData({ ...formData, description: e.target.value })}
+                  placeholder="Deskripsikan event Anda dengan detail..."
+                  rows={3}
+                  className="rounded-xl border-gray-200 focus:border-blue-500 focus:ring-blue-500 resize-none"
+                />
+              </div>
+
+              <div className="space-y-2">
+                <Label htmlFor="location" className="text-sm font-medium text-gray-700 flex items-center gap-2">
+                  <MapPin className="h-4 w-4" />
+                  Lokasi
+                </Label>
+                <Input
+                  id="location"
+                  value={formData.location}
+                  onChange={(e) => setFormData({ ...formData, location: e.target.value })}
+                  placeholder="Dimana event ini akan berlangsung?"
+                  className="h-12 rounded-xl border-gray-200 focus:border-blue-500 focus:ring-blue-500"
+                />
+              </div>
             </div>
-          </div>
 
-          {/* Overlap Settings */}
-          <div className="flex items-center space-x-2">
-            <Checkbox
-              id="allowOverlap"
-              checked={formData.allowOverlap}
-              onCheckedChange={(checked) => setFormData({ ...formData, allowOverlap: !!checked })}
-            />
-            <Label htmlFor="allowOverlap">Izinkan overlap dengan event lain</Label>
-          </div>
+            {/* Time Settings */}
+            <div className="space-y-6">
+              <div className="flex items-center gap-3 mb-4">
+                <div className="p-2 bg-purple-50 rounded-lg">
+                  <Timer className="h-4 w-4 text-purple-600" />
+                </div>
+                <h3 className="text-lg font-semibold text-gray-800">Waktu & Durasi</h3>
+                <div className="flex items-center gap-2 px-3 py-1 bg-blue-50 text-blue-700 rounded-full text-xs font-medium">
+                  <Clock className="h-3 w-3" />
+                  Interval 15 menit
+                </div>
+              </div>
 
-          {/* Recurrence Settings */}
-          <div className="space-y-4">
-            <div className="flex items-center space-x-2">
-              <Checkbox
-                id="isRecurring"
-                checked={formData.isRecurring}
-                onCheckedChange={(checked) => setFormData({ ...formData, isRecurring: !!checked })}
-              />
-              <Label htmlFor="isRecurring">Event berulang</Label>
+              <div className="flex items-center space-x-3 p-4 bg-gray-50 rounded-xl">
+                <Checkbox
+                  id="allDay"
+                  checked={formData.allDay}
+                  onCheckedChange={(checked) => setFormData({ ...formData, allDay: !!checked })}
+                />
+                <Label htmlFor="allDay" className="text-sm font-medium text-gray-700 flex items-center gap-2">
+                  <Clock className="h-4 w-4" />
+                  Event sepanjang hari
+                </Label>
+              </div>
+
+              {!formData.allDay && (
+                <div className="space-y-6">
+                  {/* Start Time */}
+                  <div className="space-y-4">
+                    <h4 className="text-sm font-semibold text-gray-800">Waktu Mulai</h4>
+                    <div className="grid grid-cols-3 gap-3">
+                      <div className="space-y-2">
+                        <Label htmlFor="startDate" className="text-xs font-medium text-gray-600">
+                          Tanggal
+                        </Label>
+                        <Input
+                          id="startDate"
+                          type="date"
+                          value={formData.startDate}
+                          onChange={(e) => setFormData({ ...formData, startDate: e.target.value })}
+                          className="h-12 rounded-xl border-gray-200 focus:border-blue-500 focus:ring-blue-500"
+                          required
+                        />
+                      </div>
+                      <div className="space-y-2">
+                        <Label htmlFor="startHour" className="text-xs font-medium text-gray-600">
+                          Jam
+                        </Label>
+                        <Select
+                          value={formData.startHour}
+                          onValueChange={(value: any) => setFormData({ ...formData, startHour: value })}
+                        >
+                          <SelectTrigger className="h-12 rounded-xl">
+                            <SelectValue />
+                          </SelectTrigger>
+                          <SelectContent>
+                            {hourOptions.map((option) => (
+                              <SelectItem key={option.value} value={option.value}>
+                                {option.label}
+                              </SelectItem>
+                            ))}
+                          </SelectContent>
+                        </Select>
+                      </div>
+                      <div className="space-y-2">
+                        <Label htmlFor="startMinute" className="text-xs font-medium text-gray-600">
+                          Menit
+                        </Label>
+                        <Select
+                          value={formData.startMinute}
+                          onValueChange={(value: any) => setFormData({ ...formData, startMinute: value })}
+                        >
+                          <SelectTrigger className="h-12 rounded-xl">
+                            <SelectValue />
+                          </SelectTrigger>
+                          <SelectContent>
+                            {minuteOptions.map((option) => (
+                              <SelectItem key={option.value} value={option.value}>
+                                {option.label}
+                              </SelectItem>
+                            ))}
+                          </SelectContent>
+                        </Select>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* End Time */}
+                  <div className="space-y-4">
+                    <h4 className="text-sm font-semibold text-gray-800">Waktu Selesai</h4>
+                    <div className="grid grid-cols-3 gap-3">
+                      <div className="space-y-2">
+                        <Label htmlFor="endDate" className="text-xs font-medium text-gray-600">
+                          Tanggal
+                        </Label>
+                        <Input
+                          id="endDate"
+                          type="date"
+                          value={formData.endDate}
+                          onChange={(e) => setFormData({ ...formData, endDate: e.target.value })}
+                          className="h-12 rounded-xl border-gray-200 focus:border-blue-500 focus:ring-blue-500"
+                          required
+                        />
+                      </div>
+                      <div className="space-y-2">
+                        <Label htmlFor="endHour" className="text-xs font-medium text-gray-600">
+                          Jam
+                        </Label>
+                        <Select
+                          value={formData.endHour}
+                          onValueChange={(value: any) => setFormData({ ...formData, endHour: value })}
+                        >
+                          <SelectTrigger className="h-12 rounded-xl">
+                            <SelectValue />
+                          </SelectTrigger>
+                          <SelectContent>
+                            {hourOptions.map((option) => (
+                              <SelectItem key={option.value} value={option.value}>
+                                {option.label}
+                              </SelectItem>
+                            ))}
+                          </SelectContent>
+                        </Select>
+                      </div>
+                      <div className="space-y-2">
+                        <Label htmlFor="endMinute" className="text-xs font-medium text-gray-600">
+                          Menit
+                        </Label>
+                        <Select
+                          value={formData.endMinute}
+                          onValueChange={(value: any) => setFormData({ ...formData, endMinute: value })}
+                        >
+                          <SelectTrigger className="h-12 rounded-xl">
+                            <SelectValue />
+                          </SelectTrigger>
+                          <SelectContent>
+                            {minuteOptions.map((option) => (
+                              <SelectItem key={option.value} value={option.value}>
+                                {option.label}
+                              </SelectItem>
+                            ))}
+                          </SelectContent>
+                        </Select>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              )}
             </div>
 
-            {formData.isRecurring && (
-              <div className="space-y-4 p-4 border rounded-lg bg-gray-50">
-                <div className="grid grid-cols-2 gap-4">
-                  <div>
-                    <Label>Frekuensi</Label>
-                    <Select
-                      value={recurrenceRule.frequency}
-                      onValueChange={(value: any) => setRecurrenceRule({ ...recurrenceRule, frequency: value })}
+            {/* Color & Settings */}
+            <div className="space-y-6">
+              <div className="flex items-center gap-3 mb-4">
+                <div className="p-2 bg-pink-50 rounded-lg">
+                  <Palette className="h-4 w-4 text-pink-600" />
+                </div>
+                <h3 className="text-lg font-semibold text-gray-800">Tampilan & Pengaturan</h3>
+              </div>
+
+              <div className="space-y-2">
+                <Label className="text-sm font-medium text-gray-700">Warna Event</Label>
+                <div className="grid grid-cols-4 gap-3">
+                  {colorOptions.map((option) => (
+                    <button
+                      key={option.value}
+                      type="button"
+                      onClick={() => setFormData({ ...formData, color: option.value })}
+                      className={`group relative p-3 rounded-xl border-2 transition-all duration-200 hover:scale-105 ${
+                        formData.color === option.value 
+                          ? 'border-gray-800 shadow-lg' 
+                          : 'border-gray-200 hover:border-gray-300'
+                      }`}
                     >
-                      <SelectTrigger>
+                      <div className={`w-8 h-8 rounded-lg bg-gradient-to-br ${option.preview} mx-auto mb-2 shadow-sm`} />
+                      <span className="text-xs font-medium text-gray-600 text-center block">
+                        {option.label.split(' ')[1]}
+                      </span>
+                    </button>
+                  ))}
+                </div>
+              </div>
+
+              <div className="flex items-center space-x-3 p-4 bg-yellow-50 rounded-xl">
+                <Checkbox
+                  id="allowOverlap"
+                  checked={formData.allowOverlap}
+                  onCheckedChange={(checked) => setFormData({ ...formData, allowOverlap: !!checked })}
+                />
+                <Label htmlFor="allowOverlap" className="text-sm font-medium text-gray-700">
+                  Izinkan overlap dengan event lain
+                </Label>
+              </div>
+            </div>
+
+            {/* Recurrence Settings */}
+            <div className="space-y-6">
+              <div className="flex items-center space-x-3 p-4 bg-blue-50 rounded-xl">
+                <Checkbox
+                  id="isRecurring"
+                  checked={formData.isRecurring}
+                  onCheckedChange={(checked) => setFormData({ ...formData, isRecurring: !!checked })}
+                />
+                <Label htmlFor="isRecurring" className="text-sm font-medium text-gray-700 flex items-center gap-2">
+                  <Repeat className="h-4 w-4" />
+                  Event berulang
+                </Label>
+              </div>
+
+              {formData.isRecurring && (
+                <div className="space-y-6 p-6 border-2 border-dashed border-blue-200 rounded-2xl bg-blue-50/50">
+                  <div className="flex items-center gap-3 mb-4">
+                    <div className="p-2 bg-blue-100 rounded-lg">
+                      <Settings className="h-4 w-4 text-blue-600" />
+                    </div>
+                    <h4 className="font-semibold text-gray-800">Pengaturan Pengulangan</h4>
+                  </div>
+
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div className="space-y-2">
+                      <Label className="text-sm font-medium text-gray-700">Frekuensi</Label>
+                      <Select
+                        value={recurrenceRule.frequency}
+                        onValueChange={(value: any) => setRecurrenceRule({ ...recurrenceRule, frequency: value })}
+                      >
+                        <SelectTrigger className="h-12 rounded-xl">
+                          <SelectValue />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="DAILY">Harian</SelectItem>
+                          <SelectItem value="WEEKLY">Mingguan</SelectItem>
+                          <SelectItem value="MONTHLY">Bulanan</SelectItem>
+                          <SelectItem value="YEARLY">Tahunan</SelectItem>
+                        </SelectContent>
+                      </Select>
+                    </div>
+                    
+                    <div className="space-y-2">
+                      <Label className="text-sm font-medium text-gray-700">Interval</Label>
+                      <Input
+                        type="number"
+                        min="1"
+                        value={recurrenceRule.interval}
+                        onChange={(e) => setRecurrenceRule({ ...recurrenceRule, interval: parseInt(e.target.value) })}
+                        className="h-12 rounded-xl"
+                      />
+                    </div>
+                  </div>
+
+                  {recurrenceRule.frequency === 'WEEKLY' && (
+                    <div className="space-y-3">
+                      <Label className="text-sm font-medium text-gray-700">Hari dalam seminggu</Label>
+                      <div className="flex flex-wrap gap-2">
+                        {dayNames.map((day, index) => (
+                          <button
+                            key={index}
+                            type="button"
+                            onClick={() => handleDayOfWeekToggle(index)}
+                            className={`px-4 py-2 rounded-xl text-sm font-medium transition-all duration-200 ${
+                              recurrenceRule.daysOfWeek?.includes(index)
+                                ? 'bg-blue-600 text-white shadow-lg scale-105'
+                                : 'bg-white text-gray-700 border border-gray-200 hover:border-blue-300'
+                            }`}
+                          >
+                            {day}
+                          </button>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+
+                  <div className="space-y-3">
+                    <Label className="text-sm font-medium text-gray-700">Berakhir</Label>
+                    <Select value={endType} onValueChange={(value: any) => setEndType(value)}>
+                      <SelectTrigger className="h-12 rounded-xl">
                         <SelectValue />
                       </SelectTrigger>
                       <SelectContent>
-                        <SelectItem value="DAILY">Harian</SelectItem>
-                        <SelectItem value="WEEKLY">Mingguan</SelectItem>
-                        <SelectItem value="MONTHLY">Bulanan</SelectItem>
-                        <SelectItem value="YEARLY">Tahunan</SelectItem>
+                        <SelectItem value="never">Tidak pernah</SelectItem>
+                        <SelectItem value="date">Pada tanggal</SelectItem>
+                        <SelectItem value="count">Setelah berapa kali</SelectItem>
                       </SelectContent>
                     </Select>
                   </div>
-                  
-                  <div>
-                    <Label>Interval</Label>
-                    <Input
-                      type="number"
-                      min="1"
-                      value={recurrenceRule.interval}
-                      onChange={(e) => setRecurrenceRule({ ...recurrenceRule, interval: parseInt(e.target.value) })}
-                    />
-                  </div>
-                </div>
 
-                {recurrenceRule.frequency === 'WEEKLY' && (
-                  <div>
-                    <Label>Hari dalam seminggu</Label>
-                    <div className="flex flex-wrap gap-2 mt-2">
-                      {dayNames.map((day, index) => (
-                        <button
-                          key={index}
-                          type="button"
-                          onClick={() => handleDayOfWeekToggle(index)}
-                          className={`px-3 py-1 rounded text-sm ${
-                            recurrenceRule.daysOfWeek?.includes(index)
-                              ? 'bg-blue-600 text-white'
-                              : 'bg-gray-200 text-gray-700'
-                          }`}
-                        >
-                          {day}
-                        </button>
-                      ))}
+                  {endType === 'date' && (
+                    <div className="space-y-2">
+                      <Label className="text-sm font-medium text-gray-700">Tanggal berakhir</Label>
+                      <Input
+                        type="date"
+                        value={recurrenceRule.endDate ? format(recurrenceRule.endDate, 'yyyy-MM-dd') : ''}
+                        onChange={(e) => setRecurrenceRule({ 
+                          ...recurrenceRule, 
+                          endDate: e.target.value ? new Date(e.target.value) : undefined 
+                        })}
+                        className="h-12 rounded-xl"
+                      />
                     </div>
-                  </div>
-                )}
+                  )}
 
-                <div>
-                  <Label>Berakhir</Label>
-                  <Select value={endType} onValueChange={(value: any) => setEndType(value)}>
-                    <SelectTrigger>
-                      <SelectValue />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="never">Tidak pernah</SelectItem>
-                      <SelectItem value="date">Pada tanggal</SelectItem>
-                      <SelectItem value="count">Setelah berapa kali</SelectItem>
-                    </SelectContent>
-                  </Select>
+                  {endType === 'count' && (
+                    <div className="space-y-2">
+                      <Label className="text-sm font-medium text-gray-700">Jumlah pengulangan</Label>
+                      <Input
+                        type="number"
+                        min="1"
+                        value={recurrenceRule.count || ''}
+                        onChange={(e) => setRecurrenceRule({ 
+                          ...recurrenceRule, 
+                          count: e.target.value ? parseInt(e.target.value) : undefined 
+                        })}
+                        className="h-12 rounded-xl"
+                      />
+                    </div>
+                  )}
                 </div>
+              )}
+            </div>
 
-                {endType === 'date' && (
-                  <div>
-                    <Label>Tanggal berakhir</Label>
-                    <Input
-                      type="date"
-                      value={recurrenceRule.endDate ? format(recurrenceRule.endDate, 'yyyy-MM-dd') : ''}
-                      onChange={(e) => setRecurrenceRule({ 
-                        ...recurrenceRule, 
-                        endDate: e.target.value ? new Date(e.target.value) : undefined 
-                      })}
-                    />
-                  </div>
-                )}
-
-                {endType === 'count' && (
-                  <div>
-                    <Label>Jumlah pengulangan</Label>
-                    <Input
-                      type="number"
-                      min="1"
-                      value={recurrenceRule.count || ''}
-                      onChange={(e) => setRecurrenceRule({ 
-                        ...recurrenceRule, 
-                        count: e.target.value ? parseInt(e.target.value) : undefined 
-                      })}
-                    />
-                  </div>
-                )}
-              </div>
-            )}
-          </div>
-
-          {/* Action Buttons */}
-          <div className="flex justify-end space-x-2 pt-4">
-            <Button type="button" variant="outline" onClick={onClose}>
-              Batal
-            </Button>
-            <Button type="submit" className="bg-blue-600 hover:bg-blue-700">
-              {event ? 'Update Event' : 'Buat Event'}
-            </Button>
-          </div>
-        </form>
+            {/* Action Buttons */}
+            <div className="flex flex-col sm:flex-row gap-3 pt-6 border-t border-gray-100">
+              <Button 
+                type="button" 
+                variant="outline" 
+                onClick={onClose}
+                className="flex-1 h-12 rounded-xl border-gray-200 hover:bg-gray-50"
+              >
+                <X className="h-4 w-4 mr-2" />
+                Batal
+              </Button>
+              <Button 
+                type="submit" 
+                className="flex-1 h-12 bg-gradient-to-r from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700 text-white rounded-xl shadow-lg hover:shadow-xl transform hover:scale-[1.02] transition-all duration-200 border-0"
+              >
+                <Save className="h-4 w-4 mr-2" />
+                {event ? 'Update Event' : 'Buat Event'}
+              </Button>
+            </div>
+          </form>
+        </div>
       </DialogContent>
     </Dialog>
   );
