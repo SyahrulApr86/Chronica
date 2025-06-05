@@ -1,0 +1,71 @@
+import { EventsService } from './events.service';
+import { CreateEventDto, UpdateEventDto } from './dto/event.dto';
+export declare class EventsController {
+    private readonly eventsService;
+    constructor(eventsService: EventsService);
+    createEvent(createEventDto: CreateEventDto, req: any): Promise<{
+        id: string;
+        title: string;
+        description: string | null;
+        startTime: Date;
+        endTime: Date;
+        allDay: boolean;
+        location: string | null;
+        color: string;
+        isRecurring: boolean;
+        allowOverlap: boolean;
+        userId: string;
+        parentEventId: string | null;
+        createdAt: Date;
+        updatedAt: Date;
+    }>;
+    getEvents(req: any, startDate?: string, endDate?: string): Promise<{
+        id: string;
+        title: string;
+        description: string | null;
+        startTime: Date;
+        endTime: Date;
+        allDay: boolean;
+        location: string | null;
+        color: string;
+        isRecurring: boolean;
+        allowOverlap: boolean;
+        userId: string;
+        parentEventId: string | null;
+        createdAt: Date;
+        updatedAt: Date;
+    }[]>;
+    getEventById(eventId: string, req: any): Promise<{
+        id: string;
+        title: string;
+        description: string | null;
+        startTime: Date;
+        endTime: Date;
+        allDay: boolean;
+        location: string | null;
+        color: string;
+        isRecurring: boolean;
+        allowOverlap: boolean;
+        userId: string;
+        parentEventId: string | null;
+        createdAt: Date;
+        updatedAt: Date;
+    }>;
+    updateEvent(eventId: string, updateEventDto: UpdateEventDto, req: any): Promise<{
+        id: string;
+        title: string;
+        description: string | null;
+        startTime: Date;
+        endTime: Date;
+        allDay: boolean;
+        location: string | null;
+        color: string;
+        isRecurring: boolean;
+        allowOverlap: boolean;
+        userId: string;
+        parentEventId: string | null;
+        createdAt: Date;
+        updatedAt: Date;
+    }>;
+    deleteEvent(eventId: string, req: any): Promise<void>;
+}

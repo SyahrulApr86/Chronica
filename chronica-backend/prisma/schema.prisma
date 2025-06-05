@@ -1,0 +1,127 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+  output   = "../generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id        String   @id @default(cuid())
+  email     String   @unique
+  username  String   @unique
+  password  String
+  name      String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  
+  events    Event[]
+  calendars Calendar[]
+  
+  @@map("users")
+}
+
+model Event {
+  id          String   @id @default(cuid())
+  title       String
+  description String?
+  startTime   DateTime
+  endTime     DateTime
+  allDay      Boolean  @default(false)
+  location    String?
+  color       String   @default("#3b82f6") // Default blue color
+  
+  // Recurring event properties
+  isRecurring    Boolean           @default(false)
+  recurrenceRule RecurrenceRule?
+  
+  // Overlap control
+  allowOverlap Boolean @default(false)
+  
+  // Relations
+  userId String
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+  
+  // Parent-child relationship for recurring events
+  parentEventId String?
+  parentEvent   Event?  @relation("EventRecurrence", fields: [parentEventId], references: [id], onDelete: Cascade)
+  childEvents   Event[] @relation("EventRecurrence")
+  
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  
+  @@map("events")
+}
+
+model RecurrenceRule {
+  id       String @id @default(cuid())
+  eventId  String @unique
+  event    Event  @relation(fields: [eventId], references: [id], onDelete: Cascade)
+  
+  // Recurrence pattern
+  frequency RecurrenceFrequency // DAILY, WEEKLY, MONTHLY, YEARLY
+  interval  Int                 @default(1) // Every X days/weeks/months/years
+  
+  // Days of week for weekly recurrence (0 = Sunday, 6 = Saturday)
+  daysOfWeek Int[] // Array of integers
+  
+  // Day of month for monthly recurrence
+  dayOfMonth Int?
+  
+  // Month of year for yearly recurrence
+  monthOfYear Int?
+  
+  // End conditions
+  endDate    DateTime? // End by specific date
+  count      Int?      // End after X occurrences
+  
+  // Exceptions (dates to skip)
+  exceptions DateTime[]
+  
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  
+  @@map("recurrence_rules")
+}
+
+enum RecurrenceFrequency {
+  DAILY
+  WEEKLY
+  MONTHLY
+  YEARLY
+}
+
+model EventException {
+  id        String   @id @default(cuid())
+  eventId   String
+  date      DateTime
+  reason    String?
+  createdAt DateTime @default(now())
+  
+  @@unique([eventId, date])
+  @@map("event_exceptions")
+}
+
+model Calendar {
+  id          String  @id @default(cuid())
+  name        String
+  description String?
+  color       String  @default("#3b82f6")
+  isDefault   Boolean @default(false)
+  
+  userId String
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+  
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  
+  @@map("calendars")
+}
