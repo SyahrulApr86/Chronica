@@ -5,6 +5,7 @@ A modern, elegant calendar application built with Next.js and NestJS that revolu
 ## Features
 
 ### Core Functionality
+
 - **Event Management**: Create, edit, and delete events with customizable colors and descriptions
 - **Calendar Views**: Interactive monthly calendar with intuitive date selection
 - **All-Day Events**: Support for both timed and all-day events
@@ -12,6 +13,7 @@ A modern, elegant calendar application built with Next.js and NestJS that revolu
 - **Event Indicators**: Visual dots on calendar dates showing event presence
 
 ### User Experience
+
 - **Modern UI**: Glass morphism design with gradient backgrounds and smooth animations
 - **Responsive Design**: Optimized for desktop, tablet, and mobile devices
 - **Authentication**: Secure user registration and login system
@@ -19,6 +21,7 @@ A modern, elegant calendar application built with Next.js and NestJS that revolu
 - **Indonesian Localization**: Full support for Indonesian language and date formats
 
 ### Technical Features
+
 - **RESTful API**: Clean API architecture with proper error handling
 - **Database Integration**: PostgreSQL with Prisma ORM
 - **JWT Authentication**: Secure token-based authentication
@@ -28,6 +31,7 @@ A modern, elegant calendar application built with Next.js and NestJS that revolu
 ## Technology Stack
 
 ### Frontend
+
 - **Next.js 15.3.3**: React framework with App Router
 - **TypeScript**: Type-safe JavaScript development
 - **Tailwind CSS**: Utility-first CSS framework
@@ -37,6 +41,7 @@ A modern, elegant calendar application built with Next.js and NestJS that revolu
 - **Lucide React**: Beautiful icon library
 
 ### Backend
+
 - **NestJS**: Progressive Node.js framework
 - **TypeScript**: Type-safe server development
 - **Prisma**: Next-generation ORM
@@ -77,6 +82,7 @@ Chronica/
 ## Getting Started
 
 ### Prerequisites
+
 - Node.js 18.0 or higher
 - npm or yarn package manager
 - PostgreSQL database
@@ -84,62 +90,64 @@ Chronica/
 ### Installation
 
 1. **Clone the repository**
+
    ```bash
-   git clone https://github.com/your-username/Chronica.git
+   git clone https://github.com/SyahrulApr86/Chronica.git
    cd Chronica
    ```
-
 2. **Setup Backend**
+
    ```bash
    cd chronica-backend
    npm install
    ```
-
 3. **Configure Environment Variables**
    Create `.env` file in `chronica-backend/`:
+
    ```env
    DATABASE_URL="postgresql://username:password@localhost:5432/chronica"
    JWT_SECRET="your-secret-key"
    ```
-
 4. **Setup Database**
+
    ```bash
    npx prisma migrate dev
    npx prisma generate
    ```
-
 5. **Start Backend Server**
+
    ```bash
    npm run start:dev
    ```
-
 6. **Setup Frontend**
+
    ```bash
    cd ../chronica-frontend
    npm install
    ```
-
 7. **Configure Frontend Environment**
    Create `.env.local` file in `chronica-frontend/`:
+
    ```env
    NEXT_PUBLIC_API_URL=http://localhost:3001
    ```
-
 8. **Start Frontend Development Server**
+
    ```bash
    npm run dev
    ```
-
 9. **Access Application**
    Open [http://localhost:3000](http://localhost:3000) in your browser
 
 ## API Documentation
 
 ### Authentication Endpoints
+
 - `POST /auth/register` - User registration
 - `POST /auth/login` - User login
 
 ### Event Endpoints
+
 - `GET /events` - Get user events (with date range query)
 - `POST /events` - Create new event
 - `PUT /events/:id` - Update event
@@ -148,6 +156,7 @@ Chronica/
 ### Request/Response Examples
 
 **Create Event:**
+
 ```json
 POST /events
 {
@@ -161,6 +170,7 @@ POST /events
 ```
 
 **Response:**
+
 ```json
 {
   "id": "uuid",
@@ -179,6 +189,7 @@ POST /events
 ## Database Schema
 
 ### Users Table
+
 - `id`: UUID primary key
 - `username`: Unique username
 - `email`: User email address
@@ -188,6 +199,7 @@ POST /events
 - `updatedAt`: Update timestamp
 
 ### Events Table
+
 - `id`: UUID primary key
 - `title`: Event title
 - `description`: Event description (optional)
@@ -204,18 +216,21 @@ POST /events
 ### Available Scripts
 
 **Frontend:**
+
 - `npm run dev` - Start development server
 - `npm run build` - Build for production
 - `npm run start` - Start production server
 - `npm run lint` - Run ESLint
 
 **Backend:**
+
 - `npm run start:dev` - Start development server
 - `npm run build` - Build for production
 - `npm run start:prod` - Start production server
 - `npm run test` - Run tests
 
 ### Code Style
+
 - ESLint configuration for consistent code style
 - TypeScript strict mode enabled
 - Prettier for code formatting
@@ -223,11 +238,13 @@ POST /events
 ## Deployment
 
 ### Frontend (Vercel)
+
 1. Connect your GitHub repository to Vercel
 2. Set environment variables in Vercel dashboard
 3. Deploy automatically on push to main branch
 
 ### Backend (Railway/Heroku)
+
 1. Create new application
 2. Connect to GitHub repository
 3. Set environment variables
@@ -235,10 +252,13 @@ POST /events
 5. Deploy
 
 ### Environment Variables for Production
+
 **Frontend:**
+
 - `NEXT_PUBLIC_API_URL`: Backend API URL
 
 **Backend:**
+
 - `DATABASE_URL`: PostgreSQL connection string
 - `JWT_SECRET`: JWT signing secret
 - `PORT`: Server port (optional)
@@ -252,6 +272,7 @@ POST /events
 5. Open a Pull Request
 
 ### Development Guidelines
+
 - Follow TypeScript best practices
 - Write meaningful commit messages
 - Add tests for new features
@@ -265,6 +286,7 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 ## Support
 
 If you encounter any issues or have questions:
+
 1. Check existing [Issues](https://github.com/your-username/Chronica/issues)
 2. Create a new issue with detailed description
 3. Include steps to reproduce the problem
@@ -273,4 +295,4 @@ If you encounter any issues or have questions:
 
 - Built with modern web technologies
 - Inspired by clean design principles
-- Community-driven development approach 
+- Community-driven development approach
