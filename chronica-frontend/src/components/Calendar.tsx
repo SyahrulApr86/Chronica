@@ -389,7 +389,7 @@ export function Calendar() {
                   cell: "text-center text-base p-1 relative first:[&:has([aria-selected])]:rounded-l-md last:[&:has([aria-selected])]:rounded-r-md focus-within:relative focus-within:z-20",
                   day: "h-20 w-20 p-0 font-semibold aria-selected:opacity-100 hover:bg-blue-50 rounded-2xl transition-all duration-300 hover:scale-110 text-lg",
                   day_selected: "bg-gradient-to-br from-blue-500 to-purple-600 text-white hover:from-blue-600 hover:to-purple-700 shadow-xl scale-110",
-                  day_today: "bg-gradient-to-br from-orange-100 to-yellow-100 text-orange-700 font-black border-3 border-orange-400 shadow-lg",
+                  day_today: "bg-gradient-to-br from-orange-100 to-yellow-100 text-orange-800 font-black border-2 border-orange-400 shadow-lg",
                   day_outside: "text-gray-300 opacity-50",
                   day_disabled: "text-gray-300 opacity-30",
                 }}
@@ -402,7 +402,7 @@ export function Calendar() {
 
                     return (
                       <div className="relative w-full h-full flex flex-col items-center justify-center group">
-                        <span className={`text-lg font-bold ${isSelected ? 'text-white' : ''} transition-all duration-300`}>
+                        <span className={`text-lg font-bold ${isSelected ? 'text-white' : isCurrentDay ? 'text-orange-800' : 'text-gray-700'} transition-all duration-300`}>
                           {format(date, 'd')}
                         </span>
                         {hasEvents && (
