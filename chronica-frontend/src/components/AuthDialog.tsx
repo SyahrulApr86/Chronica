@@ -66,49 +66,53 @@ export function AuthDialog({ isOpen, onClose }: AuthDialogProps) {
   return (
     <Dialog open={isOpen} onOpenChange={handleDialogOpenChange}>
       <DialogContent 
-        className="max-w-md p-0 overflow-hidden bg-white/95 backdrop-blur-md border-0 shadow-2xl rounded-3xl"
+        className="max-w-lg p-0 overflow-hidden bg-white/90 backdrop-blur-2xl border-0 shadow-3xl rounded-[2rem]"
         showCloseButton={false}
       >
         <div className="relative">
-          {/* Background gradient */}
-          <div className="absolute inset-0 bg-gradient-to-br from-blue-500/10 via-purple-500/10 to-pink-500/10 rounded-3xl"></div>
+          {/* Enhanced Background gradient */}
+          <div className="absolute inset-0 bg-gradient-to-br from-blue-500/15 via-purple-500/10 to-pink-500/15 rounded-[2rem]"></div>
+          <div className="absolute inset-0 bg-gradient-to-tl from-white/20 via-white/10 to-transparent rounded-[2rem] pointer-events-none"></div>
           
-          <div className="relative z-10 p-8">
-            {/* Custom Close Button */}
+          <div className="relative z-10 p-10">
+            {/* Enhanced Custom Close Button */}
             <button
               onClick={onClose}
-              className="absolute top-4 right-4 p-2 rounded-full hover:bg-gray-100 transition-colors duration-200 z-20"
+              className="absolute top-6 right-6 p-3 rounded-2xl hover:bg-white/20 backdrop-blur-sm transition-all duration-300 z-20 group border border-white/10"
               aria-label="Close dialog"
             >
-              <X className="h-5 w-5 text-gray-500 hover:text-gray-700" />
+              <X className="h-5 w-5 text-gray-500 hover:text-gray-700 group-hover:rotate-90 transition-transform duration-300" />
             </button>
             
-            <DialogHeader className="text-center mb-8">
-              <div className="mx-auto w-16 h-16 bg-gradient-to-br from-blue-500 to-purple-600 rounded-2xl flex items-center justify-center mb-4 shadow-lg">
-                <User className="h-8 w-8 text-white" />
+            <DialogHeader className="text-center mb-10">
+              <div className="mx-auto mb-6 relative group">
+                <div className="absolute -inset-4 bg-gradient-to-r from-blue-500 to-purple-600 rounded-3xl blur-2xl opacity-75 group-hover:opacity-100 animate-pulse"></div>
+                <div className="relative w-20 h-20 bg-gradient-to-br from-blue-500 to-purple-600 rounded-3xl flex items-center justify-center shadow-2xl">
+                  <User className="h-10 w-10 text-white" />
+                </div>
               </div>
-              <DialogTitle className="text-3xl font-bold bg-gradient-to-r from-gray-900 to-gray-700 bg-clip-text text-transparent">
+              <DialogTitle className="text-4xl font-black bg-gradient-to-r from-gray-900 via-blue-800 to-purple-800 bg-clip-text text-transparent mb-3 tracking-tight">
                 Selamat Datang
               </DialogTitle>
-              <DialogDescription className="text-gray-600 text-lg mt-2">
-                Masuk atau daftar untuk melanjutkan ke Chronica
+              <DialogDescription className="text-gray-600 text-xl font-light leading-relaxed">
+                Masuk atau daftar untuk melanjutkan ke <span className="font-semibold text-purple-600">Chronica</span>
               </DialogDescription>
             </DialogHeader>
 
             <Tabs defaultValue="login" className="w-full">
-              <TabsList className="grid w-full grid-cols-2 bg-gray-100/50 rounded-2xl p-1 mb-8">
+              <TabsList className="grid w-full grid-cols-2 bg-white/30 backdrop-blur-sm rounded-3xl p-2 mb-10 border border-white/20 shadow-lg">
                 <TabsTrigger 
                   value="login" 
-                  className="rounded-xl data-[state=active]:bg-white data-[state=active]:shadow-md data-[state=active]:text-blue-600 transition-all duration-200"
+                  className="rounded-2xl data-[state=active]:bg-gradient-to-r data-[state=active]:from-blue-500 data-[state=active]:to-blue-600 data-[state=active]:text-white data-[state=active]:shadow-xl text-gray-600 font-semibold transition-all duration-300 hover:bg-white/20"
                 >
-                  <LogIn className="h-4 w-4 mr-2" />
+                  <LogIn className="h-5 w-5 mr-2" />
                   Masuk
                 </TabsTrigger>
                 <TabsTrigger 
                   value="register"
-                  className="rounded-xl data-[state=active]:bg-white data-[state=active]:shadow-md data-[state=active]:text-purple-600 transition-all duration-200"
+                  className="rounded-2xl data-[state=active]:bg-gradient-to-r data-[state=active]:from-purple-500 data-[state=active]:to-purple-600 data-[state=active]:text-white data-[state=active]:shadow-xl text-gray-600 font-semibold transition-all duration-300 hover:bg-white/20"
                 >
-                  <UserPlus className="h-4 w-4 mr-2" />
+                  <UserPlus className="h-5 w-5 mr-2" />
                   Daftar
                 </TabsTrigger>
               </TabsList>
@@ -128,7 +132,7 @@ export function AuthDialog({ isOpen, onClose }: AuthDialogProps) {
                         value={loginData.emailOrUsername}
                         onChange={(e) => setLoginData({ ...loginData, emailOrUsername: e.target.value })}
                         placeholder="Masukkan email atau username"
-                        className="pl-10 h-12 rounded-xl border-gray-200 focus:border-blue-500 focus:ring-blue-500 transition-all duration-200"
+                        className="pl-12 h-14 rounded-2xl border-gray-200/50 bg-white/50 backdrop-blur-sm focus:border-blue-500 focus:ring-blue-500/20 focus:bg-white/80 transition-all duration-300 text-base shadow-sm"
                         required
                       />
                     </div>
@@ -148,7 +152,7 @@ export function AuthDialog({ isOpen, onClose }: AuthDialogProps) {
                         value={loginData.password}
                         onChange={(e) => setLoginData({ ...loginData, password: e.target.value })}
                         placeholder="Masukkan password"
-                        className="pl-10 pr-10 h-12 rounded-xl border-gray-200 focus:border-blue-500 focus:ring-blue-500 transition-all duration-200"
+                        className="pl-12 pr-12 h-14 rounded-2xl border-gray-200/50 bg-white/50 backdrop-blur-sm focus:border-blue-500 focus:ring-blue-500/20 focus:bg-white/80 transition-all duration-300 text-base shadow-sm"
                         required
                       />
                       <button
@@ -169,7 +173,7 @@ export function AuthDialog({ isOpen, onClose }: AuthDialogProps) {
 
                   <Button 
                     type="submit" 
-                    className="w-full h-12 bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white rounded-xl shadow-lg hover:shadow-xl transform hover:scale-[1.02] transition-all duration-200 border-0"
+                    className="w-full h-14 bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white rounded-2xl shadow-xl hover:shadow-2xl hover:shadow-blue-500/25 transform hover:scale-[1.02] transition-all duration-300 border-0 font-semibold text-base"
                     disabled={isLoading}
                   >
                     {isLoading ? (

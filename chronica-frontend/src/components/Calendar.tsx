@@ -107,35 +107,57 @@ export function Calendar() {
   // If not authenticated, show landing page
   if (!user || !token) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-indigo-900 via-purple-900 to-pink-900 flex items-center justify-center p-4 relative overflow-hidden">
-        {/* Background decorations */}
-        <div className="absolute inset-0 opacity-30">
-          <div className="absolute inset-0 bg-gradient-to-r from-purple-400/20 via-pink-400/20 to-indigo-400/20"></div>
+      <div className="min-h-screen bg-gradient-to-br from-slate-900 via-purple-900 to-indigo-900 flex items-center justify-center p-4 relative overflow-hidden">
+        {/* Enhanced Background decorations */}
+        <div className="absolute inset-0">
+          <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-purple-900/20 via-slate-900/40 to-indigo-900/60"></div>
+          <div className="absolute inset-0 bg-[conic-gradient(from_0deg_at_50%_50%,_var(--tw-gradient-stops))] from-purple-500/10 via-pink-500/5 to-indigo-500/10 animate-spin" style={{animationDuration: '20s'}}></div>
         </div>
-        <div className="absolute top-20 left-20 w-72 h-72 bg-purple-400 rounded-full mix-blend-multiply filter blur-xl opacity-20 animate-pulse"></div>
-        <div className="absolute top-40 right-20 w-72 h-72 bg-pink-400 rounded-full mix-blend-multiply filter blur-xl opacity-20 animate-pulse animation-delay-2000"></div>
-        <div className="absolute -bottom-20 left-40 w-72 h-72 bg-indigo-400 rounded-full mix-blend-multiply filter blur-xl opacity-20 animate-pulse animation-delay-4000"></div>
         
-        <div className="text-center relative z-10 backdrop-blur-sm bg-white/10 p-12 rounded-3xl border border-white/20 shadow-2xl">
-          <div className="flex items-center justify-center mb-6">
-            <div className="relative">
-              <CalendarIcon className="h-16 w-16 text-white mb-4" />
-              <Sparkles className="absolute -top-2 -right-2 h-6 w-6 text-yellow-300 animate-pulse" />
+        {/* Floating orbs */}
+        <div className="absolute top-1/4 left-1/4 w-64 h-64 bg-gradient-to-r from-purple-400/30 to-pink-400/30 rounded-full mix-blend-multiply filter blur-xl animate-float"></div>
+        <div className="absolute top-1/3 right-1/4 w-80 h-80 bg-gradient-to-r from-blue-400/25 to-indigo-400/25 rounded-full mix-blend-multiply filter blur-xl animate-float-delayed"></div>
+        <div className="absolute bottom-1/4 left-1/3 w-72 h-72 bg-gradient-to-r from-pink-400/20 to-purple-400/20 rounded-full mix-blend-multiply filter blur-xl animate-float-slow"></div>
+        
+        {/* Glass morphism card */}
+        <div className="text-center relative z-10 backdrop-blur-xl bg-white/5 p-16 rounded-[2rem] border border-white/10 shadow-2xl max-w-2xl mx-auto">
+          <div className="absolute inset-0 bg-gradient-to-br from-white/10 via-white/5 to-transparent rounded-[2rem] pointer-events-none"></div>
+          
+          <div className="relative z-10">
+            <div className="flex items-center justify-center mb-8">
+              <div className="relative group">
+                <div className="absolute -inset-4 bg-gradient-to-r from-purple-500 to-pink-500 rounded-full blur-lg opacity-75 group-hover:opacity-100 animate-pulse"></div>
+                <div className="relative p-6 bg-gradient-to-br from-purple-600 to-pink-600 rounded-2xl shadow-2xl">
+                  <CalendarIcon className="h-16 w-16 text-white" />
+                </div>
+                <Sparkles className="absolute -top-2 -right-2 h-8 w-8 text-yellow-300 animate-bounce" />
+              </div>
+            </div>
+            
+            <h1 className="text-7xl font-black text-transparent bg-clip-text bg-gradient-to-r from-white via-purple-200 to-pink-200 mb-6 tracking-tight">
+              Chronica
+            </h1>
+            
+            <p className="text-xl text-gray-200 mb-12 max-w-lg mx-auto leading-relaxed font-light">
+              Revolusi cara Anda mengelola waktu dengan platform kalender yang elegan dan powerful
+            </p>
+            
+            <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
+              <Button 
+                onClick={() => setIsAuthDialogOpen(true)}
+                className="group relative bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white px-10 py-4 text-lg font-semibold rounded-2xl shadow-2xl hover:shadow-purple-500/25 transform hover:scale-105 transition-all duration-300 border-0 overflow-hidden"
+              >
+                <div className="absolute inset-0 bg-gradient-to-r from-white/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+                <User className="mr-3 h-6 w-6" />
+                <span className="relative z-10">Mulai Sekarang</span>
+              </Button>
+              
+              <div className="flex items-center gap-2 text-gray-300 text-sm">
+                <div className="w-2 h-2 bg-green-400 rounded-full animate-pulse"></div>
+                <span>Gratis • Tanpa Batasan • Aman</span>
+              </div>
             </div>
           </div>
-          <h1 className="text-5xl font-bold text-white mb-4 bg-gradient-to-r from-white to-purple-200 bg-clip-text text-transparent">
-            Chronica
-          </h1>
-          <p className="text-purple-100 mb-8 text-lg max-w-md mx-auto leading-relaxed">
-            Kelola jadwal Anda dengan mudah dan elegan. Mulai perjalanan produktivitas Anda hari ini.
-          </p>
-          <Button 
-            onClick={() => setIsAuthDialogOpen(true)}
-            className="bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 text-white px-8 py-3 text-lg rounded-xl shadow-lg hover:shadow-xl transform hover:scale-105 transition-all duration-200 border-0"
-          >
-            <User className="mr-2 h-5 w-5" />
-            Masuk / Daftar
-          </Button>
         </div>
         
         <AuthDialog 
@@ -147,63 +169,87 @@ export function Calendar() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-100 p-4 relative overflow-hidden">
-      {/* Background decorations */}
-      <div className="absolute top-0 left-0 w-96 h-96 bg-gradient-to-br from-blue-200/30 to-purple-200/30 rounded-full mix-blend-multiply filter blur-xl opacity-70 animate-pulse"></div>
-      <div className="absolute bottom-0 right-0 w-96 h-96 bg-gradient-to-tl from-pink-200/30 to-yellow-200/30 rounded-full mix-blend-multiply filter blur-xl opacity-70 animate-pulse animation-delay-2000"></div>
+    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50/50 to-indigo-100/80 relative overflow-hidden">
+      {/* Enhanced Background elements */}
+      <div className="absolute inset-0">
+        <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top_right,_var(--tw-gradient-stops))] from-blue-100/50 via-transparent to-purple-100/30"></div>
+        <div className="absolute top-0 left-0 w-[800px] h-[800px] bg-gradient-to-br from-blue-200/20 to-purple-200/20 rounded-full mix-blend-multiply filter blur-3xl animate-float"></div>
+        <div className="absolute bottom-0 right-0 w-[600px] h-[600px] bg-gradient-to-tl from-pink-200/20 to-yellow-200/20 rounded-full mix-blend-multiply filter blur-3xl animate-float-delayed"></div>
+        <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-[400px] h-[400px] bg-gradient-to-r from-indigo-200/15 to-purple-200/15 rounded-full mix-blend-multiply filter blur-2xl animate-float-slow"></div>
+      </div>
       
-      <div className="max-w-7xl mx-auto relative z-10">
-        {/* Header */}
-        <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-8 gap-4">
-          <div className="flex items-center gap-4">
-            <div className="p-3 bg-gradient-to-br from-blue-500 to-purple-600 rounded-2xl shadow-lg">
-              <CalendarIcon className="h-8 w-8 text-white" />
+      <div className="max-w-7xl mx-auto relative z-10 p-6">
+        {/* Enhanced Header */}
+        <div className="flex flex-col lg:flex-row justify-between items-start lg:items-center mb-12 gap-6">
+          <div className="flex items-center gap-6">
+            <div className="relative group">
+              <div className="absolute -inset-2 bg-gradient-to-r from-blue-500 to-purple-600 rounded-3xl blur-lg opacity-75 group-hover:opacity-100 transition-opacity duration-300"></div>
+              <div className="relative p-4 bg-gradient-to-br from-blue-500 to-purple-600 rounded-3xl shadow-2xl">
+                <CalendarIcon className="h-10 w-10 text-white" />
+              </div>
             </div>
             <div>
-              <h1 className="text-4xl font-bold bg-gradient-to-r from-gray-900 via-blue-800 to-purple-800 bg-clip-text text-transparent mb-1">
+              <h1 className="text-5xl font-black bg-gradient-to-r from-gray-900 via-blue-800 to-purple-800 bg-clip-text text-transparent mb-2 tracking-tight">
                 Chronica
               </h1>
-              <div className="flex items-center gap-2 text-gray-600">
-                <div className="w-2 h-2 bg-green-400 rounded-full animate-pulse"></div>
-                <span>Selamat datang, {user.name || user.username}!</span>
+              <div className="flex items-center gap-3 text-gray-600">
+                <div className="flex items-center gap-2">
+                  <div className="w-3 h-3 bg-gradient-to-r from-green-400 to-emerald-500 rounded-full animate-pulse shadow-lg"></div>
+                  <span className="font-medium">Selamat datang, {user.name || user.username}!</span>
+                </div>
+                <div className="hidden sm:block w-1 h-1 bg-gray-300 rounded-full"></div>
+                <div className="hidden sm:flex items-center gap-1 text-sm text-gray-500">
+                  <Timer className="h-4 w-4" />
+                  <span>{new Date().toLocaleDateString('id-ID', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })}</span>
+                </div>
               </div>
             </div>
           </div>
           
-          <div className="flex items-center gap-3">
+          <div className="flex items-center gap-4">
             <Button
               onClick={handleCreateEvent}
-              className="bg-gradient-to-r from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700 text-white px-6 py-2.5 rounded-xl shadow-lg hover:shadow-xl transform hover:scale-105 transition-all duration-200 border-0"
+              className="group relative bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white px-8 py-3 text-base font-semibold rounded-2xl shadow-xl hover:shadow-2xl hover:shadow-blue-500/25 transform hover:scale-105 transition-all duration-300 border-0 overflow-hidden"
             >
-              <Plus className="h-5 w-5 mr-2" />
-              Tambah Event
+              <div className="absolute inset-0 bg-gradient-to-r from-white/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+              <Plus className="h-5 w-5 mr-2 relative z-10" />
+              <span className="relative z-10">Tambah Event</span>
             </Button>
             
             <Button
               variant="outline"
               onClick={handleLogout}
-              className="border-gray-200 hover:bg-gray-50 rounded-xl px-4 py-2.5 shadow-sm hover:shadow-md transition-all duration-200"
+              className="group border-2 border-gray-200 hover:border-gray-300 bg-white/80 backdrop-blur-sm hover:bg-white/90 text-gray-700 hover:text-gray-900 rounded-2xl px-6 py-3 shadow-lg hover:shadow-xl transition-all duration-300"
             >
-              <LogOut className="h-4 w-4 mr-2" />
-              Logout
+              <LogOut className="h-4 w-4 mr-2 group-hover:rotate-12 transition-transform duration-300" />
+              <span className="font-medium">Logout</span>
             </Button>
           </div>
         </div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-10">
           {/* Calendar Section */}
           <div className="lg:col-span-2">
-            <Card className="shadow-2xl border-0 bg-white/70 backdrop-blur-md rounded-3xl overflow-hidden">
-              <CardHeader className="pb-6 bg-gradient-to-r from-blue-50 to-purple-50 border-b border-gray-100">
-                <CardTitle className="text-3xl font-bold text-gray-800 flex items-center justify-between">
-                  <span className="bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
-                    {format(selectedDate, 'MMMM yyyy', { locale: localeId })}
-                  </span>
-                  <div className="flex items-center gap-3">
-                    <div className="px-3 py-1 bg-blue-100 text-blue-700 rounded-full text-sm font-medium">
-                      {events.length} Events
+            <Card className="group shadow-2xl border-0 bg-white/80 backdrop-blur-xl rounded-[2rem] overflow-hidden hover:shadow-3xl transition-all duration-500 hover:scale-[1.02]">
+              <div className="absolute inset-0 bg-gradient-to-br from-white/20 via-white/10 to-transparent pointer-events-none"></div>
+              <CardHeader className="relative pb-8 bg-gradient-to-br from-blue-50/80 to-purple-50/80 backdrop-blur-sm border-b border-white/20">
+                <CardTitle className="text-4xl font-black text-gray-800 flex flex-col lg:flex-row lg:items-center justify-between gap-4">
+                  <div className="flex items-center gap-4">
+                    <div className="p-3 bg-gradient-to-br from-blue-500 to-purple-600 rounded-2xl shadow-lg">
+                      <CalendarIcon className="h-8 w-8 text-white" />
                     </div>
-                    <div className="flex items-center gap-2 px-3 py-1 bg-purple-100 text-purple-700 rounded-full text-sm font-medium">
+                    <span className="bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent tracking-tight">
+                      {format(selectedDate, 'MMMM yyyy', { locale: localeId })}
+                    </span>
+                  </div>
+                  <div className="flex items-center gap-3 flex-wrap">
+                    <div className="px-4 py-2 bg-gradient-to-r from-blue-500/10 to-blue-600/10 backdrop-blur-sm border border-blue-200/50 text-blue-700 rounded-2xl text-sm font-semibold shadow-lg">
+                      <span className="flex items-center gap-2">
+                        <div className="w-2 h-2 bg-blue-500 rounded-full animate-pulse"></div>
+                        {events.length} Events
+                      </span>
+                    </div>
+                    <div className="flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-purple-500/10 to-purple-600/10 backdrop-blur-sm border border-purple-200/50 text-purple-700 rounded-2xl text-sm font-semibold shadow-lg">
                       <Timer className="h-4 w-4" />
                       <span>{calculateMonthlyDuration(events, selectedDate)}</span>
                     </div>
@@ -274,63 +320,101 @@ export function Calendar() {
           </div>
 
           {/* Events Section */}
-          <div className="space-y-6">
+          <div className="space-y-8">
             {/* Monthly Statistics Card */}
-            <Card className="shadow-2xl border-0 bg-white/70 backdrop-blur-md rounded-3xl overflow-hidden">
-              <CardHeader className="pb-4 bg-gradient-to-r from-orange-50 to-amber-50 border-b border-gray-100">
-                <CardTitle className="text-lg font-bold text-gray-800 flex items-center gap-3">
-                  <div className="p-2 bg-gradient-to-br from-orange-500 to-amber-600 rounded-xl">
-                    <Timer className="h-5 w-5 text-white" />
+            <Card className="group shadow-2xl border-0 bg-white/80 backdrop-blur-xl rounded-[2rem] overflow-hidden hover:shadow-3xl transition-all duration-500">
+              <div className="absolute inset-0 bg-gradient-to-br from-white/20 via-white/10 to-transparent pointer-events-none"></div>
+              <CardHeader className="relative pb-6 bg-gradient-to-br from-orange-50/80 to-amber-50/80 backdrop-blur-sm border-b border-white/20">
+                <CardTitle className="text-2xl font-black text-gray-800 flex items-center gap-4">
+                  <div className="relative group-hover:scale-110 transition-transform duration-300">
+                    <div className="absolute -inset-2 bg-gradient-to-r from-orange-500 to-amber-600 rounded-2xl blur-lg opacity-75"></div>
+                    <div className="relative p-3 bg-gradient-to-br from-orange-500 to-amber-600 rounded-2xl shadow-lg">
+                      <Timer className="h-6 w-6 text-white" />
+                    </div>
                   </div>
-                  <span className="bg-gradient-to-r from-orange-600 to-amber-600 bg-clip-text text-transparent">
+                  <span className="bg-gradient-to-r from-orange-600 to-amber-600 bg-clip-text text-transparent tracking-tight">
                     Statistik {format(selectedDate, 'MMMM yyyy', { locale: localeId })}
                   </span>
                 </CardTitle>
               </CardHeader>
-              <CardContent className="p-6">
-                <div className="space-y-4">
-                  <div className="flex items-center justify-between p-4 bg-blue-50 rounded-2xl">
-                    <div className="flex items-center gap-3">
-                      <div className="p-2 bg-blue-500 rounded-lg">
-                        <CalendarIcon className="h-4 w-4 text-white" />
+              <CardContent className="relative p-8">
+                <div className="space-y-6">
+                  <div className="group flex items-center justify-between p-6 bg-gradient-to-br from-blue-50/80 to-blue-100/50 backdrop-blur-sm rounded-3xl border border-blue-200/30 hover:shadow-lg transition-all duration-300">
+                    <div className="flex items-center gap-4">
+                      <div className="relative">
+                        <div className="absolute -inset-1 bg-gradient-to-r from-blue-500 to-blue-600 rounded-xl blur opacity-75 group-hover:opacity-100 transition-opacity duration-300"></div>
+                        <div className="relative p-3 bg-gradient-to-br from-blue-500 to-blue-600 rounded-xl shadow-lg">
+                          <CalendarIcon className="h-5 w-5 text-white" />
+                        </div>
                       </div>
-                      <span className="font-medium text-blue-900">Total Events</span>
+                      <div>
+                        <span className="text-lg font-bold text-blue-900">Total Events</span>
+                        <div className="text-sm text-blue-600 font-medium">Bulan ini</div>
+                      </div>
                     </div>
-                    <span className="text-2xl font-bold text-blue-600">{events.length}</span>
+                    <div className="text-right">
+                      <span className="text-4xl font-black text-blue-600">{events.length}</span>
+                      <div className="text-sm text-blue-500 font-medium">events</div>
+                    </div>
                   </div>
                   
-                  <div className="flex items-center justify-between p-4 bg-purple-50 rounded-2xl">
-                    <div className="flex items-center gap-3">
-                      <div className="p-2 bg-purple-500 rounded-lg">
-                        <Timer className="h-4 w-4 text-white" />
+                  <div className="group flex items-center justify-between p-6 bg-gradient-to-br from-purple-50/80 to-purple-100/50 backdrop-blur-sm rounded-3xl border border-purple-200/30 hover:shadow-lg transition-all duration-300">
+                    <div className="flex items-center gap-4">
+                      <div className="relative">
+                        <div className="absolute -inset-1 bg-gradient-to-r from-purple-500 to-purple-600 rounded-xl blur opacity-75 group-hover:opacity-100 transition-opacity duration-300"></div>
+                        <div className="relative p-3 bg-gradient-to-br from-purple-500 to-purple-600 rounded-xl shadow-lg">
+                          <Timer className="h-5 w-5 text-white" />
+                        </div>
                       </div>
-                      <span className="font-medium text-purple-900">Total Durasi</span>
+                      <div>
+                        <span className="text-lg font-bold text-purple-900">Total Durasi</span>
+                        <div className="text-sm text-purple-600 font-medium">Waktu produktif</div>
+                      </div>
                     </div>
-                    <span className="text-lg font-bold text-purple-600 text-right">
-                      {calculateMonthlyDuration(events, selectedDate)}
+                    <div className="text-right">
+                      <span className="text-2xl font-black text-purple-600">
+                        {calculateMonthlyDuration(events, selectedDate)}
+                      </span>
+                    </div>
+                  </div>
+                  
+                  <div className="text-center p-4 bg-gradient-to-r from-gray-50/80 to-gray-100/50 backdrop-blur-sm rounded-2xl border border-gray-200/30">
+                    <span className="text-sm text-gray-600 font-medium flex items-center justify-center gap-2">
+                      <div className="w-2 h-2 bg-amber-400 rounded-full animate-pulse"></div>
+                      Event sepanjang hari tidak dihitung dalam durasi
                     </span>
-                  </div>
-                  
-                  <div className="text-center text-sm text-gray-500 mt-4 pt-4 border-t border-gray-200">
-                    <span>📅 Event sepanjang hari tidak dihitung dalam durasi</span>
                   </div>
                 </div>
               </CardContent>
             </Card>
 
-            <Card className="shadow-2xl border-0 bg-white/70 backdrop-blur-md rounded-3xl overflow-hidden">
-              <CardHeader className="pb-4 bg-gradient-to-r from-purple-50 to-pink-50 border-b border-gray-100">
-                <CardTitle className="text-xl font-bold text-gray-800 flex items-center justify-between">
-                  <span className="bg-gradient-to-r from-purple-600 to-pink-600 bg-clip-text text-transparent">
-                    {format(selectedDate, 'dd MMMM yyyy', { locale: localeId })}
-                  </span>
+            <Card className="group shadow-2xl border-0 bg-white/80 backdrop-blur-xl rounded-[2rem] overflow-hidden hover:shadow-3xl transition-all duration-500">
+              <div className="absolute inset-0 bg-gradient-to-br from-white/20 via-white/10 to-transparent pointer-events-none"></div>
+              <CardHeader className="relative pb-6 bg-gradient-to-br from-purple-50/80 to-pink-50/80 backdrop-blur-sm border-b border-white/20">
+                <CardTitle className="text-2xl font-black text-gray-800 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                  <div className="flex items-center gap-4">
+                    <div className="relative group-hover:scale-110 transition-transform duration-300">
+                      <div className="absolute -inset-2 bg-gradient-to-r from-purple-500 to-pink-500 rounded-2xl blur-lg opacity-75"></div>
+                      <div className="relative p-3 bg-gradient-to-br from-purple-600 to-pink-600 rounded-2xl shadow-lg">
+                        <CalendarIcon className="h-6 w-6 text-white" />
+                      </div>
+                    </div>
+                    <span className="bg-gradient-to-r from-purple-600 to-pink-600 bg-clip-text text-transparent tracking-tight">
+                      {format(selectedDate, 'dd MMMM yyyy', { locale: localeId })}
+                    </span>
+                  </div>
                   <div className="flex items-center gap-2">
-                    <div className={`px-3 py-1 rounded-full text-sm font-medium ${
+                    <div className={`px-4 py-2 rounded-2xl text-sm font-bold shadow-lg transition-all duration-300 ${
                       eventsForSelectedDate.length > 0 
-                        ? 'bg-green-100 text-green-700' 
-                        : 'bg-gray-100 text-gray-500'
+                        ? 'bg-gradient-to-r from-green-500/10 to-emerald-500/10 border border-green-200/50 text-green-700' 
+                        : 'bg-gradient-to-r from-gray-500/10 to-gray-600/10 border border-gray-200/50 text-gray-500'
                     }`}>
-                      {eventsForSelectedDate.length} Event{eventsForSelectedDate.length !== 1 ? 's' : ''}
+                      <span className="flex items-center gap-2">
+                        <div className={`w-2 h-2 rounded-full animate-pulse ${
+                          eventsForSelectedDate.length > 0 ? 'bg-green-500' : 'bg-gray-400'
+                        }`}></div>
+                        {eventsForSelectedDate.length} Event{eventsForSelectedDate.length !== 1 ? 's' : ''}
+                      </span>
                     </div>
                   </div>
                 </CardTitle>
