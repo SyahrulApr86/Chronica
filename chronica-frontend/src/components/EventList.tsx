@@ -3,8 +3,8 @@
 import React from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
-import { Clock, MapPin, Edit, Trash2, Repeat, Calendar, Sparkles } from 'lucide-react';
-import { format } from 'date-fns';
+import { Clock, MapPin, Edit, Trash2, Repeat, Calendar, Sparkles, Timer } from 'lucide-react';
+import { format, differenceInMinutes, differenceInHours, differenceInDays } from 'date-fns';
 import { useEventStore, Event } from '@/store/eventStore';
 import { useAuthStore } from '@/store/authStore';
 
@@ -12,6 +12,28 @@ interface EventListProps {
   events: Event[];
   onEventEdit: (event: Event) => void;
 }
+
+// Function to calculate and format event duration
+const formatDuration = (startTime: Date, endTime: Date): string => {
+  const totalMinutes = differenceInMinutes(endTime, startTime);
+  const days = Math.floor(totalMinutes / (24 * 60));
+  const hours = Math.floor((totalMinutes % (24 * 60)) / 60);
+  const minutes = totalMinutes % 60;
+
+  if (days > 0) {
+    if (hours > 0) {
+      return `${days} hari ${hours} jam`;
+    }
+    return `${days} hari`;
+  } else if (hours > 0) {
+    if (minutes > 0) {
+      return `${hours} jam ${minutes} menit`;
+    }
+    return `${hours} jam`;
+  } else {
+    return `${minutes} menit`;
+  }
+};
 
 export function EventList({ events, onEventEdit }: EventListProps) {
   const { removeEvent, isLoading } = useEventStore();
@@ -63,7 +85,7 @@ export function EventList({ events, onEventEdit }: EventListProps) {
                     className="w-3 h-3 rounded-full shadow-sm"
                     style={{ backgroundColor: event.color }}
                   />
-                  <h3 className="font-semibold text-gray-900 text-lg truncate group-hover:text-blue-600 transition-colors duration-200">
+                  <h3 className="font-semibold text-gray-900 text-lg group-hover:text-blue-600 transition-colors duration-200">
                     {event.title}
                   </h3>
                   {event.isRecurring && (
@@ -75,7 +97,7 @@ export function EventList({ events, onEventEdit }: EventListProps) {
                 </div>
                 
                 {event.description && (
-                  <p className="text-gray-600 text-sm mb-3 line-clamp-2 leading-relaxed">
+                  <p className="text-gray-600 text-sm mb-3 leading-relaxed">
                     {event.description}
                   </p>
                 )}
@@ -91,11 +113,20 @@ export function EventList({ events, onEventEdit }: EventListProps) {
                       </span>
                     )}
                   </div>
+
+                  {!event.allDay && (
+                    <div className="flex items-center gap-2 px-3 py-1.5 bg-purple-50 rounded-lg">
+                      <Timer className="h-4 w-4 text-purple-500" />
+                      <span className="font-medium text-purple-700">
+                        {formatDuration(event.startTime, event.endTime)}
+                      </span>
+                    </div>
+                  )}
                   
                   {event.location && (
                     <div className="flex items-center gap-2 px-3 py-1.5 bg-green-50 rounded-lg">
                       <MapPin className="h-4 w-4 text-green-500" />
-                      <span className="font-medium text-green-700 truncate max-w-32">
+                      <span className="font-medium text-green-700">
                         {event.location}
                       </span>
                     </div>

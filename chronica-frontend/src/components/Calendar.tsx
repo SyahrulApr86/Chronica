@@ -4,14 +4,51 @@ import React, { useState, useEffect } from 'react';
 import { Calendar as CalendarPrimitive } from '@/components/ui/calendar';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Plus, LogOut, User, Calendar as CalendarIcon, Sparkles } from 'lucide-react';
-import { format, isSameDay, isToday } from 'date-fns';
+import { Plus, LogOut, User, Calendar as CalendarIcon, Sparkles, Timer } from 'lucide-react';
+import { format, isSameDay, isToday, differenceInMinutes, startOfMonth, endOfMonth, isWithinInterval } from 'date-fns';
 import { id as localeId } from 'date-fns/locale';
 import { EventDialog } from './EventDialog';
 import { EventList } from './EventList';
 import { AuthDialog } from './AuthDialog';
 import { useEventStore } from '@/store/eventStore';
 import { useAuthStore } from '@/store/authStore';
+
+// Function to calculate total duration for events in a month
+const calculateMonthlyDuration = (events: any[], date: Date): string => {
+  const monthStart = startOfMonth(date);
+  const monthEnd = endOfMonth(date);
+  
+  const monthlyEvents = events.filter(event => {
+    const eventDate = new Date(event.startTime);
+    return isWithinInterval(eventDate, { start: monthStart, end: monthEnd });
+  });
+
+  const totalMinutes = monthlyEvents.reduce((total, event) => {
+    if (event.allDay) return total; // Skip all-day events
+    const duration = differenceInMinutes(new Date(event.endTime), new Date(event.startTime));
+    return total + duration;
+  }, 0);
+
+  const days = Math.floor(totalMinutes / (24 * 60));
+  const hours = Math.floor((totalMinutes % (24 * 60)) / 60);
+  const minutes = totalMinutes % 60;
+
+  if (days > 0) {
+    if (hours > 0) {
+      return `${days} hari ${hours} jam`;
+    }
+    return `${days} hari`;
+  } else if (hours > 0) {
+    if (minutes > 0) {
+      return `${hours} jam ${minutes} menit`;
+    }
+    return `${hours} jam`;
+  } else if (minutes > 0) {
+    return `${minutes} menit`;
+  } else {
+    return '0 menit';
+  }
+};
 
 export function Calendar() {
   const [selectedDate, setSelectedDate] = useState<Date>(new Date());
@@ -22,10 +59,10 @@ export function Calendar() {
   const { events, fetchEvents, isLoading } = useEventStore();
   const { user, token, logout } = useAuthStore();
 
-  // Show auth dialog if not logged in
+  // Close auth dialog when user logs in
   useEffect(() => {
-    if (!user || !token) {
-      setIsAuthDialogOpen(true);
+    if (user && token) {
+      setIsAuthDialogOpen(false);
     }
   }, [user, token]);
 
@@ -67,7 +104,7 @@ export function Calendar() {
     setIsAuthDialogOpen(true);
   };
 
-  // If not authenticated, only show auth dialog
+  // If not authenticated, show landing page
   if (!user || !token) {
     return (
       <div className="min-h-screen bg-gradient-to-br from-indigo-900 via-purple-900 to-pink-900 flex items-center justify-center p-4 relative overflow-hidden">
@@ -103,7 +140,7 @@ export function Calendar() {
         
         <AuthDialog 
           isOpen={isAuthDialogOpen} 
-          onClose={() => {}} // Don't allow closing if not authenticated
+          onClose={() => setIsAuthDialogOpen(false)}
         />
       </div>
     );
@@ -162,9 +199,13 @@ export function Calendar() {
                   <span className="bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
                     {format(selectedDate, 'MMMM yyyy', { locale: localeId })}
                   </span>
-                  <div className="flex items-center gap-2">
+                  <div className="flex items-center gap-3">
                     <div className="px-3 py-1 bg-blue-100 text-blue-700 rounded-full text-sm font-medium">
                       {events.length} Events
+                    </div>
+                    <div className="flex items-center gap-2 px-3 py-1 bg-purple-100 text-purple-700 rounded-full text-sm font-medium">
+                      <Timer className="h-4 w-4" />
+                      <span>{calculateMonthlyDuration(events, selectedDate)}</span>
                     </div>
                   </div>
                 </CardTitle>
@@ -234,6 +275,49 @@ export function Calendar() {
 
           {/* Events Section */}
           <div className="space-y-6">
+            {/* Monthly Statistics Card */}
+            <Card className="shadow-2xl border-0 bg-white/70 backdrop-blur-md rounded-3xl overflow-hidden">
+              <CardHeader className="pb-4 bg-gradient-to-r from-orange-50 to-amber-50 border-b border-gray-100">
+                <CardTitle className="text-lg font-bold text-gray-800 flex items-center gap-3">
+                  <div className="p-2 bg-gradient-to-br from-orange-500 to-amber-600 rounded-xl">
+                    <Timer className="h-5 w-5 text-white" />
+                  </div>
+                  <span className="bg-gradient-to-r from-orange-600 to-amber-600 bg-clip-text text-transparent">
+                    Statistik {format(selectedDate, 'MMMM yyyy', { locale: localeId })}
+                  </span>
+                </CardTitle>
+              </CardHeader>
+              <CardContent className="p-6">
+                <div className="space-y-4">
+                  <div className="flex items-center justify-between p-4 bg-blue-50 rounded-2xl">
+                    <div className="flex items-center gap-3">
+                      <div className="p-2 bg-blue-500 rounded-lg">
+                        <CalendarIcon className="h-4 w-4 text-white" />
+                      </div>
+                      <span className="font-medium text-blue-900">Total Events</span>
+                    </div>
+                    <span className="text-2xl font-bold text-blue-600">{events.length}</span>
+                  </div>
+                  
+                  <div className="flex items-center justify-between p-4 bg-purple-50 rounded-2xl">
+                    <div className="flex items-center gap-3">
+                      <div className="p-2 bg-purple-500 rounded-lg">
+                        <Timer className="h-4 w-4 text-white" />
+                      </div>
+                      <span className="font-medium text-purple-900">Total Durasi</span>
+                    </div>
+                    <span className="text-lg font-bold text-purple-600 text-right">
+                      {calculateMonthlyDuration(events, selectedDate)}
+                    </span>
+                  </div>
+                  
+                  <div className="text-center text-sm text-gray-500 mt-4 pt-4 border-t border-gray-200">
+                    <span>📅 Event sepanjang hari tidak dihitung dalam durasi</span>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+
             <Card className="shadow-2xl border-0 bg-white/70 backdrop-blur-md rounded-3xl overflow-hidden">
               <CardHeader className="pb-4 bg-gradient-to-r from-purple-50 to-pink-50 border-b border-gray-100">
                 <CardTitle className="text-xl font-bold text-gray-800 flex items-center justify-between">

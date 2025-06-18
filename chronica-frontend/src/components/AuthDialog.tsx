@@ -13,7 +13,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { useAuthStore } from '@/store/authStore';
-import { Mail, User, Lock, UserPlus, LogIn, Eye, EyeOff } from 'lucide-react';
+import { Mail, User, Lock, UserPlus, LogIn, Eye, EyeOff, X } from 'lucide-react';
 
 interface AuthDialogProps {
   isOpen: boolean;
@@ -57,14 +57,32 @@ export function AuthDialog({ isOpen, onClose }: AuthDialogProps) {
     }
   };
 
+  const handleDialogOpenChange = (open: boolean) => {
+    if (!open) {
+      onClose();
+    }
+  };
+
   return (
-    <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className="max-w-md p-0 overflow-hidden bg-white/95 backdrop-blur-md border-0 shadow-2xl rounded-3xl">
+    <Dialog open={isOpen} onOpenChange={handleDialogOpenChange}>
+      <DialogContent 
+        className="max-w-md p-0 overflow-hidden bg-white/95 backdrop-blur-md border-0 shadow-2xl rounded-3xl"
+        showCloseButton={false}
+      >
         <div className="relative">
           {/* Background gradient */}
           <div className="absolute inset-0 bg-gradient-to-br from-blue-500/10 via-purple-500/10 to-pink-500/10 rounded-3xl"></div>
           
           <div className="relative z-10 p-8">
+            {/* Custom Close Button */}
+            <button
+              onClick={onClose}
+              className="absolute top-4 right-4 p-2 rounded-full hover:bg-gray-100 transition-colors duration-200 z-20"
+              aria-label="Close dialog"
+            >
+              <X className="h-5 w-5 text-gray-500 hover:text-gray-700" />
+            </button>
+            
             <DialogHeader className="text-center mb-8">
               <div className="mx-auto w-16 h-16 bg-gradient-to-br from-blue-500 to-purple-600 rounded-2xl flex items-center justify-center mb-4 shadow-lg">
                 <User className="h-8 w-8 text-white" />
