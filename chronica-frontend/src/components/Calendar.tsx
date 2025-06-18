@@ -126,15 +126,15 @@ export function Calendar() {
           <div className="relative z-10">
             <div className="flex items-center justify-center mb-8">
               <div className="relative group">
-                <div className="absolute -inset-4 bg-gradient-to-r from-purple-500 to-pink-500 rounded-full blur-lg opacity-75 group-hover:opacity-100 animate-pulse"></div>
-                <div className="relative p-6 bg-gradient-to-br from-purple-600 to-pink-600 rounded-2xl shadow-2xl">
+                <div className="absolute -inset-4 bg-gradient-to-r from-blue-500 to-purple-600 rounded-full blur-lg opacity-75 group-hover:opacity-100 animate-pulse"></div>
+                <div className="relative p-6 bg-gradient-to-br from-blue-500 to-purple-600 rounded-2xl shadow-2xl">
                   <CalendarIcon className="h-16 w-16 text-white" />
                 </div>
                 <Sparkles className="absolute -top-2 -right-2 h-8 w-8 text-yellow-300 animate-bounce" />
               </div>
             </div>
             
-            <h1 className="text-7xl font-black text-transparent bg-clip-text bg-gradient-to-r from-white via-purple-200 to-pink-200 mb-6 tracking-tight">
+            <h1 className="text-7xl font-black text-white mb-6 tracking-tight">
               Chronica
             </h1>
             
@@ -145,7 +145,7 @@ export function Calendar() {
             <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
               <Button 
                 onClick={() => setIsAuthDialogOpen(true)}
-                className="group relative bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white px-10 py-4 text-lg font-semibold rounded-2xl shadow-2xl hover:shadow-purple-500/25 transform hover:scale-105 transition-all duration-300 border-0 overflow-hidden"
+                className="group relative bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white px-10 py-4 text-lg font-semibold rounded-2xl shadow-2xl hover:shadow-blue-500/25 transform hover:scale-105 transition-all duration-300 border-0 overflow-hidden"
               >
                 <div className="absolute inset-0 bg-gradient-to-r from-white/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
                 <User className="mr-3 h-6 w-6" />
@@ -189,7 +189,7 @@ export function Calendar() {
               </div>
             </div>
             <div>
-              <h1 className="text-5xl font-black bg-gradient-to-r from-gray-900 via-blue-800 to-purple-800 bg-clip-text text-transparent mb-2 tracking-tight">
+              <h1 className="text-5xl font-black text-gray-900 mb-2 tracking-tight">
                 Chronica
               </h1>
               <div className="flex items-center gap-3 text-gray-600">
