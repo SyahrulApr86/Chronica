@@ -100,17 +100,17 @@ export function AuthDialog({ isOpen, onClose }: AuthDialogProps) {
             </DialogHeader>
 
             <Tabs defaultValue="login" className="w-full">
-              <TabsList className="grid w-full grid-cols-2 bg-white/30 backdrop-blur-sm rounded-3xl p-2 mb-10 border border-white/20 shadow-lg">
+              <TabsList className="grid w-full grid-cols-2 bg-white/30 backdrop-blur-sm rounded-3xl p-2 mb-10 border border-white/20 shadow-lg h-16 items-center">
                 <TabsTrigger 
                   value="login" 
-                  className="rounded-2xl data-[state=active]:bg-gradient-to-r data-[state=active]:from-blue-500 data-[state=active]:to-blue-600 data-[state=active]:text-white data-[state=active]:shadow-xl text-gray-600 font-semibold transition-all duration-300 hover:bg-white/20"
+                  className="h-12 rounded-2xl data-[state=active]:bg-gradient-to-r data-[state=active]:from-blue-500 data-[state=active]:to-blue-600 data-[state=active]:text-white data-[state=active]:shadow-xl text-gray-600 font-semibold transition-all duration-300 hover:bg-white/20 flex items-center justify-center"
                 >
                   <LogIn className="h-5 w-5 mr-2" />
                   Masuk
                 </TabsTrigger>
                 <TabsTrigger 
                   value="register"
-                  className="rounded-2xl data-[state=active]:bg-gradient-to-r data-[state=active]:from-purple-500 data-[state=active]:to-purple-600 data-[state=active]:text-white data-[state=active]:shadow-xl text-gray-600 font-semibold transition-all duration-300 hover:bg-white/20"
+                  className="h-12 rounded-2xl data-[state=active]:bg-gradient-to-r data-[state=active]:from-purple-500 data-[state=active]:to-purple-600 data-[state=active]:text-white data-[state=active]:shadow-xl text-gray-600 font-semibold transition-all duration-300 hover:bg-white/20 flex items-center justify-center"
                 >
                   <UserPlus className="h-5 w-5 mr-2" />
                   Daftar
