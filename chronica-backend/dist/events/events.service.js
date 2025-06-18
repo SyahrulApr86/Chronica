@@ -13,16 +13,24 @@ exports.EventsService = void 0;
 const common_1 = require("@nestjs/common");
 const prisma_service_1 = require("../prisma.service");
 const prisma_1 = require("../../generated/prisma");
+const calendars_service_1 = require("../calendars/calendars.service");
 let EventsService = class EventsService {
     prisma;
-    constructor(prisma) {
+    calendarsService;
+    constructor(prisma, calendarsService) {
         this.prisma = prisma;
+        this.calendarsService = calendarsService;
     }
     async createEvent(userId, createEventDto) {
         const startTime = new Date(createEventDto.startTime);
         const endTime = new Date(createEventDto.endTime);
+        let calendarId = createEventDto.calendarId;
+        if (!calendarId) {
+            const defaultCalendar = await this.calendarsService.getDefaultCalendar(userId);
+            calendarId = defaultCalendar.id;
+        }
         if (!createEventDto.allowOverlap) {
-            await this.checkForOverlap(userId, startTime, endTime);
+            await this.checkForOverlap(userId, startTime, endTime, undefined, calendarId);
         }
         const event = await this.prisma.event.create({
             data: {
@@ -36,6 +44,7 @@ let EventsService = class EventsService {
                 isRecurring: createEventDto.isRecurring || false,
                 allowOverlap: createEventDto.allowOverlap || false,
                 userId,
+                calendarId,
                 recurrenceRule: createEventDto.recurrenceRule
                     ? {
                         create: {
@@ -58,8 +67,11 @@ let EventsService = class EventsService {
         });
         return event;
     }
-    async getEvents(userId, startDate, endDate) {
+    async getEvents(userId, startDate, endDate, calendarId) {
         const where = { userId };
+        if (calendarId) {
+            where.calendarId = calendarId;
+        }
         if (startDate && endDate) {
             where.OR = [
                 {
@@ -181,7 +193,7 @@ let EventsService = class EventsService {
             where: { id: eventId },
         });
     }
-    async checkForOverlap(userId, startTime, endTime, excludeEventId) {
+    async checkForOverlap(userId, startTime, endTime, excludeEventId, calendarId) {
         const overlappingEvents = await this.prisma.event.findMany({
             where: {
                 userId,
@@ -293,6 +305,7 @@ let EventsService = class EventsService {
 exports.EventsService = EventsService;
 exports.EventsService = EventsService = __decorate([
     (0, common_1.Injectable)(),
-    __metadata("design:paramtypes", [prisma_service_1.PrismaService])
+    __metadata("design:paramtypes", [prisma_service_1.PrismaService,
+        calendars_service_1.CalendarsService])
 ], EventsService);
 //# sourceMappingURL=events.service.js.map

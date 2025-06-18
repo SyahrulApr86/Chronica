@@ -20,6 +20,7 @@ export declare class CreateEventDto {
     isRecurring?: boolean;
     recurrenceRule?: CreateRecurrenceRuleDto;
     allowOverlap?: boolean;
+    calendarId?: string;
 }
 export declare class UpdateEventDto {
     title?: string;

@@ -12,6 +12,7 @@ export interface Event {
   isRecurring: boolean;
   allowOverlap: boolean;
   userId: string;
+  calendarId: string;
   recurrenceRule?: RecurrenceRule;
 }
 
@@ -42,7 +43,7 @@ interface EventStore {
   setError: (error: string | null) => void;
   
   // API calls
-  fetchEvents: (token: string, startDate?: Date, endDate?: Date) => Promise<void>;
+  fetchEvents: (token: string, startDate?: Date, endDate?: Date, calendarId?: string) => Promise<void>;
   createEvent: (token: string, eventData: Omit<Event, 'id' | 'userId'>) => Promise<void>;
   editEvent: (token: string, id: string, eventData: Partial<Event>) => Promise<void>;
   removeEvent: (token: string, id: string) => Promise<void>;
@@ -81,12 +82,13 @@ export const useEventStore = create<EventStore>((set, get) => ({
   setLoading: (loading) => set({ isLoading: loading }),
   setError: (error) => set({ error }),
 
-  fetchEvents: async (token: string, startDate?: Date, endDate?: Date) => {
+  fetchEvents: async (token: string, startDate?: Date, endDate?: Date, calendarId?: string) => {
     set({ isLoading: true, error: null });
     try {
       const params = new URLSearchParams();
       if (startDate) params.append('startDate', startDate.toISOString());
       if (endDate) params.append('endDate', endDate.toISOString());
+      if (calendarId) params.append('calendarId', calendarId);
 
       const response = await fetch(`${API_BASE_URL}/events?${params}`, {
         headers: getAuthHeaders(token),

@@ -2,18 +2,29 @@ import { Injectable, ConflictException, NotFoundException } from '@nestjs/common
 import { PrismaService } from '../prisma.service';
 import { CreateEventDto, UpdateEventDto } from './dto/event.dto';
 import { Event, RecurrenceFrequency } from '../../generated/prisma';
+import { CalendarsService } from '../calendars/calendars.service';
 
 @Injectable()
 export class EventsService {
-  constructor(private prisma: PrismaService) {}
+  constructor(
+    private prisma: PrismaService,
+    private calendarsService: CalendarsService,
+  ) {}
 
   async createEvent(userId: string, createEventDto: CreateEventDto): Promise<Event> {
     const startTime = new Date(createEventDto.startTime);
     const endTime = new Date(createEventDto.endTime);
 
+    // Get calendar ID - use provided or default
+    let calendarId = createEventDto.calendarId;
+    if (!calendarId) {
+      const defaultCalendar = await this.calendarsService.getDefaultCalendar(userId);
+      calendarId = defaultCalendar.id;
+    }
+
     // Check for overlapping events if overlap is not allowed
     if (!createEventDto.allowOverlap) {
-      await this.checkForOverlap(userId, startTime, endTime);
+      await this.checkForOverlap(userId, startTime, endTime, undefined, calendarId);
     }
 
     const event = await this.prisma.event.create({
@@ -28,6 +39,7 @@ export class EventsService {
         isRecurring: createEventDto.isRecurring || false,
         allowOverlap: createEventDto.allowOverlap || false,
         userId,
+        calendarId,
         recurrenceRule: createEventDto.recurrenceRule
           ? {
               create: {
@@ -52,8 +64,12 @@ export class EventsService {
     return event;
   }
 
-  async getEvents(userId: string, startDate?: Date, endDate?: Date): Promise<Event[]> {
+  async getEvents(userId: string, startDate?: Date, endDate?: Date, calendarId?: string): Promise<Event[]> {
     const where: any = { userId };
+
+    if (calendarId) {
+      where.calendarId = calendarId;
+    }
 
     if (startDate && endDate) {
       where.OR = [
@@ -196,6 +212,7 @@ export class EventsService {
     startTime: Date,
     endTime: Date,
     excludeEventId?: string,
+    calendarId?: string,
   ): Promise<void> {
     const overlappingEvents = await this.prisma.event.findMany({
       where: {

@@ -13,13 +13,14 @@ export declare class EventsController {
         color: string;
         isRecurring: boolean;
         allowOverlap: boolean;
-        id: string;
+        calendarId: string;
         userId: string;
-        parentEventId: string | null;
+        id: string;
         createdAt: Date;
         updatedAt: Date;
+        parentEventId: string | null;
     }>;
-    getEvents(req: any, startDate?: string, endDate?: string): Promise<{
+    getEvents(req: any, startDate?: string, endDate?: string, calendarId?: string): Promise<{
         title: string;
         description: string | null;
         startTime: Date;
@@ -29,11 +30,12 @@ export declare class EventsController {
         color: string;
         isRecurring: boolean;
         allowOverlap: boolean;
-        id: string;
+        calendarId: string;
         userId: string;
-        parentEventId: string | null;
+        id: string;
         createdAt: Date;
         updatedAt: Date;
+        parentEventId: string | null;
     }[]>;
     getEventById(eventId: string, req: any): Promise<{
         title: string;
@@ -45,11 +47,12 @@ export declare class EventsController {
         color: string;
         isRecurring: boolean;
         allowOverlap: boolean;
-        id: string;
+        calendarId: string;
         userId: string;
-        parentEventId: string | null;
+        id: string;
         createdAt: Date;
         updatedAt: Date;
+        parentEventId: string | null;
     }>;
     updateEvent(eventId: string, updateEventDto: UpdateEventDto, req: any): Promise<{
         title: string;
@@ -61,11 +64,12 @@ export declare class EventsController {
         color: string;
         isRecurring: boolean;
         allowOverlap: boolean;
-        id: string;
+        calendarId: string;
         userId: string;
-        parentEventId: string | null;
+        id: string;
         createdAt: Date;
         updatedAt: Date;
+        parentEventId: string | null;
     }>;
     deleteEvent(eventId: string, req: any): Promise<void>;
 }

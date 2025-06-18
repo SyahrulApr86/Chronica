@@ -79,6 +79,7 @@ class CreateEventDto {
     isRecurring = false;
     recurrenceRule;
     allowOverlap = false;
+    calendarId;
 }
 exports.CreateEventDto = CreateEventDto;
 __decorate([
@@ -128,6 +129,11 @@ __decorate([
     (0, class_validator_1.IsOptional)(),
     __metadata("design:type", Boolean)
 ], CreateEventDto.prototype, "allowOverlap", void 0);
+__decorate([
+    (0, class_validator_1.IsString)(),
+    (0, class_validator_1.IsOptional)(),
+    __metadata("design:type", String)
+], CreateEventDto.prototype, "calendarId", void 0);
 class UpdateEventDto {
     title;
     description;

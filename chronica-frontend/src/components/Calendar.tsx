@@ -13,6 +13,8 @@ import { AuthDialog } from './AuthDialog';
 import { WeekView } from './WeekView';
 import { useEventStore } from '@/store/eventStore';
 import { useAuthStore } from '@/store/authStore';
+import { useCalendarStore } from '@/store/calendarStore';
+import { CalendarSelector } from './CalendarSelector';
 
 // Function to calculate total duration for events in a month
 const calculateMonthlyDuration = (events: any[], date: Date): string => {
@@ -60,6 +62,15 @@ export function Calendar() {
 
   const { events, fetchEvents, isLoading } = useEventStore();
   const { user, token, logout } = useAuthStore();
+  const { 
+    calendars, 
+    selectedCalendar, 
+    setSelectedCalendar, 
+    fetchCalendars,
+    createCalendar,
+    editCalendar,
+    deleteCalendar 
+  } = useCalendarStore();
 
   // Close auth dialog when user logs in
   useEffect(() => {
@@ -68,14 +79,21 @@ export function Calendar() {
     }
   }, [user, token]);
 
-  // Fetch events when user is logged in
+  // Fetch calendars when user is logged in
   useEffect(() => {
     if (user && token) {
+      fetchCalendars();
+    }
+  }, [user, token, fetchCalendars]);
+
+  // Fetch events when user is logged in and calendar is selected
+  useEffect(() => {
+    if (user && token && selectedCalendar) {
       const startOfMonth = new Date(selectedDate.getFullYear(), selectedDate.getMonth(), 1);
       const endOfMonth = new Date(selectedDate.getFullYear(), selectedDate.getMonth() + 1, 0);
-      fetchEvents(token, startOfMonth, endOfMonth);
+      fetchEvents(token, startOfMonth, endOfMonth, selectedCalendar.id);
     }
-  }, [user, token, selectedDate, fetchEvents]);
+  }, [user, token, selectedDate, selectedCalendar, fetchEvents]);
 
   const eventsForSelectedDate = events.filter(event =>
     isSameDay(event.startTime, selectedDate)
@@ -377,6 +395,18 @@ export function Calendar() {
               )}
             </CardContent>
           </Card>
+        </div>
+
+        {/* Calendar Selector Section */}
+        <div className="mb-10">
+          <CalendarSelector
+            calendars={calendars}
+            selectedCalendar={selectedCalendar}
+            onCalendarSelect={setSelectedCalendar}
+            onCalendarCreate={createCalendar}
+            onCalendarUpdate={editCalendar}
+            onCalendarDelete={deleteCalendar}
+          />
         </div>
 
         {/* Calendar Section - Now full width */}

@@ -35,11 +35,12 @@ export class EventsController {
     @Request() req,
     @Query('startDate') startDate?: string,
     @Query('endDate') endDate?: string,
+    @Query('calendarId') calendarId?: string,
   ) {
     const start = startDate ? new Date(startDate) : undefined;
     const end = endDate ? new Date(endDate) : undefined;
     
-    return this.eventsService.getEvents(req.user.id, start, end);
+    return this.eventsService.getEvents(req.user.id, start, end, calendarId);
   }
 
   @Get(':id')

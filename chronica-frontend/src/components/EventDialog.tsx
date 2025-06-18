@@ -22,6 +22,7 @@ import {
 } from '@/components/ui/select';
 import { useEventStore, Event, RecurrenceRule } from '@/store/eventStore';
 import { useAuthStore } from '@/store/authStore';
+import { useCalendarStore } from '@/store/calendarStore';
 import { format } from 'date-fns';
 import { 
   Calendar, 
@@ -79,6 +80,7 @@ const formatDateTimeForInput = (date: Date): string => {
 export function EventDialog({ isOpen, onClose, event, userId, selectedDate }: EventDialogProps) {
   const { createEvent, editEvent, fetchEvents } = useEventStore();
   const { token } = useAuthStore();
+  const { calendars, selectedCalendar } = useCalendarStore();
   
   const [formData, setFormData] = useState({
     title: '',
@@ -94,6 +96,7 @@ export function EventDialog({ isOpen, onClose, event, userId, selectedDate }: Ev
     color: '#3b82f6',
     isRecurring: false,
     allowOverlap: false,
+    calendarId: '',
   });
 
   const [recurrenceRule, setRecurrenceRule] = useState<Partial<RecurrenceRule>>({
@@ -164,6 +167,7 @@ export function EventDialog({ isOpen, onClose, event, userId, selectedDate }: Ev
         color: event.color,
         isRecurring: event.isRecurring,
         allowOverlap: event.allowOverlap,
+        calendarId: event.calendarId,
       });
       
       if (event.recurrenceRule) {
@@ -194,6 +198,7 @@ export function EventDialog({ isOpen, onClose, event, userId, selectedDate }: Ev
         color: '#3b82f6',
         isRecurring: false,
         allowOverlap: false,
+        calendarId: selectedCalendar?.id || '',
       });
       
       setRecurrenceRule({
@@ -236,6 +241,7 @@ export function EventDialog({ isOpen, onClose, event, userId, selectedDate }: Ev
       color: formData.color,
       isRecurring: formData.isRecurring,
       allowOverlap: formData.allowOverlap,
+      calendarId: formData.calendarId || selectedCalendar?.id || '',
       recurrenceRule: formData.isRecurring ? {
         ...recurrenceRule,
         endDate: endType === 'date' ? recurrenceRule.endDate : undefined,
@@ -253,10 +259,10 @@ export function EventDialog({ isOpen, onClose, event, userId, selectedDate }: Ev
       onClose();
       
       // Refresh events list
-      if (token) {
+      if (token && selectedCalendar) {
         const startOfMonth = new Date(selectedDate.getFullYear(), selectedDate.getMonth(), 1);
         const endOfMonth = new Date(selectedDate.getFullYear(), selectedDate.getMonth() + 1, 0);
-        await fetchEvents(token, startOfMonth, endOfMonth);
+        await fetchEvents(token, startOfMonth, endOfMonth, selectedCalendar.id);
       }
     } catch (error) {
       console.error('Error saving event:', error);

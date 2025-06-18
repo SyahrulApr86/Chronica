@@ -50,6 +50,9 @@ model Event {
   userId String
   user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
   
+  calendarId String
+  calendar   Calendar @relation(fields: [calendarId], references: [id], onDelete: Cascade)
+  
   // Parent-child relationship for recurring events
   parentEventId String?
   parentEvent   Event?  @relation("EventRecurrence", fields: [parentEventId], references: [id], onDelete: Cascade)
@@ -119,6 +122,8 @@ model Calendar {
   
   userId String
   user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+  
+  events Event[]
   
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt

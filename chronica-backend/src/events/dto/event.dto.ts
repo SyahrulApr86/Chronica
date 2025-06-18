@@ -77,6 +77,10 @@ export class CreateEventDto {
   @IsBoolean()
   @IsOptional()
   allowOverlap?: boolean = false;
+
+  @IsString()
+  @IsOptional()
+  calendarId?: string;
 }
 
 export class UpdateEventDto {
