@@ -1,4 +1,4 @@
-import { Injectable, ConflictException, NotFoundException } from '@nestjs/common';
+import { Injectable, ConflictException, NotFoundException, BadRequestException } from '@nestjs/common';
 import { PrismaService } from '../prisma.service';
 import { CreateEventDto, UpdateEventDto } from './dto/event.dto';
 import { Event, RecurrenceFrequency } from '../../generated/prisma';
@@ -15,11 +15,10 @@ export class EventsService {
     const startTime = new Date(createEventDto.startTime);
     const endTime = new Date(createEventDto.endTime);
 
-    // Get calendar ID - use provided or default
-    let calendarId = createEventDto.calendarId;
+    // Get calendar ID - use provided or throw error if none
+    const calendarId = createEventDto.calendarId;
     if (!calendarId) {
-      const defaultCalendar = await this.calendarsService.getDefaultCalendar(userId);
-      calendarId = defaultCalendar.id;
+      throw new BadRequestException('Calendar ID is required. Please select a calendar first.');
     }
 
     // Check for overlapping events if overlap is not allowed

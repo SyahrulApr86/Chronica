@@ -80,5 +80,5 @@ export declare class CalendarsService {
         id: string;
         createdAt: Date;
         updatedAt: Date;
-    }>;
+    } | null>;
 }

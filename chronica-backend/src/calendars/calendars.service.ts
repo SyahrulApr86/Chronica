@@ -138,19 +138,9 @@ export class CalendarsService {
   }
 
   async getDefaultCalendar(userId: string) {
-    let defaultCalendar = await this.prisma.calendar.findFirst({
+    const defaultCalendar = await this.prisma.calendar.findFirst({
       where: { userId, isDefault: true },
     });
-
-    // If no default calendar exists, create one
-    if (!defaultCalendar) {
-      defaultCalendar = await this.createCalendar(userId, {
-        name: 'My Calendar',
-        description: 'Default calendar',
-        color: '#3b82f6',
-        isDefault: true,
-      });
-    }
 
     return defaultCalendar;
   }

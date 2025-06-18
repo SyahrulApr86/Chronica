@@ -198,7 +198,7 @@ export function EventDialog({ isOpen, onClose, event, userId, selectedDate }: Ev
         color: '#3b82f6',
         isRecurring: false,
         allowOverlap: false,
-        calendarId: selectedCalendar?.id || '',
+        calendarId: selectedCalendar?.id || (calendars.length > 0 ? calendars[0].id : ''),
       });
       
       setRecurrenceRule({
@@ -220,7 +220,11 @@ export function EventDialog({ isOpen, onClose, event, userId, selectedDate }: Ev
       return;
     }
 
-    
+    if (!formData.calendarId) {
+      alert('Silakan pilih kalender terlebih dahulu');
+      return;
+    }
+
     // Ensure we have valid dates
     if (!formData.startDate || !formData.endDate) {
       console.error('Missing date information');

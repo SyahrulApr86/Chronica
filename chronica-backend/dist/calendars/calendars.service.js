@@ -122,17 +122,9 @@ let CalendarsService = class CalendarsService {
         return { message: 'Calendar deleted successfully' };
     }
     async getDefaultCalendar(userId) {
-        let defaultCalendar = await this.prisma.calendar.findFirst({
+        const defaultCalendar = await this.prisma.calendar.findFirst({
             where: { userId, isDefault: true },
         });
-        if (!defaultCalendar) {
-            defaultCalendar = await this.createCalendar(userId, {
-                name: 'My Calendar',
-                description: 'Default calendar',
-                color: '#3b82f6',
-                isDefault: true,
-            });
-        }
         return defaultCalendar;
     }
 };

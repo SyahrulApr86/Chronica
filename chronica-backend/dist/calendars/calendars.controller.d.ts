@@ -36,7 +36,7 @@ export declare class CalendarsController {
         id: string;
         createdAt: Date;
         updatedAt: Date;
-    }>;
+    } | null>;
     getCalendarById(req: any, id: string): Promise<{
         events: {
             title: string;

@@ -170,7 +170,21 @@ export function CalendarSelector({
       </CardHeader>
       <CardContent className="p-6">
         <div className="space-y-3">
-          {calendars.map((calendar) => (
+          {calendars.length === 0 ? (
+            <div className="text-center py-8">
+              <div className="mb-4">
+                <CalendarIcon className="h-16 w-16 text-gray-300 mx-auto" />
+              </div>
+              <h3 className="text-lg font-semibold text-gray-600 mb-2">Belum Ada Kalender</h3>
+              <p className="text-gray-500 mb-4">
+                Buat kalender pertama Anda untuk mulai mengorganisir events
+              </p>
+              <div className="text-sm text-amber-600 bg-amber-50 border border-amber-200 rounded-lg p-3">
+                💡 Tip: Anda tidak bisa membuat event tanpa kalender
+              </div>
+            </div>
+          ) : (
+            calendars.map((calendar) => (
             <div
               key={calendar.id}
               className={`group flex items-center justify-between p-4 rounded-2xl border transition-all duration-300 cursor-pointer hover:shadow-lg ${
@@ -246,7 +260,8 @@ export function CalendarSelector({
                 )}
               </div>
             </div>
-          ))}
+            ))
+          )}
         </div>
       </CardContent>
 

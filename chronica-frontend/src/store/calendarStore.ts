@@ -127,6 +127,7 @@ export const useCalendarStore = create<CalendarStore>((set, get) => ({
       const newCalendar = await response.json();
       set((state) => ({
         calendars: [...state.calendars, newCalendar],
+        selectedCalendar: newCalendar.isDefault || !state.selectedCalendar ? newCalendar : state.selectedCalendar,
         isLoading: false
       }));
     } catch (error) {

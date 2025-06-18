@@ -95,6 +95,9 @@ export function Calendar() {
     }
   }, [user, token, selectedDate, selectedCalendar, fetchEvents]);
 
+  // Don't allow creating events if no calendar selected
+  const canCreateEvent = selectedCalendar !== null;
+
   const eventsForSelectedDate = events.filter(event =>
     isSameDay(event.startTime, selectedDate)
   );
@@ -110,6 +113,10 @@ export function Calendar() {
   };
 
   const handleCreateEvent = () => {
+    if (!canCreateEvent) {
+      alert('Silakan buat kalender terlebih dahulu sebelum menambah event.');
+      return;
+    }
     setEditingEvent(null);
     setIsEventDialogOpen(true);
   };
@@ -125,6 +132,10 @@ export function Calendar() {
   };
 
   const handleTimeSlotClick = (date: Date, hour: number) => {
+    if (!canCreateEvent) {
+      alert('Silakan buat kalender terlebih dahulu sebelum menambah event.');
+      return;
+    }
     const eventDate = new Date(date);
     eventDate.setHours(hour, 0, 0, 0);
     setSelectedDate(eventDate);
@@ -264,9 +275,15 @@ export function Calendar() {
 
             <Button
               onClick={handleCreateEvent}
-              className="group bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white px-6 py-3 rounded-2xl font-semibold shadow-xl hover:shadow-blue-500/25 transition-all duration-300 transform hover:scale-105 border-0"
+              disabled={!canCreateEvent}
+              className={`group px-6 py-3 rounded-2xl font-semibold shadow-xl transition-all duration-300 transform border-0 ${
+                canCreateEvent 
+                  ? 'bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white hover:shadow-blue-500/25 hover:scale-105' 
+                  : 'bg-gray-300 text-gray-500 cursor-not-allowed'
+              }`}
+              title={!canCreateEvent ? 'Buat kalender terlebih dahulu' : ''}
             >
-              <Plus className="mr-2 h-5 w-5 group-hover:rotate-90 transition-transform duration-300" />
+              <Plus className={`mr-2 h-5 w-5 transition-transform duration-300 ${canCreateEvent ? 'group-hover:rotate-90' : ''}`} />
               Tambah Event
             </Button>
             <Button
