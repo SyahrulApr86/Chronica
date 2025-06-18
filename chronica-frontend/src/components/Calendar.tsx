@@ -227,9 +227,125 @@ export function Calendar() {
           </div>
         </div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-10">
-          {/* Calendar Section */}
-          <div className="lg:col-span-2">
+        {/* Statistics Section - Moved to top */}
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-10">
+          {/* Monthly Statistics Card */}
+          <Card className="group shadow-2xl border-0 bg-white/80 backdrop-blur-xl rounded-[2rem] overflow-hidden hover:shadow-3xl transition-all duration-500">
+            <div className="absolute inset-0 bg-gradient-to-br from-white/20 via-white/10 to-transparent pointer-events-none"></div>
+            <CardHeader className="relative pb-6 bg-gradient-to-br from-orange-50/80 to-amber-50/80 backdrop-blur-sm border-b border-white/20">
+              <CardTitle className="text-xl font-black text-gray-800 flex items-center gap-3">
+                <div className="relative group-hover:scale-110 transition-transform duration-300">
+                  <div className="absolute -inset-2 bg-gradient-to-r from-orange-500 to-amber-600 rounded-2xl blur-lg opacity-75"></div>
+                  <div className="relative p-3 bg-gradient-to-br from-orange-500 to-amber-600 rounded-2xl shadow-lg">
+                    <Timer className="h-5 w-5 text-white" />
+                  </div>
+                </div>
+                <span className="bg-gradient-to-r from-orange-600 to-amber-600 bg-clip-text text-transparent tracking-tight">
+                  Statistik {format(selectedDate, 'MMMM yyyy', { locale: localeId })}
+                </span>
+              </CardTitle>
+            </CardHeader>
+            <CardContent className="relative p-6">
+              <div className="space-y-4">
+                <div className="group flex items-center justify-between p-4 bg-gradient-to-br from-blue-50/80 to-blue-100/50 backdrop-blur-sm rounded-2xl border border-blue-200/30 hover:shadow-lg transition-all duration-300">
+                  <div className="flex items-center gap-3">
+                    <div className="relative">
+                      <div className="absolute -inset-1 bg-gradient-to-r from-blue-500 to-blue-600 rounded-xl blur opacity-75 group-hover:opacity-100 transition-opacity duration-300"></div>
+                      <div className="relative p-2 bg-gradient-to-br from-blue-500 to-blue-600 rounded-xl shadow-lg">
+                        <CalendarIcon className="h-4 w-4 text-white" />
+                      </div>
+                    </div>
+                    <div>
+                      <span className="text-base font-bold text-blue-900">Total Events</span>
+                      <div className="text-xs text-blue-600 font-medium">Bulan ini</div>
+                    </div>
+                  </div>
+                  <div className="text-right">
+                    <span className="text-3xl font-black text-blue-600">{events.length}</span>
+                    <div className="text-xs text-blue-500 font-medium">events</div>
+                  </div>
+                </div>
+                
+                <div className="group flex items-center justify-between p-4 bg-gradient-to-br from-purple-50/80 to-purple-100/50 backdrop-blur-sm rounded-2xl border border-purple-200/30 hover:shadow-lg transition-all duration-300">
+                  <div className="flex items-center gap-3">
+                    <div className="relative">
+                      <div className="absolute -inset-1 bg-gradient-to-r from-purple-500 to-purple-600 rounded-xl blur opacity-75 group-hover:opacity-100 transition-opacity duration-300"></div>
+                      <div className="relative p-2 bg-gradient-to-br from-purple-500 to-purple-600 rounded-xl shadow-lg">
+                        <Timer className="h-4 w-4 text-white" />
+                      </div>
+                    </div>
+                    <div>
+                      <span className="text-base font-bold text-purple-900">Total Durasi</span>
+                      <div className="text-xs text-purple-600 font-medium">Waktu produktif</div>
+                    </div>
+                  </div>
+                  <div className="text-right">
+                    <span className="text-lg font-black text-purple-600">
+                      {calculateMonthlyDuration(events, selectedDate)}
+                    </span>
+                  </div>
+                </div>
+                
+                <div className="text-center p-3 bg-gradient-to-r from-gray-50/80 to-gray-100/50 backdrop-blur-sm rounded-xl border border-gray-200/30">
+                  <span className="text-xs text-gray-600 font-medium flex items-center justify-center gap-2">
+                    <div className="w-1.5 h-1.5 bg-amber-400 rounded-full animate-pulse"></div>
+                    Event sepanjang hari tidak dihitung dalam durasi
+                  </span>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+
+          {/* Daily Events Card */}
+          <Card className="group shadow-2xl border-0 bg-white/80 backdrop-blur-xl rounded-[2rem] overflow-hidden hover:shadow-3xl transition-all duration-500">
+            <div className="absolute inset-0 bg-gradient-to-br from-white/20 via-white/10 to-transparent pointer-events-none"></div>
+            <CardHeader className="relative pb-6 bg-gradient-to-br from-purple-50/80 to-pink-50/80 backdrop-blur-sm border-b border-white/20">
+              <CardTitle className="text-xl font-black text-gray-800 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+                <div className="flex items-center gap-3">
+                  <div className="relative group-hover:scale-110 transition-transform duration-300">
+                    <div className="absolute -inset-2 bg-gradient-to-r from-purple-500 to-pink-500 rounded-2xl blur-lg opacity-75"></div>
+                    <div className="relative p-3 bg-gradient-to-br from-purple-600 to-pink-600 rounded-2xl shadow-lg">
+                      <CalendarIcon className="h-5 w-5 text-white" />
+                    </div>
+                  </div>
+                  <span className="bg-gradient-to-r from-purple-600 to-pink-600 bg-clip-text text-transparent tracking-tight">
+                    {format(selectedDate, 'dd MMMM yyyy', { locale: localeId })}
+                  </span>
+                </div>
+                <div className="flex items-center gap-2">
+                  <div className={`px-3 py-1.5 rounded-xl text-xs font-bold shadow-lg transition-all duration-300 ${
+                    eventsForSelectedDate.length > 0 
+                      ? 'bg-gradient-to-r from-green-500/10 to-emerald-500/10 border border-green-200/50 text-green-700' 
+                      : 'bg-gradient-to-r from-gray-500/10 to-gray-600/10 border border-gray-200/50 text-gray-500'
+                  }`}>
+                    <span className="flex items-center gap-1.5">
+                      <div className={`w-1.5 h-1.5 rounded-full animate-pulse ${
+                        eventsForSelectedDate.length > 0 ? 'bg-green-500' : 'bg-gray-400'
+                      }`}></div>
+                      {eventsForSelectedDate.length} Event{eventsForSelectedDate.length !== 1 ? 's' : ''}
+                    </span>
+                  </div>
+                </div>
+              </CardTitle>
+            </CardHeader>
+            <CardContent className="p-6">
+              {isLoading ? (
+                <div className="text-center py-4">
+                  <div className="animate-spin rounded-full h-6 w-6 border-2 border-blue-600 border-t-transparent mx-auto mb-2"></div>
+                  <div className="text-gray-500 text-sm">Loading events...</div>
+                </div>
+              ) : (
+                <EventList
+                  events={eventsForSelectedDate}
+                  onEventEdit={handleEditEvent}
+                />
+              )}
+            </CardContent>
+          </Card>
+        </div>
+
+        {/* Calendar Section - Now full width */}
+        <div className="w-full">
             <Card className="group shadow-2xl border-0 bg-white/80 backdrop-blur-xl rounded-[2rem] overflow-hidden hover:shadow-3xl transition-all duration-500 hover:scale-[1.02]">
               <div className="absolute inset-0 bg-gradient-to-br from-white/20 via-white/10 to-transparent pointer-events-none"></div>
               <CardHeader className="relative pb-8 bg-gradient-to-br from-blue-50/80 to-purple-50/80 backdrop-blur-sm border-b border-white/20">
@@ -256,30 +372,30 @@ export function Calendar() {
                   </div>
                 </CardTitle>
               </CardHeader>
-              <CardContent className="p-8">
+              <CardContent className="p-12">
                 <CalendarPrimitive
                   mode="single"
                   selected={selectedDate}
                   onSelect={handleDateSelect}
                   locale={localeId}
-                  className="w-full"
+                  className="w-full max-w-4xl mx-auto"
                   classNames={{
                     months: "flex flex-col sm:flex-row space-y-4 sm:space-x-4 sm:space-y-0",
-                    month: "space-y-4",
-                    caption: "flex justify-center pt-1 relative items-center mb-4",
-                    caption_label: "text-lg font-semibold text-gray-700",
-                    nav: "space-x-1 flex items-center",
-                    nav_button: "h-8 w-8 bg-gray-100 hover:bg-gray-200 rounded-lg transition-colors",
-                    nav_button_previous: "absolute left-1",
-                    nav_button_next: "absolute right-1",
-                    table: "w-full border-collapse space-y-1",
-                    head_row: "flex mb-2",
-                    head_cell: "text-gray-500 rounded-md w-12 font-medium text-sm uppercase tracking-wide",
-                    row: "flex w-full mt-2",
-                    cell: "text-center text-sm p-0 relative first:[&:has([aria-selected])]:rounded-l-md last:[&:has([aria-selected])]:rounded-r-md focus-within:relative focus-within:z-20",
-                    day: "h-12 w-12 p-0 font-medium aria-selected:opacity-100 hover:bg-blue-50 rounded-xl transition-all duration-200 hover:scale-105",
-                    day_selected: "bg-gradient-to-br from-blue-500 to-purple-600 text-white hover:from-blue-600 hover:to-purple-700 shadow-lg",
-                    day_today: "bg-gradient-to-br from-orange-100 to-yellow-100 text-orange-700 font-bold border-2 border-orange-300",
+                    month: "space-y-6",
+                    caption: "flex justify-center pt-2 relative items-center mb-8",
+                    caption_label: "text-2xl font-bold text-gray-700",
+                    nav: "space-x-2 flex items-center",
+                    nav_button: "h-12 w-12 bg-gradient-to-br from-gray-100 to-gray-200 hover:from-gray-200 hover:to-gray-300 rounded-2xl transition-all duration-300 shadow-lg hover:shadow-xl",
+                    nav_button_previous: "absolute left-2",
+                    nav_button_next: "absolute right-2",
+                    table: "w-full border-collapse space-y-2",
+                    head_row: "flex mb-4",
+                    head_cell: "text-gray-600 rounded-xl w-20 h-12 font-bold text-base uppercase tracking-wide flex items-center justify-center",
+                    row: "flex w-full mt-3",
+                    cell: "text-center text-base p-1 relative first:[&:has([aria-selected])]:rounded-l-md last:[&:has([aria-selected])]:rounded-r-md focus-within:relative focus-within:z-20",
+                    day: "h-20 w-20 p-0 font-semibold aria-selected:opacity-100 hover:bg-blue-50 rounded-2xl transition-all duration-300 hover:scale-110 text-lg",
+                    day_selected: "bg-gradient-to-br from-blue-500 to-purple-600 text-white hover:from-blue-600 hover:to-purple-700 shadow-xl scale-110",
+                    day_today: "bg-gradient-to-br from-orange-100 to-yellow-100 text-orange-700 font-black border-3 border-orange-400 shadow-lg",
                     day_outside: "text-gray-300 opacity-50",
                     day_disabled: "text-gray-300 opacity-30",
                   }}
@@ -292,21 +408,21 @@ export function Calendar() {
 
                       return (
                         <div className="relative w-full h-full flex flex-col items-center justify-center group">
-                          <span className={`text-sm ${isSelected ? 'font-bold' : ''} transition-all duration-200`}>
+                          <span className={`text-lg font-bold ${isSelected ? 'text-white' : ''} transition-all duration-300`}>
                             {format(date, 'd')}
                           </span>
                           {hasEvents && (
-                            <div className="flex gap-1 mt-1 flex-wrap justify-center absolute -bottom-1">
-                              {dayEvents.slice(0, 3).map((event, idx) => (
+                            <div className="flex gap-1.5 mt-2 flex-wrap justify-center absolute -bottom-2">
+                              {dayEvents.slice(0, 4).map((event, idx) => (
                                 <div
                                   key={idx}
-                                  className="w-1.5 h-1.5 rounded-full shadow-sm transition-all duration-200 group-hover:scale-125"
+                                  className="w-2.5 h-2.5 rounded-full shadow-lg transition-all duration-300 group-hover:scale-150 border border-white/20"
                                   style={{ backgroundColor: event.color }}
                                   title={event.title}
                                 />
                               ))}
-                              {dayEvents.length > 3 && (
-                                <div className="w-1.5 h-1.5 rounded-full bg-gray-400 shadow-sm transition-all duration-200 group-hover:scale-125" title={`+${dayEvents.length - 3} lagi`} />
+                              {dayEvents.length > 4 && (
+                                <div className="w-2.5 h-2.5 rounded-full bg-gray-500 shadow-lg transition-all duration-300 group-hover:scale-150 border border-white/20" title={`+${dayEvents.length - 4} lagi`} />
                               )}
                             </div>
                           )}
@@ -315,122 +431,6 @@ export function Calendar() {
                     },
                   }}
                 />
-              </CardContent>
-            </Card>
-          </div>
-
-          {/* Events Section */}
-          <div className="space-y-8">
-            {/* Monthly Statistics Card */}
-            <Card className="group shadow-2xl border-0 bg-white/80 backdrop-blur-xl rounded-[2rem] overflow-hidden hover:shadow-3xl transition-all duration-500">
-              <div className="absolute inset-0 bg-gradient-to-br from-white/20 via-white/10 to-transparent pointer-events-none"></div>
-              <CardHeader className="relative pb-6 bg-gradient-to-br from-orange-50/80 to-amber-50/80 backdrop-blur-sm border-b border-white/20">
-                <CardTitle className="text-2xl font-black text-gray-800 flex items-center gap-4">
-                  <div className="relative group-hover:scale-110 transition-transform duration-300">
-                    <div className="absolute -inset-2 bg-gradient-to-r from-orange-500 to-amber-600 rounded-2xl blur-lg opacity-75"></div>
-                    <div className="relative p-3 bg-gradient-to-br from-orange-500 to-amber-600 rounded-2xl shadow-lg">
-                      <Timer className="h-6 w-6 text-white" />
-                    </div>
-                  </div>
-                  <span className="bg-gradient-to-r from-orange-600 to-amber-600 bg-clip-text text-transparent tracking-tight">
-                    Statistik {format(selectedDate, 'MMMM yyyy', { locale: localeId })}
-                  </span>
-                </CardTitle>
-              </CardHeader>
-              <CardContent className="relative p-8">
-                <div className="space-y-6">
-                  <div className="group flex items-center justify-between p-6 bg-gradient-to-br from-blue-50/80 to-blue-100/50 backdrop-blur-sm rounded-3xl border border-blue-200/30 hover:shadow-lg transition-all duration-300">
-                    <div className="flex items-center gap-4">
-                      <div className="relative">
-                        <div className="absolute -inset-1 bg-gradient-to-r from-blue-500 to-blue-600 rounded-xl blur opacity-75 group-hover:opacity-100 transition-opacity duration-300"></div>
-                        <div className="relative p-3 bg-gradient-to-br from-blue-500 to-blue-600 rounded-xl shadow-lg">
-                          <CalendarIcon className="h-5 w-5 text-white" />
-                        </div>
-                      </div>
-                      <div>
-                        <span className="text-lg font-bold text-blue-900">Total Events</span>
-                        <div className="text-sm text-blue-600 font-medium">Bulan ini</div>
-                      </div>
-                    </div>
-                    <div className="text-right">
-                      <span className="text-4xl font-black text-blue-600">{events.length}</span>
-                      <div className="text-sm text-blue-500 font-medium">events</div>
-                    </div>
-                  </div>
-                  
-                  <div className="group flex items-center justify-between p-6 bg-gradient-to-br from-purple-50/80 to-purple-100/50 backdrop-blur-sm rounded-3xl border border-purple-200/30 hover:shadow-lg transition-all duration-300">
-                    <div className="flex items-center gap-4">
-                      <div className="relative">
-                        <div className="absolute -inset-1 bg-gradient-to-r from-purple-500 to-purple-600 rounded-xl blur opacity-75 group-hover:opacity-100 transition-opacity duration-300"></div>
-                        <div className="relative p-3 bg-gradient-to-br from-purple-500 to-purple-600 rounded-xl shadow-lg">
-                          <Timer className="h-5 w-5 text-white" />
-                        </div>
-                      </div>
-                      <div>
-                        <span className="text-lg font-bold text-purple-900">Total Durasi</span>
-                        <div className="text-sm text-purple-600 font-medium">Waktu produktif</div>
-                      </div>
-                    </div>
-                    <div className="text-right">
-                      <span className="text-2xl font-black text-purple-600">
-                        {calculateMonthlyDuration(events, selectedDate)}
-                      </span>
-                    </div>
-                  </div>
-                  
-                  <div className="text-center p-4 bg-gradient-to-r from-gray-50/80 to-gray-100/50 backdrop-blur-sm rounded-2xl border border-gray-200/30">
-                    <span className="text-sm text-gray-600 font-medium flex items-center justify-center gap-2">
-                      <div className="w-2 h-2 bg-amber-400 rounded-full animate-pulse"></div>
-                      Event sepanjang hari tidak dihitung dalam durasi
-                    </span>
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
-
-            <Card className="group shadow-2xl border-0 bg-white/80 backdrop-blur-xl rounded-[2rem] overflow-hidden hover:shadow-3xl transition-all duration-500">
-              <div className="absolute inset-0 bg-gradient-to-br from-white/20 via-white/10 to-transparent pointer-events-none"></div>
-              <CardHeader className="relative pb-6 bg-gradient-to-br from-purple-50/80 to-pink-50/80 backdrop-blur-sm border-b border-white/20">
-                <CardTitle className="text-2xl font-black text-gray-800 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-                  <div className="flex items-center gap-4">
-                    <div className="relative group-hover:scale-110 transition-transform duration-300">
-                      <div className="absolute -inset-2 bg-gradient-to-r from-purple-500 to-pink-500 rounded-2xl blur-lg opacity-75"></div>
-                      <div className="relative p-3 bg-gradient-to-br from-purple-600 to-pink-600 rounded-2xl shadow-lg">
-                        <CalendarIcon className="h-6 w-6 text-white" />
-                      </div>
-                    </div>
-                    <span className="bg-gradient-to-r from-purple-600 to-pink-600 bg-clip-text text-transparent tracking-tight">
-                      {format(selectedDate, 'dd MMMM yyyy', { locale: localeId })}
-                    </span>
-                  </div>
-                  <div className="flex items-center gap-2">
-                    <div className={`px-4 py-2 rounded-2xl text-sm font-bold shadow-lg transition-all duration-300 ${
-                      eventsForSelectedDate.length > 0 
-                        ? 'bg-gradient-to-r from-green-500/10 to-emerald-500/10 border border-green-200/50 text-green-700' 
-                        : 'bg-gradient-to-r from-gray-500/10 to-gray-600/10 border border-gray-200/50 text-gray-500'
-                    }`}>
-                      <span className="flex items-center gap-2">
-                        <div className={`w-2 h-2 rounded-full animate-pulse ${
-                          eventsForSelectedDate.length > 0 ? 'bg-green-500' : 'bg-gray-400'
-                        }`}></div>
-                        {eventsForSelectedDate.length} Event{eventsForSelectedDate.length !== 1 ? 's' : ''}
-                      </span>
-                    </div>
-                  </div>
-                </CardTitle>
-              </CardHeader>
-              <CardContent className="p-6">
-                {isLoading ? (
-                  <div className="text-center py-8">
-                    <div className="animate-spin rounded-full h-8 w-8 border-2 border-blue-600 border-t-transparent mx-auto mb-4"></div>
-                    <div className="text-gray-500">Loading events...</div>
-                  </div>
-                ) : (
-                  <EventList
-                    events={eventsForSelectedDate}
-                    onEventEdit={handleEditEvent}
-                  />
-                )}
               </CardContent>
             </Card>
           </div>
