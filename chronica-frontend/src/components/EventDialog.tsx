@@ -157,6 +157,8 @@ export function EventDialog({
   );
 
   const [endType, setEndType] = useState<"never" | "date" | "count">("never");
+  const [errorMessage, setErrorMessage] = useState<string | null>(null);
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   // Helper options for dropdowns
   const hourOptions = Array.from({ length: 24 }, (_, i) => ({
@@ -266,11 +268,24 @@ export function EventDialog({
     }
   }, [event, selectedDate, selectedCalendar, calendars]);
 
+  // Reset error message when dialog opens
+  useEffect(() => {
+    if (isOpen) {
+      setErrorMessage(null);
+      setIsSubmitting(false);
+    }
+  }, [isOpen]);
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    setErrorMessage(null);
+    setIsSubmitting(true);
 
     if (!token) {
-      console.error("No authentication token");
+      setErrorMessage(
+        "Token autentikasi tidak ditemukan. Silakan login ulang."
+      );
+      setIsSubmitting(false);
       return;
     }
 
@@ -281,13 +296,17 @@ export function EventDialog({
       (calendars.length > 0 ? calendars[0].id : "");
 
     if (!calendarId) {
-      alert("Silakan buat kalender terlebih dahulu sebelum menambah event");
+      setErrorMessage(
+        "Silakan buat kalender terlebih dahulu sebelum menambah event"
+      );
+      setIsSubmitting(false);
       return;
     }
 
     // Ensure we have valid dates
     if (!formData.startDate || !formData.endDate) {
-      console.error("Missing date information");
+      setErrorMessage("Tanggal mulai dan selesai harus diisi");
+      setIsSubmitting(false);
       return;
     }
 
@@ -346,11 +365,12 @@ export function EventDialog({
       }
 
       // Only close dialog if everything succeeded
+      setIsSubmitting(false);
       onClose();
     } catch (error) {
       console.error("Error saving event:", error);
-      // Show error to user
-      alert("Gagal menyimpan event: " + (error as Error).message);
+      setErrorMessage((error as Error).message);
+      setIsSubmitting(false);
       // Don't close the dialog so user can fix the issue
     }
   };
@@ -397,6 +417,34 @@ export function EventDialog({
               </Button>
             </div>
           </div>
+
+          {/* Error Alert */}
+          {errorMessage && (
+            <div className="mx-8 mt-6 p-4 bg-red-50 border border-red-200 rounded-xl">
+              <div className="flex items-start gap-3">
+                <div className="flex-shrink-0">
+                  <div className="w-5 h-5 bg-red-500 rounded-full flex items-center justify-center">
+                    <X className="h-3 w-3 text-white" />
+                  </div>
+                </div>
+                <div className="flex-1">
+                  <h3 className="text-sm font-medium text-red-800 mb-1">
+                    Terjadi Kesalahan
+                  </h3>
+                  <p className="text-sm text-red-700">{errorMessage}</p>
+                </div>
+                <Button
+                  type="button"
+                  variant="ghost"
+                  size="sm"
+                  onClick={() => setErrorMessage(null)}
+                  className="flex-shrink-0 h-6 w-6 p-0 text-red-500 hover:text-red-700 hover:bg-red-100"
+                >
+                  <X className="h-4 w-4" />
+                </Button>
+              </div>
+            </div>
+          )}
 
           <form onSubmit={handleSubmit} className="p-8 space-y-8">
             {/* Basic Information */}
@@ -955,10 +1003,20 @@ export function EventDialog({
               </Button>
               <Button
                 type="submit"
-                className="flex-1 h-12 bg-gradient-to-r from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700 text-white rounded-xl shadow-lg hover:shadow-xl transform hover:scale-[1.02] transition-all duration-200 border-0"
+                disabled={isSubmitting}
+                className="flex-1 h-12 bg-gradient-to-r from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700 text-white rounded-xl shadow-lg hover:shadow-xl transform hover:scale-[1.02] transition-all duration-200 border-0 disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none"
               >
-                <Save className="h-4 w-4 mr-2" />
-                {event ? "Update Event" : "Buat Event"}
+                {isSubmitting ? (
+                  <>
+                    <div className="animate-spin rounded-full h-4 w-4 border-2 border-white border-t-transparent mr-2"></div>
+                    Menyimpan...
+                  </>
+                ) : (
+                  <>
+                    <Save className="h-4 w-4 mr-2" />
+                    {event ? "Update Event" : "Buat Event"}
+                  </>
+                )}
               </Button>
             </div>
           </form>
