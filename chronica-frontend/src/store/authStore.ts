@@ -1,5 +1,6 @@
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
+import { useEffect, useState } from "react";
 
 export interface User {
   id: string;
@@ -174,8 +175,51 @@ export const useAuthStore = create<AuthStore>()(
       name: "auth-storage",
       partialize: (state) => ({ user: state.user, token: state.token }),
       onRehydrateStorage: () => (state) => {
-        state?.setHydrated(true);
+        // Set hydrated immediately when rehydration starts
+        if (state) {
+          state.setHydrated(true);
+        }
       },
     }
   )
 );
+
+// Custom hook to handle hydration
+export const useAuthHydration = () => {
+  const [isHydrated, setIsHydrated] = useState(false);
+  const store = useAuthStore();
+
+  useEffect(() => {
+    // Check if we're in browser environment
+    if (typeof window !== "undefined") {
+      // Try to get data from localStorage immediately
+      const stored = localStorage.getItem("auth-storage");
+      if (stored) {
+        try {
+          const parsedData = JSON.parse(stored);
+          if (parsedData.state) {
+            // Data exists in localStorage, we can consider it hydrated
+            setIsHydrated(true);
+            return;
+          }
+        } catch (error) {
+          // If parsing fails, continue with normal hydration
+        }
+      }
+
+      // If no data in localStorage or parsing failed, set hydrated after a short delay
+      const timer = setTimeout(() => {
+        setIsHydrated(true);
+      }, 50); // Very short delay to prevent flash
+
+      return () => clearTimeout(timer);
+    }
+  }, []);
+
+  return {
+    isHydrated,
+    user: store.user,
+    token: store.token,
+    logout: store.logout,
+  };
+};

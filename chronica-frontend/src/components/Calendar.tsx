@@ -27,7 +27,7 @@ import { EventList } from "./EventList";
 import { AuthDialog } from "./AuthDialog";
 import { WeekView } from "./WeekView";
 import { useEventStore } from "@/store/eventStore";
-import { useAuthStore } from "@/store/authStore";
+import { useAuthStore, useAuthHydration } from "@/store/authStore";
 import { useCalendarStore } from "@/store/calendarStore";
 import { CalendarSelector } from "./CalendarSelector";
 
@@ -81,7 +81,7 @@ export function Calendar() {
 
   const { events, allEvents, fetchEvents, fetchAllEvents, isLoading } =
     useEventStore();
-  const { user, token, isHydrated, logout } = useAuthStore();
+  const { user, token, isHydrated, logout } = useAuthHydration();
   const {
     calendars,
     selectedCalendar,
