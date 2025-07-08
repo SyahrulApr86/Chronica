@@ -26,7 +26,7 @@ let EventsService = class EventsService {
         const endTime = new Date(createEventDto.endTime);
         const calendarId = createEventDto.calendarId;
         if (!calendarId) {
-            throw new BadRequestException('Calendar ID is required. Please select a calendar first.');
+            throw new common_1.BadRequestException('Calendar ID is required. Please select a calendar first.');
         }
         if (!createEventDto.allowOverlap) {
             await this.checkForOverlap(userId, startTime, endTime, undefined, calendarId);

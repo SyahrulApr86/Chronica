@@ -80,7 +80,7 @@ export function AuthDialog({ isOpen, onClose }: AuthDialogProps) {
   return (
     <Dialog open={isOpen} onOpenChange={handleDialogOpenChange}>
       <DialogContent
-        className="max-w-lg p-0 overflow-hidden bg-white/90 backdrop-blur-2xl border-0 shadow-3xl rounded-[2rem]"
+        className="max-w-lg max-h-[90vh] overflow-y-auto p-0 bg-white/90 backdrop-blur-2xl border-0 shadow-3xl rounded-[2rem] sm:max-h-[95vh]"
         showCloseButton={false}
       >
         <div className="relative">
@@ -88,7 +88,7 @@ export function AuthDialog({ isOpen, onClose }: AuthDialogProps) {
           <div className="absolute inset-0 bg-gradient-to-br from-blue-500/15 via-purple-500/10 to-pink-500/15 rounded-[2rem]"></div>
           <div className="absolute inset-0 bg-gradient-to-tl from-white/20 via-white/10 to-transparent rounded-[2rem] pointer-events-none"></div>
 
-          <div className="relative z-10 p-10">
+          <div className="relative z-10 p-6 sm:p-10">
             {/* Enhanced Custom Close Button */}
             <button
               onClick={onClose}
@@ -98,17 +98,17 @@ export function AuthDialog({ isOpen, onClose }: AuthDialogProps) {
               <X className="h-5 w-5 text-gray-500 hover:text-gray-700 group-hover:rotate-90 transition-transform duration-300" />
             </button>
 
-            <DialogHeader className="text-center mb-10">
-              <div className="mx-auto mb-6 relative group">
+            <DialogHeader className="text-center mb-6 sm:mb-10">
+              <div className="mx-auto mb-4 sm:mb-6 relative group">
                 <div className="absolute -inset-4 bg-gradient-to-r from-blue-500 to-purple-600 rounded-3xl blur-2xl opacity-75 group-hover:opacity-100 animate-pulse"></div>
-                <div className="relative w-20 h-20 bg-gradient-to-br from-blue-500 to-purple-600 rounded-3xl flex items-center justify-center shadow-2xl">
-                  <User className="h-10 w-10 text-white" />
+                <div className="relative w-16 h-16 sm:w-20 sm:h-20 bg-gradient-to-br from-blue-500 to-purple-600 rounded-3xl flex items-center justify-center shadow-2xl">
+                  <User className="h-8 w-8 sm:h-10 sm:w-10 text-white" />
                 </div>
               </div>
-              <DialogTitle className="text-4xl font-black bg-gradient-to-r from-gray-900 via-blue-800 to-purple-800 bg-clip-text text-transparent mb-3 tracking-tight">
+              <DialogTitle className="text-2xl sm:text-4xl font-black bg-gradient-to-r from-gray-900 via-blue-800 to-purple-800 bg-clip-text text-transparent mb-2 sm:mb-3 tracking-tight">
                 Selamat Datang
               </DialogTitle>
-              <DialogDescription className="text-gray-600 text-xl font-light leading-relaxed">
+              <DialogDescription className="text-gray-600 text-sm sm:text-xl font-light leading-relaxed px-2">
                 Masuk atau daftar untuk melanjutkan ke{" "}
                 <span className="font-semibold text-purple-600">Chronica</span>
               </DialogDescription>
@@ -119,25 +119,25 @@ export function AuthDialog({ isOpen, onClose }: AuthDialogProps) {
               className="w-full"
               onValueChange={handleTabChange}
             >
-              <TabsList className="grid w-full grid-cols-2 bg-white/30 backdrop-blur-sm rounded-3xl p-2 mb-10 border border-white/20 shadow-lg h-16 items-center">
+              <TabsList className="grid w-full grid-cols-2 bg-white/30 backdrop-blur-sm rounded-3xl p-1 sm:p-2 mb-6 sm:mb-10 border border-white/20 shadow-lg h-12 sm:h-16 items-center">
                 <TabsTrigger
                   value="login"
-                  className="h-12 rounded-2xl data-[state=active]:bg-gradient-to-r data-[state=active]:from-blue-500 data-[state=active]:to-blue-600 data-[state=active]:text-white data-[state=active]:shadow-xl text-gray-600 font-semibold transition-all duration-300 hover:bg-white/20 flex items-center justify-center"
+                  className="h-10 sm:h-12 rounded-2xl data-[state=active]:bg-gradient-to-r data-[state=active]:from-blue-500 data-[state=active]:to-blue-600 data-[state=active]:text-white data-[state=active]:shadow-xl text-gray-600 text-sm sm:text-base font-semibold transition-all duration-300 hover:bg-white/20 flex items-center justify-center"
                 >
-                  <LogIn className="h-5 w-5 mr-2" />
+                  <LogIn className="h-4 w-4 sm:h-5 sm:w-5 mr-1 sm:mr-2" />
                   Masuk
                 </TabsTrigger>
                 <TabsTrigger
                   value="register"
-                  className="h-12 rounded-2xl data-[state=active]:bg-gradient-to-r data-[state=active]:from-purple-500 data-[state=active]:to-purple-600 data-[state=active]:text-white data-[state=active]:shadow-xl text-gray-600 font-semibold transition-all duration-300 hover:bg-white/20 flex items-center justify-center"
+                  className="h-10 sm:h-12 rounded-2xl data-[state=active]:bg-gradient-to-r data-[state=active]:from-purple-500 data-[state=active]:to-purple-600 data-[state=active]:text-white data-[state=active]:shadow-xl text-gray-600 text-sm sm:text-base font-semibold transition-all duration-300 hover:bg-white/20 flex items-center justify-center"
                 >
-                  <UserPlus className="h-5 w-5 mr-2" />
+                  <UserPlus className="h-4 w-4 sm:h-5 sm:w-5 mr-1 sm:mr-2" />
                   Daftar
                 </TabsTrigger>
               </TabsList>
 
-              <TabsContent value="login" className="space-y-6">
-                <form onSubmit={handleLogin} className="space-y-6">
+              <TabsContent value="login" className="space-y-4 sm:space-y-6">
+                <form onSubmit={handleLogin} className="space-y-4 sm:space-y-6">
                   <div className="space-y-2">
                     <Label
                       htmlFor="loginEmailOrUsername"
@@ -159,7 +159,7 @@ export function AuthDialog({ isOpen, onClose }: AuthDialogProps) {
                           })
                         }
                         placeholder="Masukkan email atau username"
-                        className="pl-12 h-14 rounded-2xl border-gray-200/50 bg-white/50 backdrop-blur-sm focus:border-blue-500 focus:ring-blue-500/20 focus:bg-white/80 transition-all duration-300 text-base shadow-sm"
+                        className="pl-12 h-12 sm:h-14 rounded-2xl border-gray-200/50 bg-white/50 backdrop-blur-sm focus:border-blue-500 focus:ring-blue-500/20 focus:bg-white/80 transition-all duration-300 text-sm sm:text-base shadow-sm"
                         required
                       />
                     </div>
@@ -187,7 +187,7 @@ export function AuthDialog({ isOpen, onClose }: AuthDialogProps) {
                           })
                         }
                         placeholder="Masukkan password"
-                        className="pl-12 pr-12 h-14 rounded-2xl border-gray-200/50 bg-white/50 backdrop-blur-sm focus:border-blue-500 focus:ring-blue-500/20 focus:bg-white/80 transition-all duration-300 text-base shadow-sm"
+                        className="pl-12 pr-12 h-12 sm:h-14 rounded-2xl border-gray-200/50 bg-white/50 backdrop-blur-sm focus:border-blue-500 focus:ring-blue-500/20 focus:bg-white/80 transition-all duration-300 text-sm sm:text-base shadow-sm"
                         required
                       />
                       <button
@@ -221,7 +221,7 @@ export function AuthDialog({ isOpen, onClose }: AuthDialogProps) {
 
                   <Button
                     type="submit"
-                    className="w-full h-14 bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white rounded-2xl shadow-xl hover:shadow-2xl hover:shadow-blue-500/25 transform hover:scale-[1.02] transition-all duration-300 border-0 font-semibold text-base"
+                    className="w-full h-12 sm:h-14 bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white rounded-2xl shadow-xl hover:shadow-2xl hover:shadow-blue-500/25 transform hover:scale-[1.02] transition-all duration-300 border-0 font-semibold text-sm sm:text-base"
                     disabled={isLoading}
                   >
                     {isLoading ? (
@@ -239,8 +239,11 @@ export function AuthDialog({ isOpen, onClose }: AuthDialogProps) {
                 </form>
               </TabsContent>
 
-              <TabsContent value="register" className="space-y-6">
-                <form onSubmit={handleRegister} className="space-y-6">
+              <TabsContent value="register" className="space-y-4 sm:space-y-6">
+                <form
+                  onSubmit={handleRegister}
+                  className="space-y-4 sm:space-y-6"
+                >
                   <div className="space-y-2">
                     <Label
                       htmlFor="registerEmail"
@@ -263,7 +266,7 @@ export function AuthDialog({ isOpen, onClose }: AuthDialogProps) {
                           })
                         }
                         placeholder="nama@email.com"
-                        className="pl-12 h-14 rounded-2xl border-gray-200/50 bg-white/50 backdrop-blur-sm focus:border-purple-500 focus:ring-purple-500/20 focus:bg-white/80 transition-all duration-300 text-base shadow-sm"
+                        className="pl-12 h-12 sm:h-14 rounded-2xl border-gray-200/50 bg-white/50 backdrop-blur-sm focus:border-purple-500 focus:ring-purple-500/20 focus:bg-white/80 transition-all duration-300 text-sm sm:text-base shadow-sm"
                         required
                       />
                     </div>
@@ -290,7 +293,7 @@ export function AuthDialog({ isOpen, onClose }: AuthDialogProps) {
                           })
                         }
                         placeholder="username_anda"
-                        className="pl-12 h-14 rounded-2xl border-gray-200/50 bg-white/50 backdrop-blur-sm focus:border-purple-500 focus:ring-purple-500/20 focus:bg-white/80 transition-all duration-300 text-base shadow-sm"
+                        className="pl-12 h-12 sm:h-14 rounded-2xl border-gray-200/50 bg-white/50 backdrop-blur-sm focus:border-purple-500 focus:ring-purple-500/20 focus:bg-white/80 transition-all duration-300 text-sm sm:text-base shadow-sm"
                         required
                         minLength={3}
                       />
@@ -318,7 +321,7 @@ export function AuthDialog({ isOpen, onClose }: AuthDialogProps) {
                           })
                         }
                         placeholder="Nama lengkap Anda"
-                        className="pl-12 h-14 rounded-2xl border-gray-200/50 bg-white/50 backdrop-blur-sm focus:border-purple-500 focus:ring-purple-500/20 focus:bg-white/80 transition-all duration-300 text-base shadow-sm"
+                        className="pl-12 h-12 sm:h-14 rounded-2xl border-gray-200/50 bg-white/50 backdrop-blur-sm focus:border-purple-500 focus:ring-purple-500/20 focus:bg-white/80 transition-all duration-300 text-sm sm:text-base shadow-sm"
                       />
                     </div>
                   </div>
@@ -345,7 +348,7 @@ export function AuthDialog({ isOpen, onClose }: AuthDialogProps) {
                           })
                         }
                         placeholder="Minimal 6 karakter"
-                        className="pl-12 pr-12 h-14 rounded-2xl border-gray-200/50 bg-white/50 backdrop-blur-sm focus:border-purple-500 focus:ring-purple-500/20 focus:bg-white/80 transition-all duration-300 text-base shadow-sm"
+                        className="pl-12 pr-12 h-12 sm:h-14 rounded-2xl border-gray-200/50 bg-white/50 backdrop-blur-sm focus:border-purple-500 focus:ring-purple-500/20 focus:bg-white/80 transition-all duration-300 text-sm sm:text-base shadow-sm"
                         required
                         minLength={6}
                       />
@@ -382,7 +385,7 @@ export function AuthDialog({ isOpen, onClose }: AuthDialogProps) {
 
                   <Button
                     type="submit"
-                    className="w-full h-14 bg-gradient-to-r from-purple-500 to-purple-600 hover:from-purple-600 hover:to-purple-700 text-white rounded-2xl shadow-xl hover:shadow-2xl hover:shadow-purple-500/25 transform hover:scale-[1.02] transition-all duration-300 border-0 font-semibold text-base"
+                    className="w-full h-12 sm:h-14 bg-gradient-to-r from-purple-500 to-purple-600 hover:from-purple-600 hover:to-purple-700 text-white rounded-2xl shadow-xl hover:shadow-2xl hover:shadow-purple-500/25 transform hover:scale-[1.02] transition-all duration-300 border-0 font-semibold text-sm sm:text-base"
                     disabled={isLoading}
                   >
                     {isLoading ? (

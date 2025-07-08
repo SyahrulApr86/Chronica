@@ -4,12 +4,16 @@ export declare class CalendarsController {
     private calendarsService;
     constructor(calendarsService: CalendarsService);
     createCalendar(req: any, createCalendarDto: CreateCalendarDto): Promise<{
+        _count: {
+            events: number;
+        };
+    } & {
+        id: string;
+        name: string;
         description: string | null;
         color: string;
-        name: string;
         isDefault: boolean;
         userId: string;
-        id: string;
         createdAt: Date;
         updatedAt: Date;
     }>;
@@ -18,63 +22,67 @@ export declare class CalendarsController {
             events: number;
         };
     } & {
+        id: string;
+        name: string;
         description: string | null;
         color: string;
-        name: string;
         isDefault: boolean;
         userId: string;
-        id: string;
         createdAt: Date;
         updatedAt: Date;
     })[]>;
     getDefaultCalendar(req: any): Promise<{
+        id: string;
+        name: string;
         description: string | null;
         color: string;
-        name: string;
         isDefault: boolean;
         userId: string;
-        id: string;
         createdAt: Date;
         updatedAt: Date;
     } | null>;
     getCalendarById(req: any, id: string): Promise<{
         events: {
-            title: string;
+            id: string;
             description: string | null;
+            color: string;
+            userId: string;
+            createdAt: Date;
+            updatedAt: Date;
+            title: string;
             startTime: Date;
             endTime: Date;
             allDay: boolean;
             location: string | null;
-            color: string;
             isRecurring: boolean;
             allowOverlap: boolean;
             calendarId: string;
-            userId: string;
-            id: string;
-            createdAt: Date;
-            updatedAt: Date;
             parentEventId: string | null;
         }[];
         _count: {
             events: number;
         };
     } & {
+        id: string;
+        name: string;
         description: string | null;
         color: string;
-        name: string;
         isDefault: boolean;
         userId: string;
-        id: string;
         createdAt: Date;
         updatedAt: Date;
     }>;
     updateCalendar(req: any, id: string, updateCalendarDto: UpdateCalendarDto): Promise<{
+        _count: {
+            events: number;
+        };
+    } & {
+        id: string;
+        name: string;
         description: string | null;
         color: string;
-        name: string;
         isDefault: boolean;
         userId: string;
-        id: string;
         createdAt: Date;
         updatedAt: Date;
     }>;

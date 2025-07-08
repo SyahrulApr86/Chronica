@@ -34,6 +34,11 @@ let CalendarsService = class CalendarsService {
                 userId,
                 isDefault,
             },
+            include: {
+                _count: {
+                    select: { events: true },
+                },
+            },
         });
     }
     async getUserCalendars(userId) {
@@ -44,10 +49,7 @@ let CalendarsService = class CalendarsService {
                     select: { events: true },
                 },
             },
-            orderBy: [
-                { isDefault: 'desc' },
-                { createdAt: 'asc' },
-            ],
+            orderBy: [{ isDefault: 'desc' }, { createdAt: 'asc' }],
         });
     }
     async getCalendarById(id, userId) {
@@ -81,6 +83,11 @@ let CalendarsService = class CalendarsService {
         return this.prisma.calendar.update({
             where: { id },
             data: updateCalendarDto,
+            include: {
+                _count: {
+                    select: { events: true },
+                },
+            },
         });
     }
     async deleteCalendar(id, userId) {

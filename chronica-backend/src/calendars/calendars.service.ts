@@ -1,4 +1,8 @@
-import { Injectable, NotFoundException, BadRequestException } from '@nestjs/common';
+import {
+  Injectable,
+  NotFoundException,
+  BadRequestException,
+} from '@nestjs/common';
 import { PrismaService } from '../prisma.service';
 import { CreateCalendarDto, UpdateCalendarDto } from './dto/calendar.dto';
 
@@ -28,6 +32,11 @@ export class CalendarsService {
         userId,
         isDefault,
       },
+      include: {
+        _count: {
+          select: { events: true },
+        },
+      },
     });
   }
 
@@ -39,10 +48,7 @@ export class CalendarsService {
           select: { events: true },
         },
       },
-      orderBy: [
-        { isDefault: 'desc' },
-        { createdAt: 'asc' },
-      ],
+      orderBy: [{ isDefault: 'desc' }, { createdAt: 'asc' }],
     });
   }
 
@@ -64,7 +70,11 @@ export class CalendarsService {
     return calendar;
   }
 
-  async updateCalendar(id: string, userId: string, updateCalendarDto: UpdateCalendarDto) {
+  async updateCalendar(
+    id: string,
+    userId: string,
+    updateCalendarDto: UpdateCalendarDto,
+  ) {
     const calendar = await this.prisma.calendar.findFirst({
       where: { id, userId },
     });
@@ -84,6 +94,11 @@ export class CalendarsService {
     return this.prisma.calendar.update({
       where: { id },
       data: updateCalendarDto,
+      include: {
+        _count: {
+          select: { events: true },
+        },
+      },
     });
   }
 
@@ -103,7 +118,9 @@ export class CalendarsService {
 
     // Prevent deletion if calendar has events
     if (calendar._count.events > 0) {
-      throw new BadRequestException('Cannot delete calendar with existing events');
+      throw new BadRequestException(
+        'Cannot delete calendar with existing events',
+      );
     }
 
     // Prevent deletion of the last calendar
@@ -144,4 +161,4 @@ export class CalendarsService {
 
     return defaultCalendar;
   }
-} 
+}
