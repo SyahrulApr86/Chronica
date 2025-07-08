@@ -434,10 +434,10 @@ export function EventDialog({
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className="max-w-5xl max-h-[90vh] overflow-y-auto p-0 bg-white/95 backdrop-blur-md border-0 shadow-2xl rounded-3xl">
+      <DialogContent className="w-[98vw] h-[95vh] max-w-none max-h-none overflow-y-auto p-0 bg-white/95 backdrop-blur-md border-0 shadow-2xl rounded-3xl">
         <div className="relative">
           {/* Header with gradient */}
-          <div className="bg-gradient-to-r from-blue-50 via-purple-50 to-pink-50 p-8 border-b border-gray-100">
+          <div className="bg-gradient-to-r from-blue-50 via-purple-50 to-pink-50 p-12 border-b border-gray-100">
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-4">
                 <div className="p-3 bg-gradient-to-br from-blue-500 to-purple-600 rounded-2xl shadow-lg">
@@ -464,22 +464,22 @@ export function EventDialog({
             </div>
           </div>
 
-          <form onSubmit={handleSubmit} className="p-8">
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+          <form onSubmit={handleSubmit} className="p-12">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-16">
               {/* Left Column - Basic Information */}
-              <div className="space-y-6">
+              <div className="space-y-8">
                 {/* Basic Information */}
                 <div className="space-y-6">
-                  <div className="flex items-center gap-3 mb-4">
+                  <div className="flex items-center gap-3 mb-6 pb-3 border-b border-gray-100">
                     <div className="p-2 bg-blue-50 rounded-lg">
-                      <CalendarDays className="h-4 w-4 text-blue-600" />
+                      <CalendarDays className="h-5 w-5 text-blue-600" />
                     </div>
-                    <h3 className="text-lg font-semibold text-gray-800">
+                    <h3 className="text-xl font-semibold text-gray-800">
                       Informasi Dasar
                     </h3>
                   </div>
 
-                  <div className="space-y-2">
+                  <div className="space-y-3">
                     <Label
                       htmlFor="title"
                       className="text-sm font-medium text-gray-700"
@@ -493,12 +493,12 @@ export function EventDialog({
                         setFormData({ ...formData, title: e.target.value })
                       }
                       placeholder="Masukkan judul event yang menarik"
-                      className="h-12 rounded-xl border-gray-200 focus:border-blue-500 focus:ring-blue-500 text-lg"
+                      className="h-16 rounded-xl border-gray-200 focus:border-blue-500 focus:ring-blue-500 text-lg px-6"
                       required
                     />
                   </div>
 
-                  <div className="space-y-2">
+                  <div className="space-y-3">
                     <Label className="text-sm font-medium text-gray-700">
                       Kalender
                     </Label>
@@ -512,7 +512,7 @@ export function EventDialog({
                         setFormData({ ...formData, calendarId: value })
                       }
                     >
-                      <SelectTrigger className="h-12 rounded-xl border-gray-200 focus:border-blue-500 focus:ring-blue-500">
+                      <SelectTrigger className="h-16 rounded-xl border-gray-200 focus:border-blue-500 focus:ring-blue-500">
                         <SelectValue placeholder="Pilih kalender" />
                       </SelectTrigger>
                       <SelectContent>
@@ -536,7 +536,7 @@ export function EventDialog({
                     </Select>
                   </div>
 
-                  <div className="space-y-2">
+                  <div className="space-y-3">
                     <Label
                       htmlFor="description"
                       className="text-sm font-medium text-gray-700"
@@ -553,12 +553,12 @@ export function EventDialog({
                         })
                       }
                       placeholder="Deskripsikan event Anda dengan detail..."
-                      rows={3}
-                      className="rounded-xl border-gray-200 focus:border-blue-500 focus:ring-blue-500 resize-none"
+                      rows={5}
+                      className="rounded-xl border-gray-200 focus:border-blue-500 focus:ring-blue-500 resize-none px-6 py-4"
                     />
                   </div>
 
-                  <div className="space-y-2">
+                  <div className="space-y-3">
                     <Label
                       htmlFor="location"
                       className="text-sm font-medium text-gray-700 flex items-center gap-2"
@@ -573,21 +573,21 @@ export function EventDialog({
                         setFormData({ ...formData, location: e.target.value })
                       }
                       placeholder="Dimana event ini akan berlangsung?"
-                      className="h-12 rounded-xl border-gray-200 focus:border-blue-500 focus:ring-blue-500"
+                      className="h-16 rounded-xl border-gray-200 focus:border-blue-500 focus:ring-blue-500 px-6"
                     />
                   </div>
                 </div>
               </div>
 
               {/* Right Column - Time Settings & Recurrence */}
-              <div className="space-y-6">
+              <div className="space-y-8">
                 {/* Time Settings */}
                 <div className="space-y-6">
-                  <div className="flex items-center gap-3 mb-4">
+                  <div className="flex items-center gap-3 mb-6 pb-3 border-b border-gray-100">
                     <div className="p-2 bg-purple-50 rounded-lg">
-                      <Timer className="h-4 w-4 text-purple-600" />
+                      <Timer className="h-5 w-5 text-purple-600" />
                     </div>
-                    <h3 className="text-lg font-semibold text-gray-800">
+                    <h3 className="text-xl font-semibold text-gray-800">
                       Waktu & Durasi
                     </h3>
                     <div className="flex items-center gap-2 px-3 py-1 bg-blue-50 text-blue-700 rounded-full text-xs font-medium">
@@ -596,7 +596,7 @@ export function EventDialog({
                     </div>
                   </div>
 
-                  <div className="flex items-center space-x-3 p-4 bg-gray-50 rounded-xl">
+                  <div className="flex items-center space-x-3 p-5 bg-gray-50 rounded-xl">
                     <Checkbox
                       id="allDay"
                       checked={formData.allDay}
@@ -620,8 +620,8 @@ export function EventDialog({
                         <h4 className="text-sm font-semibold text-gray-800">
                           Waktu Mulai
                         </h4>
-                        <div className="grid grid-cols-3 gap-3">
-                          <div className="space-y-2">
+                        <div className="grid grid-cols-3 gap-4">
+                          <div className="space-y-3">
                             <Label
                               htmlFor="startDate"
                               className="text-xs font-medium text-gray-600"
@@ -638,7 +638,7 @@ export function EventDialog({
                                   startDate: e.target.value,
                                 })
                               }
-                              className="h-12 rounded-xl border-gray-200 focus:border-blue-500 focus:ring-blue-500"
+                              className="h-16 rounded-xl border-gray-200 focus:border-blue-500 focus:ring-blue-500 px-4"
                               required
                             />
                           </div>
@@ -655,7 +655,7 @@ export function EventDialog({
                                 setFormData({ ...formData, startHour: value })
                               }
                             >
-                              <SelectTrigger className="h-12 rounded-xl">
+                              <SelectTrigger className="h-16 rounded-xl">
                                 <SelectValue />
                               </SelectTrigger>
                               <SelectContent>
@@ -683,7 +683,7 @@ export function EventDialog({
                                 setFormData({ ...formData, startMinute: value })
                               }
                             >
-                              <SelectTrigger className="h-12 rounded-xl">
+                              <SelectTrigger className="h-16 rounded-xl">
                                 <SelectValue />
                               </SelectTrigger>
                               <SelectContent>
@@ -706,7 +706,7 @@ export function EventDialog({
                         <h4 className="text-sm font-semibold text-gray-800">
                           Waktu Selesai
                         </h4>
-                        <div className="grid grid-cols-3 gap-3">
+                        <div className="grid grid-cols-3 gap-4">
                           <div className="space-y-2">
                             <Label
                               htmlFor="endDate"
@@ -724,7 +724,7 @@ export function EventDialog({
                                   endDate: e.target.value,
                                 })
                               }
-                              className="h-12 rounded-xl border-gray-200 focus:border-blue-500 focus:ring-blue-500"
+                              className="h-16 rounded-xl border-gray-200 focus:border-blue-500 focus:ring-blue-500 px-4"
                               required
                             />
                           </div>
@@ -741,7 +741,7 @@ export function EventDialog({
                                 setFormData({ ...formData, endHour: value })
                               }
                             >
-                              <SelectTrigger className="h-12 rounded-xl">
+                              <SelectTrigger className="h-16 rounded-xl">
                                 <SelectValue />
                               </SelectTrigger>
                               <SelectContent>
@@ -769,7 +769,7 @@ export function EventDialog({
                                 setFormData({ ...formData, endMinute: value })
                               }
                             >
-                              <SelectTrigger className="h-12 rounded-xl">
+                              <SelectTrigger className="h-16 rounded-xl">
                                 <SelectValue />
                               </SelectTrigger>
                               <SelectContent>
@@ -792,11 +792,11 @@ export function EventDialog({
 
                 {/* Color & Settings */}
                 <div className="space-y-6">
-                  <div className="flex items-center gap-3 mb-4">
+                  <div className="flex items-center gap-3 mb-6 pb-3 border-b border-gray-100">
                     <div className="p-2 bg-pink-50 rounded-lg">
-                      <Palette className="h-4 w-4 text-pink-600" />
+                      <Palette className="h-5 w-5 text-pink-600" />
                     </div>
-                    <h3 className="text-lg font-semibold text-gray-800">
+                    <h3 className="text-xl font-semibold text-gray-800">
                       Tampilan & Pengaturan
                     </h3>
                   </div>
@@ -830,7 +830,7 @@ export function EventDialog({
                     </div>
                   </div>
 
-                  <div className="flex items-center space-x-3 p-4 bg-yellow-50 rounded-xl">
+                  <div className="flex items-center space-x-3 p-5 bg-yellow-50 rounded-xl">
                     <Checkbox
                       id="allowOverlap"
                       checked={formData.allowOverlap}
@@ -849,7 +849,7 @@ export function EventDialog({
 
                 {/* Recurrence Settings */}
                 <div className="space-y-6">
-                  <div className="flex items-center space-x-3 p-4 bg-blue-50 rounded-xl">
+                  <div className="flex items-center space-x-3 p-5 bg-blue-50 rounded-xl">
                     <Checkbox
                       id="isRecurring"
                       checked={formData.isRecurring}
@@ -891,7 +891,7 @@ export function EventDialog({
                               })
                             }
                           >
-                            <SelectTrigger className="h-12 rounded-xl">
+                            <SelectTrigger className="h-16 rounded-xl">
                               <SelectValue />
                             </SelectTrigger>
                             <SelectContent>
@@ -917,7 +917,7 @@ export function EventDialog({
                                 interval: parseInt(e.target.value),
                               })
                             }
-                            className="h-12 rounded-xl"
+                            className="h-16 rounded-xl px-6"
                           />
                         </div>
                       </div>
@@ -954,7 +954,7 @@ export function EventDialog({
                           value={endType}
                           onValueChange={(value: any) => setEndType(value)}
                         >
-                          <SelectTrigger className="h-12 rounded-xl">
+                          <SelectTrigger className="h-16 rounded-xl">
                             <SelectValue />
                           </SelectTrigger>
                           <SelectContent>
@@ -987,7 +987,7 @@ export function EventDialog({
                                   : undefined,
                               })
                             }
-                            className="h-12 rounded-xl"
+                            className="h-16 rounded-xl px-6"
                           />
                         </div>
                       )}
@@ -1009,7 +1009,7 @@ export function EventDialog({
                                   : undefined,
                               })
                             }
-                            className="h-12 rounded-xl"
+                            className="h-16 rounded-xl px-6"
                           />
                         </div>
                       )}
@@ -1020,29 +1020,29 @@ export function EventDialog({
             </div>
 
             {/* Action Buttons */}
-            <div className="flex flex-col sm:flex-row gap-3 pt-6 border-t border-gray-100">
+            <div className="flex flex-col sm:flex-row gap-6 pt-10 border-t border-gray-100">
               <Button
                 type="button"
                 variant="outline"
                 onClick={onClose}
-                className="flex-1 h-12 rounded-xl border-gray-200 hover:bg-gray-50"
+                className="flex-1 h-16 rounded-xl border-gray-200 hover:bg-gray-50 text-xl"
               >
-                <X className="h-4 w-4 mr-2" />
+                <X className="h-6 w-6 mr-3" />
                 Batal
               </Button>
               <Button
                 type="submit"
                 disabled={isSubmitting}
-                className="flex-1 h-12 bg-gradient-to-r from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700 text-white rounded-xl shadow-lg hover:shadow-xl transform hover:scale-[1.02] transition-all duration-200 border-0 disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none"
+                className="flex-1 h-16 bg-gradient-to-r from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700 text-white rounded-xl shadow-lg hover:shadow-xl transform hover:scale-[1.02] transition-all duration-200 border-0 disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none text-xl"
               >
                 {isSubmitting ? (
                   <>
-                    <div className="animate-spin rounded-full h-4 w-4 border-2 border-white border-t-transparent mr-2"></div>
+                    <div className="animate-spin rounded-full h-6 w-6 border-2 border-white border-t-transparent mr-3"></div>
                     Menyimpan...
                   </>
                 ) : (
                   <>
-                    <Save className="h-4 w-4 mr-2" />
+                    <Save className="h-6 w-6 mr-3" />
                     {event ? "Update Event" : "Buat Event"}
                   </>
                 )}
