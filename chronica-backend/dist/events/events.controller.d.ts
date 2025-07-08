@@ -4,6 +4,7 @@ export declare class EventsController {
     private readonly eventsService;
     constructor(eventsService: EventsService);
     createEvent(createEventDto: CreateEventDto, req: any): Promise<{
+        id: string;
         title: string;
         description: string | null;
         startTime: Date;
@@ -13,14 +14,14 @@ export declare class EventsController {
         color: string;
         isRecurring: boolean;
         allowOverlap: boolean;
-        calendarId: string;
         userId: string;
-        id: string;
+        calendarId: string;
+        parentEventId: string | null;
         createdAt: Date;
         updatedAt: Date;
-        parentEventId: string | null;
     }>;
     getAllEvents(req: any, startDate?: string, endDate?: string): Promise<{
+        id: string;
         title: string;
         description: string | null;
         startTime: Date;
@@ -30,14 +31,14 @@ export declare class EventsController {
         color: string;
         isRecurring: boolean;
         allowOverlap: boolean;
-        calendarId: string;
         userId: string;
-        id: string;
+        calendarId: string;
+        parentEventId: string | null;
         createdAt: Date;
         updatedAt: Date;
-        parentEventId: string | null;
     }[]>;
     getEvents(req: any, startDate?: string, endDate?: string, calendarId?: string): Promise<{
+        id: string;
         title: string;
         description: string | null;
         startTime: Date;
@@ -47,14 +48,14 @@ export declare class EventsController {
         color: string;
         isRecurring: boolean;
         allowOverlap: boolean;
-        calendarId: string;
         userId: string;
-        id: string;
+        calendarId: string;
+        parentEventId: string | null;
         createdAt: Date;
         updatedAt: Date;
-        parentEventId: string | null;
     }[]>;
     getEventById(eventId: string, req: any): Promise<{
+        id: string;
         title: string;
         description: string | null;
         startTime: Date;
@@ -64,14 +65,14 @@ export declare class EventsController {
         color: string;
         isRecurring: boolean;
         allowOverlap: boolean;
-        calendarId: string;
         userId: string;
-        id: string;
+        calendarId: string;
+        parentEventId: string | null;
         createdAt: Date;
         updatedAt: Date;
-        parentEventId: string | null;
     }>;
     updateEvent(eventId: string, updateEventDto: UpdateEventDto, req: any): Promise<{
+        id: string;
         title: string;
         description: string | null;
         startTime: Date;
@@ -81,12 +82,11 @@ export declare class EventsController {
         color: string;
         isRecurring: boolean;
         allowOverlap: boolean;
-        calendarId: string;
         userId: string;
-        id: string;
+        calendarId: string;
+        parentEventId: string | null;
         createdAt: Date;
         updatedAt: Date;
-        parentEventId: string | null;
     }>;
     deleteEvent(eventId: string, req: any): Promise<void>;
 }

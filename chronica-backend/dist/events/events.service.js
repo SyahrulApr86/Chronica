@@ -190,7 +190,7 @@ let EventsService = class EventsService {
         if (updateEventDto.allowOverlap === false ||
             (!updateEventDto.allowOverlap && !existingEvent.allowOverlap)) {
             if (updateEventDto.startTime || updateEventDto.endTime) {
-                await this.checkForOverlap(userId, startTime, endTime, eventId);
+                await this.checkForOverlap(userId, startTime, endTime, eventId, existingEvent.calendarId);
             }
         }
         const event = await this.prisma.event.update({
@@ -250,32 +250,33 @@ let EventsService = class EventsService {
         });
     }
     async checkForOverlap(userId, startTime, endTime, excludeEventId, calendarId) {
+        const whereClause = {
+            userId,
+            id: excludeEventId ? { not: excludeEventId } : undefined,
+            allowOverlap: false,
+            OR: [
+                {
+                    AND: [
+                        { startTime: { lte: startTime } },
+                        { endTime: { gt: startTime } },
+                    ],
+                },
+                {
+                    AND: [{ startTime: { lt: endTime } }, { endTime: { gte: endTime } }],
+                },
+                {
+                    AND: [
+                        { startTime: { gte: startTime } },
+                        { endTime: { lte: endTime } },
+                    ],
+                },
+            ],
+        };
+        if (calendarId) {
+            whereClause.calendarId = calendarId;
+        }
         const overlappingEvents = await this.prisma.event.findMany({
-            where: {
-                userId,
-                id: excludeEventId ? { not: excludeEventId } : undefined,
-                allowOverlap: false,
-                OR: [
-                    {
-                        AND: [
-                            { startTime: { lte: startTime } },
-                            { endTime: { gt: startTime } },
-                        ],
-                    },
-                    {
-                        AND: [
-                            { startTime: { lt: endTime } },
-                            { endTime: { gte: endTime } },
-                        ],
-                    },
-                    {
-                        AND: [
-                            { startTime: { gte: startTime } },
-                            { endTime: { lte: endTime } },
-                        ],
-                    },
-                ],
-            },
+            where: whereClause,
         });
         if (overlappingEvents.length > 0) {
             throw new common_1.ConflictException('Event overlaps with existing events that do not allow overlap');

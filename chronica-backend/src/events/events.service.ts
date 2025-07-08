@@ -246,7 +246,13 @@ export class EventsService {
       (!updateEventDto.allowOverlap && !existingEvent.allowOverlap)
     ) {
       if (updateEventDto.startTime || updateEventDto.endTime) {
-        await this.checkForOverlap(userId, startTime, endTime, eventId);
+        await this.checkForOverlap(
+          userId,
+          startTime,
+          endTime,
+          eventId,
+          existingEvent.calendarId,
+        );
       }
     }
 
@@ -323,32 +329,36 @@ export class EventsService {
     excludeEventId?: string,
     calendarId?: string,
   ): Promise<void> {
+    const whereClause: any = {
+      userId,
+      id: excludeEventId ? { not: excludeEventId } : undefined,
+      allowOverlap: false,
+      OR: [
+        {
+          AND: [
+            { startTime: { lte: startTime } },
+            { endTime: { gt: startTime } },
+          ],
+        },
+        {
+          AND: [{ startTime: { lt: endTime } }, { endTime: { gte: endTime } }],
+        },
+        {
+          AND: [
+            { startTime: { gte: startTime } },
+            { endTime: { lte: endTime } },
+          ],
+        },
+      ],
+    };
+
+    // Only check for overlap within the same calendar
+    if (calendarId) {
+      whereClause.calendarId = calendarId;
+    }
+
     const overlappingEvents = await this.prisma.event.findMany({
-      where: {
-        userId,
-        id: excludeEventId ? { not: excludeEventId } : undefined,
-        allowOverlap: false,
-        OR: [
-          {
-            AND: [
-              { startTime: { lte: startTime } },
-              { endTime: { gt: startTime } },
-            ],
-          },
-          {
-            AND: [
-              { startTime: { lt: endTime } },
-              { endTime: { gte: endTime } },
-            ],
-          },
-          {
-            AND: [
-              { startTime: { gte: startTime } },
-              { endTime: { lte: endTime } },
-            ],
-          },
-        ],
-      },
+      where: whereClause,
     });
 
     if (overlappingEvents.length > 0) {

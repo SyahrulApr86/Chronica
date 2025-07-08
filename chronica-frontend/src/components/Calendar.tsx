@@ -343,7 +343,7 @@ export function Calendar() {
                   </div>
                   <div className="text-right">
                     <span className="text-3xl font-black text-blue-600">
-                      {allEvents.length}
+                      {events.length}
                     </span>
                     <div className="text-xs text-blue-500 font-medium">
                       events
@@ -370,7 +370,7 @@ export function Calendar() {
                   </div>
                   <div className="text-right">
                     <span className="text-lg font-black text-purple-600">
-                      {calculateMonthlyDuration(allEvents, selectedDate)}
+                      {calculateMonthlyDuration(events, selectedDate)}
                     </span>
                   </div>
                 </div>
