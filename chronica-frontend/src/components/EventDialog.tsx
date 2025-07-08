@@ -468,550 +468,554 @@ export function EventDialog({
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
               {/* Left Column - Basic Information */}
               <div className="space-y-6">
-            {/* Basic Information */}
-            <div className="space-y-6">
-              <div className="flex items-center gap-3 mb-4">
-                <div className="p-2 bg-blue-50 rounded-lg">
-                  <CalendarDays className="h-4 w-4 text-blue-600" />
-                </div>
-                <h3 className="text-lg font-semibold text-gray-800">
-                  Informasi Dasar
-                </h3>
-              </div>
+                {/* Basic Information */}
+                <div className="space-y-6">
+                  <div className="flex items-center gap-3 mb-4">
+                    <div className="p-2 bg-blue-50 rounded-lg">
+                      <CalendarDays className="h-4 w-4 text-blue-600" />
+                    </div>
+                    <h3 className="text-lg font-semibold text-gray-800">
+                      Informasi Dasar
+                    </h3>
+                  </div>
 
-              <div className="space-y-2">
-                <Label
-                  htmlFor="title"
-                  className="text-sm font-medium text-gray-700"
-                >
-                  Judul Event *
-                </Label>
-                <Input
-                  id="title"
-                  value={formData.title}
-                  onChange={(e) =>
-                    setFormData({ ...formData, title: e.target.value })
-                  }
-                  placeholder="Masukkan judul event yang menarik"
-                  className="h-12 rounded-xl border-gray-200 focus:border-blue-500 focus:ring-blue-500 text-lg"
-                  required
-                />
-              </div>
+                  <div className="space-y-2">
+                    <Label
+                      htmlFor="title"
+                      className="text-sm font-medium text-gray-700"
+                    >
+                      Judul Event *
+                    </Label>
+                    <Input
+                      id="title"
+                      value={formData.title}
+                      onChange={(e) =>
+                        setFormData({ ...formData, title: e.target.value })
+                      }
+                      placeholder="Masukkan judul event yang menarik"
+                      className="h-12 rounded-xl border-gray-200 focus:border-blue-500 focus:ring-blue-500 text-lg"
+                      required
+                    />
+                  </div>
 
-              <div className="space-y-2">
-                <Label className="text-sm font-medium text-gray-700">
-                  Kalender
-                </Label>
-                <Select
-                  value={
-                    formData.calendarId ||
-                    selectedCalendar?.id ||
-                    (calendars.length > 0 ? calendars[0].id : "")
-                  }
-                  onValueChange={(value) =>
-                    setFormData({ ...formData, calendarId: value })
-                  }
-                >
-                  <SelectTrigger className="h-12 rounded-xl border-gray-200 focus:border-blue-500 focus:ring-blue-500">
-                    <SelectValue placeholder="Pilih kalender" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {calendars.map((calendar) => (
-                      <SelectItem key={calendar.id} value={calendar.id}>
-                        <div className="flex items-center gap-3">
-                          <div
-                            className="w-4 h-4 rounded-full"
-                            style={{ backgroundColor: calendar.color }}
-                          />
-                          <span>{calendar.name}</span>
-                          {calendar.isDefault && (
-                            <span className="text-xs bg-blue-100 text-blue-600 px-2 py-1 rounded-full font-medium">
-                              Default
-                            </span>
-                          )}
-                        </div>
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-              </div>
+                  <div className="space-y-2">
+                    <Label className="text-sm font-medium text-gray-700">
+                      Kalender
+                    </Label>
+                    <Select
+                      value={
+                        formData.calendarId ||
+                        selectedCalendar?.id ||
+                        (calendars.length > 0 ? calendars[0].id : "")
+                      }
+                      onValueChange={(value) =>
+                        setFormData({ ...formData, calendarId: value })
+                      }
+                    >
+                      <SelectTrigger className="h-12 rounded-xl border-gray-200 focus:border-blue-500 focus:ring-blue-500">
+                        <SelectValue placeholder="Pilih kalender" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {calendars.map((calendar) => (
+                          <SelectItem key={calendar.id} value={calendar.id}>
+                            <div className="flex items-center gap-3">
+                              <div
+                                className="w-4 h-4 rounded-full"
+                                style={{ backgroundColor: calendar.color }}
+                              />
+                              <span>{calendar.name}</span>
+                              {calendar.isDefault && (
+                                <span className="text-xs bg-blue-100 text-blue-600 px-2 py-1 rounded-full font-medium">
+                                  Default
+                                </span>
+                              )}
+                            </div>
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  </div>
 
-              <div className="space-y-2">
-                <Label
-                  htmlFor="description"
-                  className="text-sm font-medium text-gray-700"
-                >
-                  Deskripsi
-                </Label>
-                <Textarea
-                  id="description"
-                  value={formData.description}
-                  onChange={(e) =>
-                    setFormData({ ...formData, description: e.target.value })
-                  }
-                  placeholder="Deskripsikan event Anda dengan detail..."
-                  rows={3}
-                  className="rounded-xl border-gray-200 focus:border-blue-500 focus:ring-blue-500 resize-none"
-                />
-              </div>
+                  <div className="space-y-2">
+                    <Label
+                      htmlFor="description"
+                      className="text-sm font-medium text-gray-700"
+                    >
+                      Deskripsi
+                    </Label>
+                    <Textarea
+                      id="description"
+                      value={formData.description}
+                      onChange={(e) =>
+                        setFormData({
+                          ...formData,
+                          description: e.target.value,
+                        })
+                      }
+                      placeholder="Deskripsikan event Anda dengan detail..."
+                      rows={3}
+                      className="rounded-xl border-gray-200 focus:border-blue-500 focus:ring-blue-500 resize-none"
+                    />
+                  </div>
 
-              <div className="space-y-2">
-                <Label
-                  htmlFor="location"
-                  className="text-sm font-medium text-gray-700 flex items-center gap-2"
-                >
-                  <MapPin className="h-4 w-4" />
-                  Lokasi
-                </Label>
-                <Input
-                  id="location"
-                  value={formData.location}
-                  onChange={(e) =>
-                    setFormData({ ...formData, location: e.target.value })
-                  }
-                  placeholder="Dimana event ini akan berlangsung?"
-                  className="h-12 rounded-xl border-gray-200 focus:border-blue-500 focus:ring-blue-500"
-                />
-              </div>
+                  <div className="space-y-2">
+                    <Label
+                      htmlFor="location"
+                      className="text-sm font-medium text-gray-700 flex items-center gap-2"
+                    >
+                      <MapPin className="h-4 w-4" />
+                      Lokasi
+                    </Label>
+                    <Input
+                      id="location"
+                      value={formData.location}
+                      onChange={(e) =>
+                        setFormData({ ...formData, location: e.target.value })
+                      }
+                      placeholder="Dimana event ini akan berlangsung?"
+                      className="h-12 rounded-xl border-gray-200 focus:border-blue-500 focus:ring-blue-500"
+                    />
+                  </div>
                 </div>
               </div>
 
               {/* Right Column - Time Settings & Recurrence */}
               <div className="space-y-6">
                 {/* Time Settings */}
-            <div className="space-y-6">
-              <div className="flex items-center gap-3 mb-4">
-                <div className="p-2 bg-purple-50 rounded-lg">
-                  <Timer className="h-4 w-4 text-purple-600" />
-                </div>
-                <h3 className="text-lg font-semibold text-gray-800">
-                  Waktu & Durasi
-                </h3>
-                <div className="flex items-center gap-2 px-3 py-1 bg-blue-50 text-blue-700 rounded-full text-xs font-medium">
-                  <Clock className="h-3 w-3" />
-                  Interval 15 menit
-                </div>
-              </div>
-
-              <div className="flex items-center space-x-3 p-4 bg-gray-50 rounded-xl">
-                <Checkbox
-                  id="allDay"
-                  checked={formData.allDay}
-                  onCheckedChange={(checked) =>
-                    setFormData({ ...formData, allDay: !!checked })
-                  }
-                />
-                <Label
-                  htmlFor="allDay"
-                  className="text-sm font-medium text-gray-700 flex items-center gap-2"
-                >
-                  <Clock className="h-4 w-4" />
-                  Event sepanjang hari
-                </Label>
-              </div>
-
-              {!formData.allDay && (
                 <div className="space-y-6">
-                  {/* Start Time */}
-                  <div className="space-y-4">
-                    <h4 className="text-sm font-semibold text-gray-800">
-                      Waktu Mulai
-                    </h4>
-                    <div className="grid grid-cols-3 gap-3">
-                      <div className="space-y-2">
-                        <Label
-                          htmlFor="startDate"
-                          className="text-xs font-medium text-gray-600"
-                        >
-                          Tanggal
-                        </Label>
-                        <Input
-                          id="startDate"
-                          type="date"
-                          value={formData.startDate}
-                          onChange={(e) =>
-                            setFormData({
-                              ...formData,
-                              startDate: e.target.value,
-                            })
-                          }
-                          className="h-12 rounded-xl border-gray-200 focus:border-blue-500 focus:ring-blue-500"
-                          required
-                        />
-                      </div>
-                      <div className="space-y-2">
-                        <Label
-                          htmlFor="startHour"
-                          className="text-xs font-medium text-gray-600"
-                        >
-                          Jam
-                        </Label>
-                        <Select
-                          value={formData.startHour}
-                          onValueChange={(value: any) =>
-                            setFormData({ ...formData, startHour: value })
-                          }
-                        >
-                          <SelectTrigger className="h-12 rounded-xl">
-                            <SelectValue />
-                          </SelectTrigger>
-                          <SelectContent>
-                            {hourOptions.map((option) => (
-                              <SelectItem
-                                key={option.value}
-                                value={option.value}
-                              >
-                                {option.label}
-                              </SelectItem>
-                            ))}
-                          </SelectContent>
-                        </Select>
-                      </div>
-                      <div className="space-y-2">
-                        <Label
-                          htmlFor="startMinute"
-                          className="text-xs font-medium text-gray-600"
-                        >
-                          Menit
-                        </Label>
-                        <Select
-                          value={formData.startMinute}
-                          onValueChange={(value: any) =>
-                            setFormData({ ...formData, startMinute: value })
-                          }
-                        >
-                          <SelectTrigger className="h-12 rounded-xl">
-                            <SelectValue />
-                          </SelectTrigger>
-                          <SelectContent>
-                            {minuteOptions.map((option) => (
-                              <SelectItem
-                                key={option.value}
-                                value={option.value}
-                              >
-                                {option.label}
-                              </SelectItem>
-                            ))}
-                          </SelectContent>
-                        </Select>
-                      </div>
-                    </div>
-                  </div>
-
-                  {/* End Time */}
-                  <div className="space-y-4">
-                    <h4 className="text-sm font-semibold text-gray-800">
-                      Waktu Selesai
-                    </h4>
-                    <div className="grid grid-cols-3 gap-3">
-                      <div className="space-y-2">
-                        <Label
-                          htmlFor="endDate"
-                          className="text-xs font-medium text-gray-600"
-                        >
-                          Tanggal
-                        </Label>
-                        <Input
-                          id="endDate"
-                          type="date"
-                          value={formData.endDate}
-                          onChange={(e) =>
-                            setFormData({
-                              ...formData,
-                              endDate: e.target.value,
-                            })
-                          }
-                          className="h-12 rounded-xl border-gray-200 focus:border-blue-500 focus:ring-blue-500"
-                          required
-                        />
-                      </div>
-                      <div className="space-y-2">
-                        <Label
-                          htmlFor="endHour"
-                          className="text-xs font-medium text-gray-600"
-                        >
-                          Jam
-                        </Label>
-                        <Select
-                          value={formData.endHour}
-                          onValueChange={(value: any) =>
-                            setFormData({ ...formData, endHour: value })
-                          }
-                        >
-                          <SelectTrigger className="h-12 rounded-xl">
-                            <SelectValue />
-                          </SelectTrigger>
-                          <SelectContent>
-                            {hourOptions.map((option) => (
-                              <SelectItem
-                                key={option.value}
-                                value={option.value}
-                              >
-                                {option.label}
-                              </SelectItem>
-                            ))}
-                          </SelectContent>
-                        </Select>
-                      </div>
-                      <div className="space-y-2">
-                        <Label
-                          htmlFor="endMinute"
-                          className="text-xs font-medium text-gray-600"
-                        >
-                          Menit
-                        </Label>
-                        <Select
-                          value={formData.endMinute}
-                          onValueChange={(value: any) =>
-                            setFormData({ ...formData, endMinute: value })
-                          }
-                        >
-                          <SelectTrigger className="h-12 rounded-xl">
-                            <SelectValue />
-                          </SelectTrigger>
-                          <SelectContent>
-                            {minuteOptions.map((option) => (
-                              <SelectItem
-                                key={option.value}
-                                value={option.value}
-                              >
-                                {option.label}
-                              </SelectItem>
-                            ))}
-                          </SelectContent>
-                        </Select>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              )}
-            </div>
-
-            {/* Color & Settings */}
-            <div className="space-y-6">
-              <div className="flex items-center gap-3 mb-4">
-                <div className="p-2 bg-pink-50 rounded-lg">
-                  <Palette className="h-4 w-4 text-pink-600" />
-                </div>
-                <h3 className="text-lg font-semibold text-gray-800">
-                  Tampilan & Pengaturan
-                </h3>
-              </div>
-
-              <div className="space-y-2">
-                <Label className="text-sm font-medium text-gray-700">
-                  Warna Event
-                </Label>
-                <div className="grid grid-cols-4 gap-3">
-                  {colorOptions.map((option) => (
-                    <button
-                      key={option.value}
-                      type="button"
-                      onClick={() =>
-                        setFormData({ ...formData, color: option.value })
-                      }
-                      className={`group relative p-3 rounded-xl border-2 transition-all duration-200 hover:scale-105 ${
-                        formData.color === option.value
-                          ? "border-gray-800 shadow-lg"
-                          : "border-gray-200 hover:border-gray-300"
-                      }`}
-                    >
-                      <div
-                        className={`w-8 h-8 rounded-lg bg-gradient-to-br ${option.preview} mx-auto mb-2 shadow-sm`}
-                      />
-                      <span className="text-xs font-medium text-gray-600 text-center block">
-                        {option.label.split(" ")[1]}
-                      </span>
-                    </button>
-                  ))}
-                </div>
-              </div>
-
-              <div className="flex items-center space-x-3 p-4 bg-yellow-50 rounded-xl">
-                <Checkbox
-                  id="allowOverlap"
-                  checked={formData.allowOverlap}
-                  onCheckedChange={(checked) =>
-                    setFormData({ ...formData, allowOverlap: !!checked })
-                  }
-                />
-                <Label
-                  htmlFor="allowOverlap"
-                  className="text-sm font-medium text-gray-700"
-                >
-                  Izinkan overlap dengan event lain
-                </Label>
-              </div>
-            </div>
-
-            {/* Recurrence Settings */}
-            <div className="space-y-6">
-              <div className="flex items-center space-x-3 p-4 bg-blue-50 rounded-xl">
-                <Checkbox
-                  id="isRecurring"
-                  checked={formData.isRecurring}
-                  onCheckedChange={(checked) =>
-                    setFormData({ ...formData, isRecurring: !!checked })
-                  }
-                />
-                <Label
-                  htmlFor="isRecurring"
-                  className="text-sm font-medium text-gray-700 flex items-center gap-2"
-                >
-                  <Repeat className="h-4 w-4" />
-                  Event berulang
-                </Label>
-              </div>
-
-              {formData.isRecurring && (
-                <div className="space-y-6 p-6 border-2 border-dashed border-blue-200 rounded-2xl bg-blue-50/50">
                   <div className="flex items-center gap-3 mb-4">
-                    <div className="p-2 bg-blue-100 rounded-lg">
-                      <Settings className="h-4 w-4 text-blue-600" />
+                    <div className="p-2 bg-purple-50 rounded-lg">
+                      <Timer className="h-4 w-4 text-purple-600" />
                     </div>
-                    <h4 className="font-semibold text-gray-800">
-                      Pengaturan Pengulangan
-                    </h4>
-                  </div>
-
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <div className="space-y-2">
-                      <Label className="text-sm font-medium text-gray-700">
-                        Frekuensi
-                      </Label>
-                      <Select
-                        value={recurrenceRule.frequency}
-                        onValueChange={(value: any) =>
-                          setRecurrenceRule({
-                            ...recurrenceRule,
-                            frequency: value,
-                          })
-                        }
-                      >
-                        <SelectTrigger className="h-12 rounded-xl">
-                          <SelectValue />
-                        </SelectTrigger>
-                        <SelectContent>
-                          <SelectItem value="DAILY">Harian</SelectItem>
-                          <SelectItem value="WEEKLY">Mingguan</SelectItem>
-                          <SelectItem value="MONTHLY">Bulanan</SelectItem>
-                          <SelectItem value="YEARLY">Tahunan</SelectItem>
-                        </SelectContent>
-                      </Select>
-                    </div>
-
-                    <div className="space-y-2">
-                      <Label className="text-sm font-medium text-gray-700">
-                        Interval
-                      </Label>
-                      <Input
-                        type="number"
-                        min="1"
-                        value={recurrenceRule.interval}
-                        onChange={(e) =>
-                          setRecurrenceRule({
-                            ...recurrenceRule,
-                            interval: parseInt(e.target.value),
-                          })
-                        }
-                        className="h-12 rounded-xl"
-                      />
+                    <h3 className="text-lg font-semibold text-gray-800">
+                      Waktu & Durasi
+                    </h3>
+                    <div className="flex items-center gap-2 px-3 py-1 bg-blue-50 text-blue-700 rounded-full text-xs font-medium">
+                      <Clock className="h-3 w-3" />
+                      Interval 15 menit
                     </div>
                   </div>
 
-                  {recurrenceRule.frequency === "WEEKLY" && (
-                    <div className="space-y-3">
-                      <Label className="text-sm font-medium text-gray-700">
-                        Hari dalam seminggu
-                      </Label>
-                      <div className="flex flex-wrap gap-2">
-                        {dayNames.map((day, index) => (
-                          <button
-                            key={index}
-                            type="button"
-                            onClick={() => handleDayOfWeekToggle(index)}
-                            className={`px-4 py-2 rounded-xl text-sm font-medium transition-all duration-200 ${
-                              recurrenceRule.daysOfWeek?.includes(index)
-                                ? "bg-blue-600 text-white shadow-lg scale-105"
-                                : "bg-white text-gray-700 border border-gray-200 hover:border-blue-300"
-                            }`}
-                          >
-                            {day}
-                          </button>
-                        ))}
+                  <div className="flex items-center space-x-3 p-4 bg-gray-50 rounded-xl">
+                    <Checkbox
+                      id="allDay"
+                      checked={formData.allDay}
+                      onCheckedChange={(checked) =>
+                        setFormData({ ...formData, allDay: !!checked })
+                      }
+                    />
+                    <Label
+                      htmlFor="allDay"
+                      className="text-sm font-medium text-gray-700 flex items-center gap-2"
+                    >
+                      <Clock className="h-4 w-4" />
+                      Event sepanjang hari
+                    </Label>
+                  </div>
+
+                  {!formData.allDay && (
+                    <div className="space-y-6">
+                      {/* Start Time */}
+                      <div className="space-y-4">
+                        <h4 className="text-sm font-semibold text-gray-800">
+                          Waktu Mulai
+                        </h4>
+                        <div className="grid grid-cols-3 gap-3">
+                          <div className="space-y-2">
+                            <Label
+                              htmlFor="startDate"
+                              className="text-xs font-medium text-gray-600"
+                            >
+                              Tanggal
+                            </Label>
+                            <Input
+                              id="startDate"
+                              type="date"
+                              value={formData.startDate}
+                              onChange={(e) =>
+                                setFormData({
+                                  ...formData,
+                                  startDate: e.target.value,
+                                })
+                              }
+                              className="h-12 rounded-xl border-gray-200 focus:border-blue-500 focus:ring-blue-500"
+                              required
+                            />
+                          </div>
+                          <div className="space-y-2">
+                            <Label
+                              htmlFor="startHour"
+                              className="text-xs font-medium text-gray-600"
+                            >
+                              Jam
+                            </Label>
+                            <Select
+                              value={formData.startHour}
+                              onValueChange={(value: any) =>
+                                setFormData({ ...formData, startHour: value })
+                              }
+                            >
+                              <SelectTrigger className="h-12 rounded-xl">
+                                <SelectValue />
+                              </SelectTrigger>
+                              <SelectContent>
+                                {hourOptions.map((option) => (
+                                  <SelectItem
+                                    key={option.value}
+                                    value={option.value}
+                                  >
+                                    {option.label}
+                                  </SelectItem>
+                                ))}
+                              </SelectContent>
+                            </Select>
+                          </div>
+                          <div className="space-y-2">
+                            <Label
+                              htmlFor="startMinute"
+                              className="text-xs font-medium text-gray-600"
+                            >
+                              Menit
+                            </Label>
+                            <Select
+                              value={formData.startMinute}
+                              onValueChange={(value: any) =>
+                                setFormData({ ...formData, startMinute: value })
+                              }
+                            >
+                              <SelectTrigger className="h-12 rounded-xl">
+                                <SelectValue />
+                              </SelectTrigger>
+                              <SelectContent>
+                                {minuteOptions.map((option) => (
+                                  <SelectItem
+                                    key={option.value}
+                                    value={option.value}
+                                  >
+                                    {option.label}
+                                  </SelectItem>
+                                ))}
+                              </SelectContent>
+                            </Select>
+                          </div>
+                        </div>
+                      </div>
+
+                      {/* End Time */}
+                      <div className="space-y-4">
+                        <h4 className="text-sm font-semibold text-gray-800">
+                          Waktu Selesai
+                        </h4>
+                        <div className="grid grid-cols-3 gap-3">
+                          <div className="space-y-2">
+                            <Label
+                              htmlFor="endDate"
+                              className="text-xs font-medium text-gray-600"
+                            >
+                              Tanggal
+                            </Label>
+                            <Input
+                              id="endDate"
+                              type="date"
+                              value={formData.endDate}
+                              onChange={(e) =>
+                                setFormData({
+                                  ...formData,
+                                  endDate: e.target.value,
+                                })
+                              }
+                              className="h-12 rounded-xl border-gray-200 focus:border-blue-500 focus:ring-blue-500"
+                              required
+                            />
+                          </div>
+                          <div className="space-y-2">
+                            <Label
+                              htmlFor="endHour"
+                              className="text-xs font-medium text-gray-600"
+                            >
+                              Jam
+                            </Label>
+                            <Select
+                              value={formData.endHour}
+                              onValueChange={(value: any) =>
+                                setFormData({ ...formData, endHour: value })
+                              }
+                            >
+                              <SelectTrigger className="h-12 rounded-xl">
+                                <SelectValue />
+                              </SelectTrigger>
+                              <SelectContent>
+                                {hourOptions.map((option) => (
+                                  <SelectItem
+                                    key={option.value}
+                                    value={option.value}
+                                  >
+                                    {option.label}
+                                  </SelectItem>
+                                ))}
+                              </SelectContent>
+                            </Select>
+                          </div>
+                          <div className="space-y-2">
+                            <Label
+                              htmlFor="endMinute"
+                              className="text-xs font-medium text-gray-600"
+                            >
+                              Menit
+                            </Label>
+                            <Select
+                              value={formData.endMinute}
+                              onValueChange={(value: any) =>
+                                setFormData({ ...formData, endMinute: value })
+                              }
+                            >
+                              <SelectTrigger className="h-12 rounded-xl">
+                                <SelectValue />
+                              </SelectTrigger>
+                              <SelectContent>
+                                {minuteOptions.map((option) => (
+                                  <SelectItem
+                                    key={option.value}
+                                    value={option.value}
+                                  >
+                                    {option.label}
+                                  </SelectItem>
+                                ))}
+                              </SelectContent>
+                            </Select>
+                          </div>
+                        </div>
                       </div>
                     </div>
                   )}
+                </div>
 
-                  <div className="space-y-3">
+                {/* Color & Settings */}
+                <div className="space-y-6">
+                  <div className="flex items-center gap-3 mb-4">
+                    <div className="p-2 bg-pink-50 rounded-lg">
+                      <Palette className="h-4 w-4 text-pink-600" />
+                    </div>
+                    <h3 className="text-lg font-semibold text-gray-800">
+                      Tampilan & Pengaturan
+                    </h3>
+                  </div>
+
+                  <div className="space-y-2">
                     <Label className="text-sm font-medium text-gray-700">
-                      Berakhir
+                      Warna Event
                     </Label>
-                    <Select
-                      value={endType}
-                      onValueChange={(value: any) => setEndType(value)}
+                    <div className="grid grid-cols-4 gap-3">
+                      {colorOptions.map((option) => (
+                        <button
+                          key={option.value}
+                          type="button"
+                          onClick={() =>
+                            setFormData({ ...formData, color: option.value })
+                          }
+                          className={`group relative p-3 rounded-xl border-2 transition-all duration-200 hover:scale-105 ${
+                            formData.color === option.value
+                              ? "border-gray-800 shadow-lg"
+                              : "border-gray-200 hover:border-gray-300"
+                          }`}
+                        >
+                          <div
+                            className={`w-8 h-8 rounded-lg bg-gradient-to-br ${option.preview} mx-auto mb-2 shadow-sm`}
+                          />
+                          <span className="text-xs font-medium text-gray-600 text-center block">
+                            {option.label.split(" ")[1]}
+                          </span>
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+
+                  <div className="flex items-center space-x-3 p-4 bg-yellow-50 rounded-xl">
+                    <Checkbox
+                      id="allowOverlap"
+                      checked={formData.allowOverlap}
+                      onCheckedChange={(checked) =>
+                        setFormData({ ...formData, allowOverlap: !!checked })
+                      }
+                    />
+                    <Label
+                      htmlFor="allowOverlap"
+                      className="text-sm font-medium text-gray-700"
                     >
-                      <SelectTrigger className="h-12 rounded-xl">
-                        <SelectValue />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="never">Tidak pernah</SelectItem>
-                        <SelectItem value="date">Pada tanggal</SelectItem>
-                        <SelectItem value="count">
-                          Setelah berapa kali
-                        </SelectItem>
-                      </SelectContent>
-                    </Select>
+                      Izinkan overlap dengan event lain
+                    </Label>
+                  </div>
+                </div>
+
+                {/* Recurrence Settings */}
+                <div className="space-y-6">
+                  <div className="flex items-center space-x-3 p-4 bg-blue-50 rounded-xl">
+                    <Checkbox
+                      id="isRecurring"
+                      checked={formData.isRecurring}
+                      onCheckedChange={(checked) =>
+                        setFormData({ ...formData, isRecurring: !!checked })
+                      }
+                    />
+                    <Label
+                      htmlFor="isRecurring"
+                      className="text-sm font-medium text-gray-700 flex items-center gap-2"
+                    >
+                      <Repeat className="h-4 w-4" />
+                      Event berulang
+                    </Label>
                   </div>
 
-                  {endType === "date" && (
-                    <div className="space-y-2">
-                      <Label className="text-sm font-medium text-gray-700">
-                        Tanggal berakhir
-                      </Label>
-                      <Input
-                        type="date"
-                        value={
-                          recurrenceRule.endDate
-                            ? format(recurrenceRule.endDate, "yyyy-MM-dd")
-                            : ""
-                        }
-                        onChange={(e) =>
-                          setRecurrenceRule({
-                            ...recurrenceRule,
-                            endDate: e.target.value
-                              ? new Date(e.target.value)
-                              : undefined,
-                          })
-                        }
-                        className="h-12 rounded-xl"
-                      />
-                    </div>
-                  )}
+                  {formData.isRecurring && (
+                    <div className="space-y-6 p-6 border-2 border-dashed border-blue-200 rounded-2xl bg-blue-50/50">
+                      <div className="flex items-center gap-3 mb-4">
+                        <div className="p-2 bg-blue-100 rounded-lg">
+                          <Settings className="h-4 w-4 text-blue-600" />
+                        </div>
+                        <h4 className="font-semibold text-gray-800">
+                          Pengaturan Pengulangan
+                        </h4>
+                      </div>
 
-                  {endType === "count" && (
-                    <div className="space-y-2">
-                      <Label className="text-sm font-medium text-gray-700">
-                        Jumlah pengulangan
-                      </Label>
-                      <Input
-                        type="number"
-                        min="1"
-                        value={recurrenceRule.count || ""}
-                        onChange={(e) =>
-                          setRecurrenceRule({
-                            ...recurrenceRule,
-                            count: e.target.value
-                              ? parseInt(e.target.value)
-                              : undefined,
-                          })
-                        }
-                        className="h-12 rounded-xl"
-                      />
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div className="space-y-2">
+                          <Label className="text-sm font-medium text-gray-700">
+                            Frekuensi
+                          </Label>
+                          <Select
+                            value={recurrenceRule.frequency}
+                            onValueChange={(value: any) =>
+                              setRecurrenceRule({
+                                ...recurrenceRule,
+                                frequency: value,
+                              })
+                            }
+                          >
+                            <SelectTrigger className="h-12 rounded-xl">
+                              <SelectValue />
+                            </SelectTrigger>
+                            <SelectContent>
+                              <SelectItem value="DAILY">Harian</SelectItem>
+                              <SelectItem value="WEEKLY">Mingguan</SelectItem>
+                              <SelectItem value="MONTHLY">Bulanan</SelectItem>
+                              <SelectItem value="YEARLY">Tahunan</SelectItem>
+                            </SelectContent>
+                          </Select>
+                        </div>
+
+                        <div className="space-y-2">
+                          <Label className="text-sm font-medium text-gray-700">
+                            Interval
+                          </Label>
+                          <Input
+                            type="number"
+                            min="1"
+                            value={recurrenceRule.interval}
+                            onChange={(e) =>
+                              setRecurrenceRule({
+                                ...recurrenceRule,
+                                interval: parseInt(e.target.value),
+                              })
+                            }
+                            className="h-12 rounded-xl"
+                          />
+                        </div>
+                      </div>
+
+                      {recurrenceRule.frequency === "WEEKLY" && (
+                        <div className="space-y-3">
+                          <Label className="text-sm font-medium text-gray-700">
+                            Hari dalam seminggu
+                          </Label>
+                          <div className="flex flex-wrap gap-2">
+                            {dayNames.map((day, index) => (
+                              <button
+                                key={index}
+                                type="button"
+                                onClick={() => handleDayOfWeekToggle(index)}
+                                className={`px-4 py-2 rounded-xl text-sm font-medium transition-all duration-200 ${
+                                  recurrenceRule.daysOfWeek?.includes(index)
+                                    ? "bg-blue-600 text-white shadow-lg scale-105"
+                                    : "bg-white text-gray-700 border border-gray-200 hover:border-blue-300"
+                                }`}
+                              >
+                                {day}
+                              </button>
+                            ))}
+                          </div>
+                        </div>
+                      )}
+
+                      <div className="space-y-3">
+                        <Label className="text-sm font-medium text-gray-700">
+                          Berakhir
+                        </Label>
+                        <Select
+                          value={endType}
+                          onValueChange={(value: any) => setEndType(value)}
+                        >
+                          <SelectTrigger className="h-12 rounded-xl">
+                            <SelectValue />
+                          </SelectTrigger>
+                          <SelectContent>
+                            <SelectItem value="never">Tidak pernah</SelectItem>
+                            <SelectItem value="date">Pada tanggal</SelectItem>
+                            <SelectItem value="count">
+                              Setelah berapa kali
+                            </SelectItem>
+                          </SelectContent>
+                        </Select>
+                      </div>
+
+                      {endType === "date" && (
+                        <div className="space-y-2">
+                          <Label className="text-sm font-medium text-gray-700">
+                            Tanggal berakhir
+                          </Label>
+                          <Input
+                            type="date"
+                            value={
+                              recurrenceRule.endDate
+                                ? format(recurrenceRule.endDate, "yyyy-MM-dd")
+                                : ""
+                            }
+                            onChange={(e) =>
+                              setRecurrenceRule({
+                                ...recurrenceRule,
+                                endDate: e.target.value
+                                  ? new Date(e.target.value)
+                                  : undefined,
+                              })
+                            }
+                            className="h-12 rounded-xl"
+                          />
+                        </div>
+                      )}
+
+                      {endType === "count" && (
+                        <div className="space-y-2">
+                          <Label className="text-sm font-medium text-gray-700">
+                            Jumlah pengulangan
+                          </Label>
+                          <Input
+                            type="number"
+                            min="1"
+                            value={recurrenceRule.count || ""}
+                            onChange={(e) =>
+                              setRecurrenceRule({
+                                ...recurrenceRule,
+                                count: e.target.value
+                                  ? parseInt(e.target.value)
+                                  : undefined,
+                              })
+                            }
+                            className="h-12 rounded-xl"
+                          />
+                        </div>
+                      )}
                     </div>
                   )}
-                  </div>
-                )}
+                </div>
               </div>
             </div>
 
