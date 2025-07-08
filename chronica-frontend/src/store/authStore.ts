@@ -184,34 +184,16 @@ export const useAuthStore = create<AuthStore>()(
   )
 );
 
-// Custom hook to handle hydration
+// Custom hook to handle hydration safely for Next.js
 export const useAuthHydration = () => {
-  // Initialize with synchronous check
-  const [isHydrated, setIsHydrated] = useState(() => {
-    if (typeof window !== "undefined") {
-      // Try to get data from localStorage immediately on first render
-      try {
-        const stored = localStorage.getItem("auth-storage");
-        return stored !== null; // If data exists, consider it hydrated
-      } catch (error) {
-        return false;
-      }
-    }
-    return false;
-  });
-
+  // Always start with false to match server rendering
+  const [isHydrated, setIsHydrated] = useState(false);
   const store = useAuthStore();
 
   useEffect(() => {
-    // If not hydrated yet, set it after a very short delay
-    if (!isHydrated) {
-      const timer = setTimeout(() => {
-        setIsHydrated(true);
-      }, 10); // Minimal delay
-
-      return () => clearTimeout(timer);
-    }
-  }, [isHydrated]);
+    // Only run on client side after component mounts
+    setIsHydrated(true);
+  }, []);
 
   return {
     isHydrated,
