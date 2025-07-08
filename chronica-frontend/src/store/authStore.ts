@@ -186,35 +186,32 @@ export const useAuthStore = create<AuthStore>()(
 
 // Custom hook to handle hydration
 export const useAuthHydration = () => {
-  const [isHydrated, setIsHydrated] = useState(false);
+  // Initialize with synchronous check
+  const [isHydrated, setIsHydrated] = useState(() => {
+    if (typeof window !== "undefined") {
+      // Try to get data from localStorage immediately on first render
+      try {
+        const stored = localStorage.getItem("auth-storage");
+        return stored !== null; // If data exists, consider it hydrated
+      } catch (error) {
+        return false;
+      }
+    }
+    return false;
+  });
+
   const store = useAuthStore();
 
   useEffect(() => {
-    // Check if we're in browser environment
-    if (typeof window !== "undefined") {
-      // Try to get data from localStorage immediately
-      const stored = localStorage.getItem("auth-storage");
-      if (stored) {
-        try {
-          const parsedData = JSON.parse(stored);
-          if (parsedData.state) {
-            // Data exists in localStorage, we can consider it hydrated
-            setIsHydrated(true);
-            return;
-          }
-        } catch (error) {
-          // If parsing fails, continue with normal hydration
-        }
-      }
-
-      // If no data in localStorage or parsing failed, set hydrated after a short delay
+    // If not hydrated yet, set it after a very short delay
+    if (!isHydrated) {
       const timer = setTimeout(() => {
         setIsHydrated(true);
-      }, 50); // Very short delay to prevent flash
+      }, 10); // Minimal delay
 
       return () => clearTimeout(timer);
     }
-  }, []);
+  }, [isHydrated]);
 
   return {
     isHydrated,
