@@ -432,9 +432,14 @@ export function EventDialog({
 
   const dayNames = ["Min", "Sen", "Sel", "Rab", "Kam", "Jum", "Sab"];
 
+  // Don't show dialog if no calendars exist
+  if (calendars.length === 0) {
+    return null;
+  }
+
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className="w-[95vw] h-[90vh] max-w-7xl max-h-none overflow-y-auto p-0 bg-white/95 backdrop-blur-md border-0 shadow-2xl rounded-3xl">
+      <DialogContent className="!w-[95vw] !h-[95vh] !max-w-[1400px] !max-h-[95vh] overflow-y-auto p-0 bg-white/95 backdrop-blur-md border-0 shadow-2xl rounded-3xl">
         <div className="relative">
           {/* Header with gradient */}
           <div className="bg-gradient-to-r from-blue-50 via-purple-50 to-pink-50 p-8 border-b border-gray-100">
