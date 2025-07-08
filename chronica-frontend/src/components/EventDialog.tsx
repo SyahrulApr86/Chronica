@@ -160,6 +160,8 @@ export function EventDialog({
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [showErrorModal, setShowErrorModal] = useState(false);
+  const [showOverlapModal, setShowOverlapModal] = useState(false);
+  const [overlappingEvents, setOverlappingEvents] = useState<any[]>([]);
 
   // Function to convert technical errors to user-friendly messages
   const formatErrorMessage = (error: string): string => {
@@ -300,6 +302,8 @@ export function EventDialog({
       setErrorMessage(null);
       setIsSubmitting(false);
       setShowErrorModal(false);
+      setShowOverlapModal(false);
+      setOverlappingEvents([]);
     }
   }, [isOpen]);
 
@@ -397,9 +401,21 @@ export function EventDialog({
       onClose();
     } catch (error) {
       console.error("Error saving event:", error);
-      const friendlyMessage = formatErrorMessage((error as Error).message);
-      setErrorMessage(friendlyMessage);
-      setShowErrorModal(true);
+      const errorMessage = (error as Error).message;
+
+      // Check if it's an overlap error
+      if (errorMessage.includes("overlaps with existing events")) {
+        // Extract overlapping events info if available
+        // For now, we'll show a generic overlap modal
+        setOverlappingEvents([]);
+        setShowOverlapModal(true);
+      } else {
+        // Handle other errors with the error modal
+        const friendlyMessage = formatErrorMessage(errorMessage);
+        setErrorMessage(friendlyMessage);
+        setShowErrorModal(true);
+      }
+
       setIsSubmitting(false);
       // Don't close the dialog so user can fix the issue
     }
@@ -1081,6 +1097,107 @@ export function EventDialog({
                   className="flex-1 bg-gradient-to-r from-red-500 to-red-600 hover:from-red-600 hover:to-red-700 text-white border-0 rounded-xl h-11 shadow-lg hover:shadow-xl transition-all duration-200"
                 >
                   Mengerti
+                </Button>
+              </div>
+            </div>
+          </div>
+        </DialogContent>
+      </Dialog>
+
+      {/* Overlap Detection Modal */}
+      <Dialog open={showOverlapModal} onOpenChange={setShowOverlapModal}>
+        <DialogContent className="max-w-lg p-0 bg-white border-0 shadow-2xl rounded-2xl overflow-hidden">
+          <div className="relative">
+            {/* Header with orange gradient */}
+            <div className="bg-gradient-to-r from-orange-500 to-amber-500 p-6 text-white">
+              <div className="flex items-center gap-3">
+                <div className="p-2 bg-white/20 rounded-full">
+                  <svg
+                    className="w-6 h-6"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"
+                    />
+                  </svg>
+                </div>
+                <div>
+                  <h2 className="text-xl font-semibold">Waktu Bentrok!</h2>
+                  <p className="text-orange-100 text-sm">
+                    Event bertabrakan dengan jadwal lain
+                  </p>
+                </div>
+              </div>
+            </div>
+
+            {/* Content */}
+            <div className="p-6">
+              <div className="flex items-start gap-4 mb-6">
+                <div className="flex-shrink-0">
+                  <div className="w-12 h-12 bg-orange-100 rounded-full flex items-center justify-center">
+                    <svg
+                      className="w-6 h-6 text-orange-600"
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth={2}
+                        d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L3.732 16.5c-.77.833.192 2.5 1.732 2.5z"
+                      />
+                    </svg>
+                  </div>
+                </div>
+                <div className="flex-1">
+                  <h3 className="text-lg font-semibold text-gray-900 mb-2">
+                    Event Berbenturan
+                  </h3>
+                  <p className="text-gray-600 leading-relaxed mb-4">
+                    Waktu event yang Anda pilih bertabrakan dengan event lain
+                    yang tidak mengizinkan tumpang tindih.
+                  </p>
+
+                  <div className="bg-orange-50 border border-orange-200 rounded-xl p-4">
+                    <h4 className="font-medium text-orange-800 mb-2">
+                      💡 Solusi yang bisa dilakukan:
+                    </h4>
+                    <ul className="text-sm text-orange-700 space-y-1">
+                      <li>• Pilih waktu yang berbeda</li>
+                      <li>
+                        • Aktifkan "Izinkan Tumpang Tindih" di pengaturan event
+                      </li>
+                      <li>• Ubah durasi event agar tidak bentrok</li>
+                    </ul>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* Footer */}
+            <div className="px-6 pb-6">
+              <div className="flex gap-3">
+                <Button
+                  onClick={() => setShowOverlapModal(false)}
+                  variant="outline"
+                  className="flex-1 border-orange-200 text-orange-600 hover:bg-orange-50 rounded-xl h-11"
+                >
+                  Pilih Waktu Lain
+                </Button>
+                <Button
+                  onClick={() => {
+                    setFormData({ ...formData, allowOverlap: true });
+                    setShowOverlapModal(false);
+                  }}
+                  className="flex-1 bg-gradient-to-r from-orange-500 to-amber-500 hover:from-orange-600 hover:to-amber-600 text-white border-0 rounded-xl h-11 shadow-lg hover:shadow-xl transition-all duration-200"
+                >
+                  Paksa Simpan
                 </Button>
               </div>
             </div>
