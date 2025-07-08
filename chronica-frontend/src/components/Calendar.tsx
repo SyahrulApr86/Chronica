@@ -80,7 +80,7 @@ export function Calendar() {
 
   const { events, allEvents, fetchEvents, fetchAllEvents, isLoading } =
     useEventStore();
-  const { user, token, logout } = useAuthStore();
+  const { user, token, isHydrated, logout } = useAuthStore();
   const {
     calendars,
     selectedCalendar,
@@ -90,6 +90,37 @@ export function Calendar() {
     editCalendar,
     deleteCalendar,
   } = useCalendarStore();
+
+  // Show loading screen while rehydrating
+  if (!isHydrated) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-slate-900 via-purple-900 to-indigo-900 flex items-center justify-center">
+        <div className="text-center">
+          <div className="relative group mb-8">
+            <div className="absolute -inset-4 bg-gradient-to-r from-purple-500 to-pink-500 rounded-full blur-lg opacity-75 animate-pulse"></div>
+            <div className="relative p-6 bg-gradient-to-br from-purple-600 to-pink-600 rounded-2xl shadow-2xl">
+              <CalendarIcon className="h-16 w-16 text-white animate-bounce" />
+            </div>
+          </div>
+          <h1 className="text-4xl font-black text-transparent bg-clip-text bg-gradient-to-r from-white via-purple-200 to-pink-200 mb-4">
+            Chronica
+          </h1>
+          <div className="flex items-center justify-center gap-2 text-gray-300">
+            <div className="w-2 h-2 bg-white rounded-full animate-pulse"></div>
+            <div
+              className="w-2 h-2 bg-white rounded-full animate-pulse"
+              style={{ animationDelay: "0.2s" }}
+            ></div>
+            <div
+              className="w-2 h-2 bg-white rounded-full animate-pulse"
+              style={{ animationDelay: "0.4s" }}
+            ></div>
+            <span className="ml-2 text-sm">Memuat...</span>
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   // Close auth dialog when user logs in
   useEffect(() => {
