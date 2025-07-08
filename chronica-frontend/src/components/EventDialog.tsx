@@ -127,7 +127,7 @@ export function EventDialog({
   const { createEvent, editEvent, fetchEvents, fetchAllEvents } =
     useEventStore();
   const { token } = useAuthStore();
-  const { calendars, selectedCalendar } = useCalendarStore();
+  const { calendars, selectedCalendar, fetchCalendars } = useCalendarStore();
 
   const [formData, setFormData] = useState({
     title: "",
@@ -380,7 +380,7 @@ export function EventDialog({
         await createEvent(token, eventData);
       }
 
-      // Refresh events list
+      // Refresh events list and calendars
       if (token && selectedCalendar) {
         const startOfMonth = new Date(
           selectedDate.getFullYear(),
@@ -394,6 +394,7 @@ export function EventDialog({
         );
         await fetchEvents(token, startOfMonth, endOfMonth, selectedCalendar.id);
         await fetchAllEvents(token, startOfMonth, endOfMonth);
+        await fetchCalendars(token); // Refresh calendar data to update event counter
       }
 
       // Only close dialog if everything succeeded
@@ -433,7 +434,7 @@ export function EventDialog({
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto p-0 bg-white/95 backdrop-blur-md border-0 shadow-2xl rounded-3xl">
+      <DialogContent className="max-w-5xl max-h-[90vh] overflow-y-auto p-0 bg-white/95 backdrop-blur-md border-0 shadow-2xl rounded-3xl">
         <div className="relative">
           {/* Header with gradient */}
           <div className="bg-gradient-to-r from-blue-50 via-purple-50 to-pink-50 p-8 border-b border-gray-100">
@@ -463,7 +464,10 @@ export function EventDialog({
             </div>
           </div>
 
-          <form onSubmit={handleSubmit} className="p-8 space-y-8">
+          <form onSubmit={handleSubmit} className="p-8">
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+              {/* Left Column - Basic Information */}
+              <div className="space-y-6">
             {/* Basic Information */}
             <div className="space-y-6">
               <div className="flex items-center gap-3 mb-4">
@@ -569,9 +573,12 @@ export function EventDialog({
                   className="h-12 rounded-xl border-gray-200 focus:border-blue-500 focus:ring-blue-500"
                 />
               </div>
-            </div>
+                </div>
+              </div>
 
-            {/* Time Settings */}
+              {/* Right Column - Time Settings & Recurrence */}
+              <div className="space-y-6">
+                {/* Time Settings */}
             <div className="space-y-6">
               <div className="flex items-center gap-3 mb-4">
                 <div className="p-2 bg-purple-50 rounded-lg">
@@ -1003,8 +1010,9 @@ export function EventDialog({
                       />
                     </div>
                   )}
-                </div>
-              )}
+                  </div>
+                )}
+              </div>
             </div>
 
             {/* Action Buttons */}
