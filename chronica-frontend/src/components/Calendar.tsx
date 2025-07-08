@@ -303,7 +303,23 @@ export function Calendar() {
           </div>
         </div>
 
-        {/* Statistics Section - Moved to top */}
+        {/* Calendar Selector Section - Now at top */}
+        <div className="mb-10">
+          <CalendarSelector
+            calendars={calendars}
+            selectedCalendar={selectedCalendar}
+            onCalendarSelect={setSelectedCalendar}
+            onCalendarCreate={(calendarData) =>
+              createCalendar(token!, calendarData)
+            }
+            onCalendarUpdate={(id, calendarData) =>
+              editCalendar(token!, id, calendarData)
+            }
+            onCalendarDelete={(id) => deleteCalendar(token!, id)}
+          />
+        </div>
+
+        {/* Statistics & Daily Events Section - Second row */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-10">
           {/* Monthly Statistics Card */}
           <Card className="group shadow-2xl border-0 bg-white/80 backdrop-blur-xl rounded-[2rem] overflow-hidden hover:shadow-3xl transition-all duration-500">
@@ -438,22 +454,6 @@ export function Calendar() {
               )}
             </CardContent>
           </Card>
-        </div>
-
-        {/* Calendar Selector Section */}
-        <div className="mb-10">
-          <CalendarSelector
-            calendars={calendars}
-            selectedCalendar={selectedCalendar}
-            onCalendarSelect={setSelectedCalendar}
-            onCalendarCreate={(calendarData) =>
-              createCalendar(token!, calendarData)
-            }
-            onCalendarUpdate={(id, calendarData) =>
-              editCalendar(token!, id, calendarData)
-            }
-            onCalendarDelete={(id) => deleteCalendar(token!, id)}
-          />
         </div>
 
         {/* Calendar Section - Now full width */}
