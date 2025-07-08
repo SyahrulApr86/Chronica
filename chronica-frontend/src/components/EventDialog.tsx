@@ -400,17 +400,16 @@ export function EventDialog({
       setIsSubmitting(false);
       onClose();
     } catch (error) {
-      console.error("Error saving event:", error);
       const errorMessage = (error as Error).message;
 
       // Check if it's an overlap error
       if (errorMessage.includes("overlaps with existing events")) {
-        // Extract overlapping events info if available
-        // For now, we'll show a generic overlap modal
+        // Show overlap modal - no need to log this error as it's handled by UI
         setOverlappingEvents([]);
         setShowOverlapModal(true);
       } else {
         // Handle other errors with the error modal
+        console.error("Error saving event:", error);
         const friendlyMessage = formatErrorMessage(errorMessage);
         setErrorMessage(friendlyMessage);
         setShowErrorModal(true);
