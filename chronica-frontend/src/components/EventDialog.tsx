@@ -1043,6 +1043,7 @@ export function EventDialog({
       {/* Error Modal */}
       <Dialog open={showErrorModal} onOpenChange={setShowErrorModal}>
         <DialogContent className="max-w-md p-0 bg-white border-0 shadow-2xl rounded-2xl overflow-hidden">
+          <DialogTitle className="sr-only">Error Message</DialogTitle>
           <div className="relative">
             {/* Header with red gradient */}
             <div className="bg-gradient-to-r from-red-500 to-red-600 p-6 text-white">
@@ -1106,6 +1107,7 @@ export function EventDialog({
       {/* Overlap Detection Modal */}
       <Dialog open={showOverlapModal} onOpenChange={setShowOverlapModal}>
         <DialogContent className="max-w-lg p-0 bg-white border-0 shadow-2xl rounded-2xl overflow-hidden">
+          <DialogTitle className="sr-only">Event Overlap Detection</DialogTitle>
           <div className="relative">
             {/* Header with orange gradient */}
             <div className="bg-gradient-to-r from-orange-500 to-amber-500 p-6 text-white">
