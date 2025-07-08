@@ -264,7 +264,7 @@ export function EventDialog({
       });
       setEndType("never");
     }
-  }, [event, selectedDate]);
+  }, [event, selectedDate, selectedCalendar, calendars]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -274,8 +274,14 @@ export function EventDialog({
       return;
     }
 
-    if (!formData.calendarId) {
-      alert("Silakan pilih kalender terlebih dahulu");
+    // Ensure we have a calendar ID - use selected calendar or first available
+    const calendarId =
+      formData.calendarId ||
+      selectedCalendar?.id ||
+      (calendars.length > 0 ? calendars[0].id : "");
+
+    if (!calendarId) {
+      alert("Silakan buat kalender terlebih dahulu sebelum menambah event");
       return;
     }
 
@@ -306,7 +312,7 @@ export function EventDialog({
       color: formData.color,
       isRecurring: formData.isRecurring,
       allowOverlap: formData.allowOverlap,
-      calendarId: formData.calendarId || selectedCalendar?.id || "",
+      calendarId: calendarId,
       recurrenceRule: formData.isRecurring
         ? ({
             ...recurrenceRule,
@@ -418,6 +424,44 @@ export function EventDialog({
                   className="h-12 rounded-xl border-gray-200 focus:border-blue-500 focus:ring-blue-500 text-lg"
                   required
                 />
+              </div>
+
+              <div className="space-y-2">
+                <Label className="text-sm font-medium text-gray-700">
+                  Kalender
+                </Label>
+                <Select
+                  value={
+                    formData.calendarId ||
+                    selectedCalendar?.id ||
+                    (calendars.length > 0 ? calendars[0].id : "")
+                  }
+                  onValueChange={(value) =>
+                    setFormData({ ...formData, calendarId: value })
+                  }
+                >
+                  <SelectTrigger className="h-12 rounded-xl border-gray-200 focus:border-blue-500 focus:ring-blue-500">
+                    <SelectValue placeholder="Pilih kalender" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {calendars.map((calendar) => (
+                      <SelectItem key={calendar.id} value={calendar.id}>
+                        <div className="flex items-center gap-3">
+                          <div
+                            className="w-4 h-4 rounded-full"
+                            style={{ backgroundColor: calendar.color }}
+                          />
+                          <span>{calendar.name}</span>
+                          {calendar.isDefault && (
+                            <span className="text-xs bg-blue-100 text-blue-600 px-2 py-1 rounded-full font-medium">
+                              Default
+                            </span>
+                          )}
+                        </div>
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
               </div>
 
               <div className="space-y-2">
