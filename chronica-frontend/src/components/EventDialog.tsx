@@ -328,7 +328,6 @@ export function EventDialog({
       } else {
         await createEvent(token, eventData);
       }
-      onClose();
 
       // Refresh events list
       if (token && selectedCalendar) {
@@ -345,10 +344,14 @@ export function EventDialog({
         await fetchEvents(token, startOfMonth, endOfMonth, selectedCalendar.id);
         await fetchAllEvents(token, startOfMonth, endOfMonth);
       }
+
+      // Only close dialog if everything succeeded
+      onClose();
     } catch (error) {
       console.error("Error saving event:", error);
       // Show error to user
       alert("Gagal menyimpan event: " + (error as Error).message);
+      // Don't close the dialog so user can fix the issue
     }
   };
 

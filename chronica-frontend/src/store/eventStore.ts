@@ -128,7 +128,10 @@ export const useEventStore = create<EventStore>((set, get) => ({
         headers: getAuthHeaders(token),
       });
 
-      if (!response.ok) throw new Error("Failed to fetch events");
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.message || "Failed to fetch events");
+      }
 
       const events = await response.json();
       const parsedEvents = events.map((event: any) => ({
@@ -165,7 +168,10 @@ export const useEventStore = create<EventStore>((set, get) => ({
         headers: getAuthHeaders(token),
       });
 
-      if (!response.ok) throw new Error("Failed to fetch all events");
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.message || "Failed to fetch all events");
+      }
 
       const events = await response.json();
       const parsedEvents = events.map((event: any) => ({
@@ -213,7 +219,10 @@ export const useEventStore = create<EventStore>((set, get) => ({
         }),
       });
 
-      if (!response.ok) throw new Error("Failed to create event");
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.message || "Failed to create event");
+      }
 
       const newEvent = await response.json();
       const parsedEvent = {
@@ -237,6 +246,7 @@ export const useEventStore = create<EventStore>((set, get) => ({
       set({ isLoading: false });
     } catch (error) {
       set({ error: (error as Error).message, isLoading: false });
+      throw error; // Re-throw so EventDialog can catch it
     }
   },
 
@@ -262,7 +272,10 @@ export const useEventStore = create<EventStore>((set, get) => ({
         }),
       });
 
-      if (!response.ok) throw new Error("Failed to update event");
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.message || "Failed to update event");
+      }
 
       const updatedEvent = await response.json();
       const parsedEvent = {
@@ -286,6 +299,7 @@ export const useEventStore = create<EventStore>((set, get) => ({
       set({ isLoading: false });
     } catch (error) {
       set({ error: (error as Error).message, isLoading: false });
+      throw error; // Re-throw so EventDialog can catch it
     }
   },
 
@@ -297,7 +311,10 @@ export const useEventStore = create<EventStore>((set, get) => ({
         headers: getAuthHeaders(token),
       });
 
-      if (!response.ok) throw new Error("Failed to delete event");
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.message || "Failed to delete event");
+      }
 
       get().deleteEvent(id);
       set({ isLoading: false });
