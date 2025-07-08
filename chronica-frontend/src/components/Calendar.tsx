@@ -72,24 +72,8 @@ const calculateMonthlyDuration = (events: any[], date: Date): string => {
 };
 
 export function Calendar() {
-  const [selectedDate, setSelectedDate] = useState<Date>(new Date());
-  const [isEventDialogOpen, setIsEventDialogOpen] = useState(false);
-  const [isAuthDialogOpen, setIsAuthDialogOpen] = useState(false);
-  const [editingEvent, setEditingEvent] = useState(null);
-  const [viewMode, setViewMode] = useState<"month" | "week">("month");
-
-  const { events, allEvents, fetchEvents, fetchAllEvents, isLoading } =
-    useEventStore();
+  // Check hydration status first before any other hooks
   const { user, token, isHydrated, logout } = useAuthStore();
-  const {
-    calendars,
-    selectedCalendar,
-    setSelectedCalendar,
-    fetchCalendars,
-    createCalendar,
-    editCalendar,
-    deleteCalendar,
-  } = useCalendarStore();
 
   // Show loading screen while rehydrating
   if (!isHydrated) {
@@ -121,6 +105,24 @@ export function Calendar() {
       </div>
     );
   }
+
+  const [selectedDate, setSelectedDate] = useState<Date>(new Date());
+  const [isEventDialogOpen, setIsEventDialogOpen] = useState(false);
+  const [isAuthDialogOpen, setIsAuthDialogOpen] = useState(false);
+  const [editingEvent, setEditingEvent] = useState(null);
+  const [viewMode, setViewMode] = useState<"month" | "week">("month");
+
+  const { events, allEvents, fetchEvents, fetchAllEvents, isLoading } =
+    useEventStore();
+  const {
+    calendars,
+    selectedCalendar,
+    setSelectedCalendar,
+    fetchCalendars,
+    createCalendar,
+    editCalendar,
+    deleteCalendar,
+  } = useCalendarStore();
 
   // Close auth dialog when user logs in
   useEffect(() => {
