@@ -1169,11 +1169,9 @@ export function EventDialog({
                       💡 Solusi yang bisa dilakukan:
                     </h4>
                     <ul className="text-sm text-orange-700 space-y-1">
-                      <li>• Pilih waktu yang berbeda</li>
-                      <li>
-                        • Aktifkan "Izinkan Tumpang Tindih" di pengaturan event
-                      </li>
+                      <li>• Pilih waktu yang berbeda untuk event</li>
                       <li>• Ubah durasi event agar tidak bentrok</li>
+                      <li>• Reschedule salah satu event yang konflik</li>
                     </ul>
                   </div>
                 </div>
@@ -1182,24 +1180,12 @@ export function EventDialog({
 
             {/* Footer */}
             <div className="px-6 pb-6">
-              <div className="flex gap-3">
-                <Button
-                  onClick={() => setShowOverlapModal(false)}
-                  variant="outline"
-                  className="flex-1 border-orange-200 text-orange-600 hover:bg-orange-50 rounded-xl h-11"
-                >
-                  Pilih Waktu Lain
-                </Button>
-                <Button
-                  onClick={() => {
-                    setFormData({ ...formData, allowOverlap: true });
-                    setShowOverlapModal(false);
-                  }}
-                  className="flex-1 bg-gradient-to-r from-orange-500 to-amber-500 hover:from-orange-600 hover:to-amber-600 text-white border-0 rounded-xl h-11 shadow-lg hover:shadow-xl transition-all duration-200"
-                >
-                  Paksa Simpan
-                </Button>
-              </div>
+              <Button
+                onClick={() => setShowOverlapModal(false)}
+                className="w-full bg-gradient-to-r from-orange-500 to-amber-500 hover:from-orange-600 hover:to-amber-600 text-white border-0 rounded-xl h-11 shadow-lg hover:shadow-xl transition-all duration-200"
+              >
+                Mengerti, Pilih Waktu Lain
+              </Button>
             </div>
           </div>
         </DialogContent>
