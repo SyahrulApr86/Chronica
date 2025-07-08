@@ -8,12 +8,12 @@ export declare class CalendarsController {
             events: number;
         };
     } & {
-        id: string;
-        name: string;
         description: string | null;
         color: string;
+        name: string;
         isDefault: boolean;
         userId: string;
+        id: string;
         createdAt: Date;
         updatedAt: Date;
     }>;
@@ -22,53 +22,53 @@ export declare class CalendarsController {
             events: number;
         };
     } & {
-        id: string;
-        name: string;
         description: string | null;
         color: string;
+        name: string;
         isDefault: boolean;
         userId: string;
+        id: string;
         createdAt: Date;
         updatedAt: Date;
     })[]>;
     getDefaultCalendar(req: any): Promise<{
-        id: string;
-        name: string;
         description: string | null;
         color: string;
+        name: string;
         isDefault: boolean;
         userId: string;
+        id: string;
         createdAt: Date;
         updatedAt: Date;
     } | null>;
     getCalendarById(req: any, id: string): Promise<{
         events: {
-            id: string;
-            description: string | null;
-            color: string;
-            userId: string;
-            createdAt: Date;
-            updatedAt: Date;
             title: string;
+            description: string | null;
             startTime: Date;
             endTime: Date;
             allDay: boolean;
             location: string | null;
+            color: string;
             isRecurring: boolean;
             allowOverlap: boolean;
             calendarId: string;
+            userId: string;
+            id: string;
+            createdAt: Date;
+            updatedAt: Date;
             parentEventId: string | null;
         }[];
         _count: {
             events: number;
         };
     } & {
-        id: string;
-        name: string;
         description: string | null;
         color: string;
+        name: string;
         isDefault: boolean;
         userId: string;
+        id: string;
         createdAt: Date;
         updatedAt: Date;
     }>;
@@ -77,12 +77,12 @@ export declare class CalendarsController {
             events: number;
         };
     } & {
-        id: string;
-        name: string;
         description: string | null;
         color: string;
+        name: string;
         isDefault: boolean;
         userId: string;
+        id: string;
         createdAt: Date;
         updatedAt: Date;
     }>;
