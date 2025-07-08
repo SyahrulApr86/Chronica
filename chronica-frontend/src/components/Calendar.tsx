@@ -345,7 +345,7 @@ export function Calendar() {
                   <div className="flex items-center gap-2 text-blue-600 bg-blue-50 px-4 py-2 rounded-xl">
                     <div className="w-2 h-2 bg-blue-500 rounded-full animate-pulse"></div>
                     <span className="text-sm font-medium">
-                      Klik "Buat Kalender Baru" di atas untuk memulai
+                      Klik "Tambah" di atas untuk memulai
                     </span>
                   </div>
                 </div>
