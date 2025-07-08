@@ -24,6 +24,7 @@ import {
 } from "date-fns";
 import { useEventStore, Event } from "@/store/eventStore";
 import { useAuthStore } from "@/store/authStore";
+import { useCalendarStore } from "@/store/calendarStore";
 
 interface EventListProps {
   events: Event[];
@@ -55,6 +56,7 @@ const formatDuration = (startTime: Date, endTime: Date): string => {
 export function EventList({ events, onEventEdit }: EventListProps) {
   const { removeEvent, isLoading } = useEventStore();
   const { token } = useAuthStore();
+  const { fetchCalendars } = useCalendarStore();
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [eventToDelete, setEventToDelete] = useState<Event | null>(null);
   const [isDeleting, setIsDeleting] = useState(false);
@@ -70,6 +72,7 @@ export function EventList({ events, onEventEdit }: EventListProps) {
     setIsDeleting(true);
     try {
       await removeEvent(token, eventToDelete.id);
+      await fetchCalendars(token); // Refresh calendar data to update event counter
       setShowDeleteModal(false);
       setEventToDelete(null);
     } catch (error) {
