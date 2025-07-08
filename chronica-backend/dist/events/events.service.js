@@ -52,9 +52,11 @@ let EventsService = class EventsService {
                             daysOfWeek: createEventDto.recurrenceRule.daysOfWeek || [],
                             dayOfMonth: createEventDto.recurrenceRule.dayOfMonth,
                             monthOfYear: createEventDto.recurrenceRule.monthOfYear,
-                            endDate: createEventDto.recurrenceRule.endDate ? new Date(createEventDto.recurrenceRule.endDate) : undefined,
+                            endDate: createEventDto.recurrenceRule.endDate
+                                ? new Date(createEventDto.recurrenceRule.endDate)
+                                : undefined,
                             count: createEventDto.recurrenceRule.count,
-                            exceptions: createEventDto.recurrenceRule.exceptions?.map(date => new Date(date)) || [],
+                            exceptions: createEventDto.recurrenceRule.exceptions?.map((date) => new Date(date)) || [],
                         },
                     }
                     : undefined,
@@ -71,6 +73,52 @@ let EventsService = class EventsService {
         if (calendarId) {
             where.calendarId = calendarId;
         }
+        if (startDate && endDate) {
+            where.OR = [
+                {
+                    startTime: {
+                        gte: startDate,
+                        lte: endDate,
+                    },
+                },
+                {
+                    endTime: {
+                        gte: startDate,
+                        lte: endDate,
+                    },
+                },
+                {
+                    AND: [
+                        { startTime: { lte: startDate } },
+                        { endTime: { gte: endDate } },
+                    ],
+                },
+            ];
+        }
+        const events = await this.prisma.event.findMany({
+            where,
+            include: {
+                recurrenceRule: true,
+                user: true,
+            },
+            orderBy: {
+                startTime: 'asc',
+            },
+        });
+        const expandedEvents = [];
+        for (const event of events) {
+            if (event.isRecurring && event.recurrenceRule) {
+                const instances = this.generateRecurringInstances(event, startDate, endDate);
+                expandedEvents.push(...instances);
+            }
+            else {
+                expandedEvents.push(event);
+            }
+        }
+        return expandedEvents;
+    }
+    async getAllEvents(userId, startDate, endDate) {
+        const where = { userId };
         if (startDate && endDate) {
             where.OR = [
                 {
@@ -133,9 +181,14 @@ let EventsService = class EventsService {
     }
     async updateEvent(userId, eventId, updateEventDto) {
         const existingEvent = await this.getEventById(userId, eventId);
-        const startTime = updateEventDto.startTime ? new Date(updateEventDto.startTime) : existingEvent.startTime;
-        const endTime = updateEventDto.endTime ? new Date(updateEventDto.endTime) : existingEvent.endTime;
-        if (updateEventDto.allowOverlap === false || (!updateEventDto.allowOverlap && !existingEvent.allowOverlap)) {
+        const startTime = updateEventDto.startTime
+            ? new Date(updateEventDto.startTime)
+            : existingEvent.startTime;
+        const endTime = updateEventDto.endTime
+            ? new Date(updateEventDto.endTime)
+            : existingEvent.endTime;
+        if (updateEventDto.allowOverlap === false ||
+            (!updateEventDto.allowOverlap && !existingEvent.allowOverlap)) {
             if (updateEventDto.startTime || updateEventDto.endTime) {
                 await this.checkForOverlap(userId, startTime, endTime, eventId);
             }
@@ -161,9 +214,11 @@ let EventsService = class EventsService {
                                 daysOfWeek: updateEventDto.recurrenceRule.daysOfWeek || [],
                                 dayOfMonth: updateEventDto.recurrenceRule.dayOfMonth,
                                 monthOfYear: updateEventDto.recurrenceRule.monthOfYear,
-                                endDate: updateEventDto.recurrenceRule.endDate ? new Date(updateEventDto.recurrenceRule.endDate) : undefined,
+                                endDate: updateEventDto.recurrenceRule.endDate
+                                    ? new Date(updateEventDto.recurrenceRule.endDate)
+                                    : undefined,
                                 count: updateEventDto.recurrenceRule.count,
-                                exceptions: updateEventDto.recurrenceRule.exceptions?.map(date => new Date(date)) || [],
+                                exceptions: updateEventDto.recurrenceRule.exceptions?.map((date) => new Date(date)) || [],
                             },
                             update: {
                                 frequency: updateEventDto.recurrenceRule.frequency,
@@ -171,9 +226,11 @@ let EventsService = class EventsService {
                                 daysOfWeek: updateEventDto.recurrenceRule.daysOfWeek || [],
                                 dayOfMonth: updateEventDto.recurrenceRule.dayOfMonth,
                                 monthOfYear: updateEventDto.recurrenceRule.monthOfYear,
-                                endDate: updateEventDto.recurrenceRule.endDate ? new Date(updateEventDto.recurrenceRule.endDate) : undefined,
+                                endDate: updateEventDto.recurrenceRule.endDate
+                                    ? new Date(updateEventDto.recurrenceRule.endDate)
+                                    : undefined,
                                 count: updateEventDto.recurrenceRule.count,
-                                exceptions: updateEventDto.recurrenceRule.exceptions?.map(date => new Date(date)) || [],
+                                exceptions: updateEventDto.recurrenceRule.exceptions?.map((date) => new Date(date)) || [],
                             },
                         },
                     }
@@ -270,13 +327,13 @@ let EventsService = class EventsService {
                     let nextDay = sortedDays.find((day) => day > currentDay);
                     if (!nextDay) {
                         nextDay = sortedDays[0];
-                        nextDate.setDate(nextDate.getDate() + (7 * rule.interval));
+                        nextDate.setDate(nextDate.getDate() + 7 * rule.interval);
                     }
                     const daysToAdd = nextDay - currentDay;
                     nextDate.setDate(nextDate.getDate() + daysToAdd);
                 }
                 else {
-                    nextDate.setDate(nextDate.getDate() + (7 * rule.interval));
+                    nextDate.setDate(nextDate.getDate() + 7 * rule.interval);
                 }
                 break;
             case prisma_1.RecurrenceFrequency.MONTHLY:

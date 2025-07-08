@@ -25,6 +25,11 @@ let EventsController = class EventsController {
     async createEvent(createEventDto, req) {
         return this.eventsService.createEvent(req.user.id, createEventDto);
     }
+    async getAllEvents(req, startDate, endDate) {
+        const start = startDate ? new Date(startDate) : undefined;
+        const end = endDate ? new Date(endDate) : undefined;
+        return this.eventsService.getAllEvents(req.user.id, start, end);
+    }
     async getEvents(req, startDate, endDate, calendarId) {
         const start = startDate ? new Date(startDate) : undefined;
         const end = endDate ? new Date(endDate) : undefined;
@@ -50,6 +55,15 @@ __decorate([
     __metadata("design:paramtypes", [event_dto_1.CreateEventDto, Object]),
     __metadata("design:returntype", Promise)
 ], EventsController.prototype, "createEvent", null);
+__decorate([
+    (0, common_1.Get)('all'),
+    __param(0, (0, common_1.Request)()),
+    __param(1, (0, common_1.Query)('startDate')),
+    __param(2, (0, common_1.Query)('endDate')),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [Object, String, String]),
+    __metadata("design:returntype", Promise)
+], EventsController.prototype, "getAllEvents", null);
 __decorate([
     (0, common_1.Get)(),
     __param(0, (0, common_1.Request)()),

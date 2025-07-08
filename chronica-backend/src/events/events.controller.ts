@@ -23,11 +23,20 @@ export class EventsController {
 
   @Post()
   @HttpCode(HttpStatus.CREATED)
-  async createEvent(
-    @Body() createEventDto: CreateEventDto,
-    @Request() req,
-  ) {
+  async createEvent(@Body() createEventDto: CreateEventDto, @Request() req) {
     return this.eventsService.createEvent(req.user.id, createEventDto);
+  }
+
+  @Get('all')
+  async getAllEvents(
+    @Request() req,
+    @Query('startDate') startDate?: string,
+    @Query('endDate') endDate?: string,
+  ) {
+    const start = startDate ? new Date(startDate) : undefined;
+    const end = endDate ? new Date(endDate) : undefined;
+
+    return this.eventsService.getAllEvents(req.user.id, start, end);
   }
 
   @Get()
@@ -39,15 +48,12 @@ export class EventsController {
   ) {
     const start = startDate ? new Date(startDate) : undefined;
     const end = endDate ? new Date(endDate) : undefined;
-    
+
     return this.eventsService.getEvents(req.user.id, start, end, calendarId);
   }
 
   @Get(':id')
-  async getEventById(
-    @Param('id') eventId: string,
-    @Request() req,
-  ) {
+  async getEventById(@Param('id') eventId: string, @Request() req) {
     return this.eventsService.getEventById(req.user.id, eventId);
   }
 
@@ -62,10 +68,7 @@ export class EventsController {
 
   @Delete(':id')
   @HttpCode(HttpStatus.NO_CONTENT)
-  async deleteEvent(
-    @Param('id') eventId: string,
-    @Request() req,
-  ) {
+  async deleteEvent(@Param('id') eventId: string, @Request() req) {
     return this.eventsService.deleteEvent(req.user.id, eventId);
   }
-} 
+}

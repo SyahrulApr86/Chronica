@@ -1,4 +1,9 @@
-import { Injectable, ConflictException, NotFoundException, BadRequestException } from '@nestjs/common';
+import {
+  Injectable,
+  ConflictException,
+  NotFoundException,
+  BadRequestException,
+} from '@nestjs/common';
 import { PrismaService } from '../prisma.service';
 import { CreateEventDto, UpdateEventDto } from './dto/event.dto';
 import { Event, RecurrenceFrequency } from '../../generated/prisma';
@@ -11,19 +16,30 @@ export class EventsService {
     private calendarsService: CalendarsService,
   ) {}
 
-  async createEvent(userId: string, createEventDto: CreateEventDto): Promise<Event> {
+  async createEvent(
+    userId: string,
+    createEventDto: CreateEventDto,
+  ): Promise<Event> {
     const startTime = new Date(createEventDto.startTime);
     const endTime = new Date(createEventDto.endTime);
 
     // Get calendar ID - use provided or throw error if none
     const calendarId = createEventDto.calendarId;
     if (!calendarId) {
-      throw new BadRequestException('Calendar ID is required. Please select a calendar first.');
+      throw new BadRequestException(
+        'Calendar ID is required. Please select a calendar first.',
+      );
     }
 
     // Check for overlapping events if overlap is not allowed
     if (!createEventDto.allowOverlap) {
-      await this.checkForOverlap(userId, startTime, endTime, undefined, calendarId);
+      await this.checkForOverlap(
+        userId,
+        startTime,
+        endTime,
+        undefined,
+        calendarId,
+      );
     }
 
     const event = await this.prisma.event.create({
@@ -47,9 +63,14 @@ export class EventsService {
                 daysOfWeek: createEventDto.recurrenceRule.daysOfWeek || [],
                 dayOfMonth: createEventDto.recurrenceRule.dayOfMonth,
                 monthOfYear: createEventDto.recurrenceRule.monthOfYear,
-                endDate: createEventDto.recurrenceRule.endDate ? new Date(createEventDto.recurrenceRule.endDate) : undefined,
+                endDate: createEventDto.recurrenceRule.endDate
+                  ? new Date(createEventDto.recurrenceRule.endDate)
+                  : undefined,
                 count: createEventDto.recurrenceRule.count,
-                exceptions: createEventDto.recurrenceRule.exceptions?.map(date => new Date(date)) || [],
+                exceptions:
+                  createEventDto.recurrenceRule.exceptions?.map(
+                    (date) => new Date(date),
+                  ) || [],
               },
             }
           : undefined,
@@ -63,7 +84,12 @@ export class EventsService {
     return event;
   }
 
-  async getEvents(userId: string, startDate?: Date, endDate?: Date, calendarId?: string): Promise<Event[]> {
+  async getEvents(
+    userId: string,
+    startDate?: Date,
+    endDate?: Date,
+    calendarId?: string,
+  ): Promise<Event[]> {
     const where: any = { userId };
 
     if (calendarId) {
@@ -108,7 +134,70 @@ export class EventsService {
     const expandedEvents: Event[] = [];
     for (const event of events) {
       if (event.isRecurring && event.recurrenceRule) {
-        const instances = this.generateRecurringInstances(event, startDate, endDate);
+        const instances = this.generateRecurringInstances(
+          event,
+          startDate,
+          endDate,
+        );
+        expandedEvents.push(...instances);
+      } else {
+        expandedEvents.push(event);
+      }
+    }
+
+    return expandedEvents;
+  }
+
+  async getAllEvents(
+    userId: string,
+    startDate?: Date,
+    endDate?: Date,
+  ): Promise<Event[]> {
+    const where: any = { userId };
+
+    if (startDate && endDate) {
+      where.OR = [
+        {
+          startTime: {
+            gte: startDate,
+            lte: endDate,
+          },
+        },
+        {
+          endTime: {
+            gte: startDate,
+            lte: endDate,
+          },
+        },
+        {
+          AND: [
+            { startTime: { lte: startDate } },
+            { endTime: { gte: endDate } },
+          ],
+        },
+      ];
+    }
+
+    const events = await this.prisma.event.findMany({
+      where,
+      include: {
+        recurrenceRule: true,
+        user: true,
+      },
+      orderBy: {
+        startTime: 'asc',
+      },
+    });
+
+    // Generate recurring event instances
+    const expandedEvents: Event[] = [];
+    for (const event of events) {
+      if (event.isRecurring && event.recurrenceRule) {
+        const instances = this.generateRecurringInstances(
+          event,
+          startDate,
+          endDate,
+        );
         expandedEvents.push(...instances);
       } else {
         expandedEvents.push(event);
@@ -137,14 +226,25 @@ export class EventsService {
     return event;
   }
 
-  async updateEvent(userId: string, eventId: string, updateEventDto: UpdateEventDto): Promise<Event> {
+  async updateEvent(
+    userId: string,
+    eventId: string,
+    updateEventDto: UpdateEventDto,
+  ): Promise<Event> {
     const existingEvent = await this.getEventById(userId, eventId);
 
-    const startTime = updateEventDto.startTime ? new Date(updateEventDto.startTime) : existingEvent.startTime;
-    const endTime = updateEventDto.endTime ? new Date(updateEventDto.endTime) : existingEvent.endTime;
+    const startTime = updateEventDto.startTime
+      ? new Date(updateEventDto.startTime)
+      : existingEvent.startTime;
+    const endTime = updateEventDto.endTime
+      ? new Date(updateEventDto.endTime)
+      : existingEvent.endTime;
 
     // Check for overlapping events if overlap is not allowed
-    if (updateEventDto.allowOverlap === false || (!updateEventDto.allowOverlap && !existingEvent.allowOverlap)) {
+    if (
+      updateEventDto.allowOverlap === false ||
+      (!updateEventDto.allowOverlap && !existingEvent.allowOverlap)
+    ) {
       if (updateEventDto.startTime || updateEventDto.endTime) {
         await this.checkForOverlap(userId, startTime, endTime, eventId);
       }
@@ -171,9 +271,14 @@ export class EventsService {
                   daysOfWeek: updateEventDto.recurrenceRule.daysOfWeek || [],
                   dayOfMonth: updateEventDto.recurrenceRule.dayOfMonth,
                   monthOfYear: updateEventDto.recurrenceRule.monthOfYear,
-                  endDate: updateEventDto.recurrenceRule.endDate ? new Date(updateEventDto.recurrenceRule.endDate) : undefined,
+                  endDate: updateEventDto.recurrenceRule.endDate
+                    ? new Date(updateEventDto.recurrenceRule.endDate)
+                    : undefined,
                   count: updateEventDto.recurrenceRule.count,
-                  exceptions: updateEventDto.recurrenceRule.exceptions?.map(date => new Date(date)) || [],
+                  exceptions:
+                    updateEventDto.recurrenceRule.exceptions?.map(
+                      (date) => new Date(date),
+                    ) || [],
                 },
                 update: {
                   frequency: updateEventDto.recurrenceRule.frequency,
@@ -181,9 +286,14 @@ export class EventsService {
                   daysOfWeek: updateEventDto.recurrenceRule.daysOfWeek || [],
                   dayOfMonth: updateEventDto.recurrenceRule.dayOfMonth,
                   monthOfYear: updateEventDto.recurrenceRule.monthOfYear,
-                  endDate: updateEventDto.recurrenceRule.endDate ? new Date(updateEventDto.recurrenceRule.endDate) : undefined,
+                  endDate: updateEventDto.recurrenceRule.endDate
+                    ? new Date(updateEventDto.recurrenceRule.endDate)
+                    : undefined,
                   count: updateEventDto.recurrenceRule.count,
-                  exceptions: updateEventDto.recurrenceRule.exceptions?.map(date => new Date(date)) || [],
+                  exceptions:
+                    updateEventDto.recurrenceRule.exceptions?.map(
+                      (date) => new Date(date),
+                    ) || [],
                 },
               },
             }
@@ -200,7 +310,7 @@ export class EventsService {
 
   async deleteEvent(userId: string, eventId: string): Promise<void> {
     const event = await this.getEventById(userId, eventId);
-    
+
     await this.prisma.event.delete({
       where: { id: eventId },
     });
@@ -242,11 +352,17 @@ export class EventsService {
     });
 
     if (overlappingEvents.length > 0) {
-      throw new ConflictException('Event overlaps with existing events that do not allow overlap');
+      throw new ConflictException(
+        'Event overlaps with existing events that do not allow overlap',
+      );
     }
   }
 
-  private generateRecurringInstances(event: any, startDate?: Date, endDate?: Date): Event[] {
+  private generateRecurringInstances(
+    event: any,
+    startDate?: Date,
+    endDate?: Date,
+  ): Event[] {
     if (!event.recurrenceRule) return [event];
 
     const instances: Event[] = [];
@@ -264,7 +380,8 @@ export class EventsService {
       if (currentDate >= minDate) {
         // Check if this date is not in exceptions
         const isException = rule.exceptions.some(
-          (exception: Date) => exception.toDateString() === currentDate.toDateString(),
+          (exception: Date) =>
+            exception.toDateString() === currentDate.toDateString(),
         );
 
         if (!isException) {
@@ -304,18 +421,20 @@ export class EventsService {
         if (rule.daysOfWeek && rule.daysOfWeek.length > 0) {
           // Find next day of week
           const currentDay = nextDate.getDay();
-          const sortedDays = rule.daysOfWeek.sort((a: number, b: number) => a - b);
-          
+          const sortedDays = rule.daysOfWeek.sort(
+            (a: number, b: number) => a - b,
+          );
+
           let nextDay = sortedDays.find((day: number) => day > currentDay);
           if (!nextDay) {
             nextDay = sortedDays[0];
-            nextDate.setDate(nextDate.getDate() + (7 * rule.interval));
+            nextDate.setDate(nextDate.getDate() + 7 * rule.interval);
           }
-          
+
           const daysToAdd = nextDay - currentDay;
           nextDate.setDate(nextDate.getDate() + daysToAdd);
         } else {
-          nextDate.setDate(nextDate.getDate() + (7 * rule.interval));
+          nextDate.setDate(nextDate.getDate() + 7 * rule.interval);
         }
         break;
 
@@ -341,4 +460,4 @@ export class EventsService {
 
     return nextDate;
   }
-} 
+}

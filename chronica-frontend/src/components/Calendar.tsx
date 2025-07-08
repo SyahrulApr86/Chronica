@@ -78,7 +78,8 @@ export function Calendar() {
   const [editingEvent, setEditingEvent] = useState(null);
   const [viewMode, setViewMode] = useState<"month" | "week">("month");
 
-  const { events, fetchEvents, isLoading } = useEventStore();
+  const { events, allEvents, fetchEvents, fetchAllEvents, isLoading } =
+    useEventStore();
   const { user, token, logout } = useAuthStore();
   const {
     calendars,
@@ -117,9 +118,19 @@ export function Calendar() {
         selectedDate.getMonth() + 1,
         0
       );
+      // Fetch events for selected calendar
       fetchEvents(token, startOfMonth, endOfMonth, selectedCalendar.id);
+      // Fetch all events for statistics
+      fetchAllEvents(token, startOfMonth, endOfMonth);
     }
-  }, [user, token, selectedDate, selectedCalendar, fetchEvents]);
+  }, [
+    user,
+    token,
+    selectedDate,
+    selectedCalendar,
+    fetchEvents,
+    fetchAllEvents,
+  ]);
 
   // Don't allow creating events if no calendar selected
   const canCreateEvent = selectedCalendar !== null;
@@ -332,7 +343,7 @@ export function Calendar() {
                   </div>
                   <div className="text-right">
                     <span className="text-3xl font-black text-blue-600">
-                      {events.length}
+                      {allEvents.length}
                     </span>
                     <div className="text-xs text-blue-500 font-medium">
                       events
@@ -359,7 +370,7 @@ export function Calendar() {
                   </div>
                   <div className="text-right">
                     <span className="text-lg font-black text-purple-600">
-                      {calculateMonthlyDuration(events, selectedDate)}
+                      {calculateMonthlyDuration(allEvents, selectedDate)}
                     </span>
                   </div>
                 </div>
@@ -510,13 +521,13 @@ export function Calendar() {
                     <div className="px-4 py-2 bg-gradient-to-r from-blue-500/10 to-blue-600/10 backdrop-blur-sm border border-blue-200/50 text-blue-700 rounded-2xl text-sm font-semibold shadow-lg">
                       <span className="flex items-center gap-2">
                         <div className="w-2 h-2 bg-blue-500 rounded-full animate-pulse"></div>
-                        {events.length} Events
+                        {allEvents.length} Events
                       </span>
                     </div>
                     <div className="flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-purple-500/10 to-purple-600/10 backdrop-blur-sm border border-purple-200/50 text-purple-700 rounded-2xl text-sm font-semibold shadow-lg">
                       <Timer className="h-4 w-4" />
                       <span>
-                        {calculateMonthlyDuration(events, selectedDate)}
+                        {calculateMonthlyDuration(allEvents, selectedDate)}
                       </span>
                     </div>
                   </div>
@@ -665,13 +676,13 @@ export function Calendar() {
                     <div className="px-4 py-2 bg-gradient-to-r from-blue-500/10 to-blue-600/10 backdrop-blur-sm border border-blue-200/50 text-blue-700 rounded-2xl text-sm font-semibold shadow-lg">
                       <span className="flex items-center gap-2">
                         <div className="w-2 h-2 bg-blue-500 rounded-full animate-pulse"></div>
-                        {events.length} Events
+                        {allEvents.length} Events
                       </span>
                     </div>
                     <div className="flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-purple-500/10 to-purple-600/10 backdrop-blur-sm border border-purple-200/50 text-purple-700 rounded-2xl text-sm font-semibold shadow-lg">
                       <Timer className="h-4 w-4" />
                       <span>
-                        {calculateMonthlyDuration(events, selectedDate)}
+                        {calculateMonthlyDuration(allEvents, selectedDate)}
                       </span>
                     </div>
                   </div>
