@@ -159,6 +159,32 @@ export function EventDialog({
   const [endType, setEndType] = useState<"never" | "date" | "count">("never");
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [showErrorModal, setShowErrorModal] = useState(false);
+
+  // Function to convert technical errors to user-friendly messages
+  const formatErrorMessage = (error: string): string => {
+    if (error.includes("overlaps with existing events")) {
+      return "Event ini bertabrakan dengan event lain yang tidak mengizinkan tumpang tindih. Silakan pilih waktu yang berbeda atau ubah pengaturan overlap.";
+    }
+    if (error.includes("authentication") || error.includes("token")) {
+      return "Sesi Anda telah berakhir. Silakan login kembali.";
+    }
+    if (error.includes("calendar not found")) {
+      return "Kalender tidak ditemukan. Silakan pilih kalender yang valid.";
+    }
+    if (error.includes("invalid date")) {
+      return "Format tanggal tidak valid. Silakan periksa kembali tanggal dan waktu.";
+    }
+    if (error.includes("title is required")) {
+      return "Judul event wajib diisi.";
+    }
+    if (error.includes("end time must be after start time")) {
+      return "Waktu selesai harus setelah waktu mulai.";
+    }
+
+    // Default fallback for unknown errors
+    return "Terjadi kesalahan saat menyimpan event. Silakan coba lagi atau hubungi administrator.";
+  };
 
   // Helper options for dropdowns
   const hourOptions = Array.from({ length: 24 }, (_, i) => ({
@@ -273,6 +299,7 @@ export function EventDialog({
     if (isOpen) {
       setErrorMessage(null);
       setIsSubmitting(false);
+      setShowErrorModal(false);
     }
   }, [isOpen]);
 
@@ -282,9 +309,8 @@ export function EventDialog({
     setIsSubmitting(true);
 
     if (!token) {
-      setErrorMessage(
-        "Token autentikasi tidak ditemukan. Silakan login ulang."
-      );
+      setErrorMessage("Sesi Anda telah berakhir. Silakan login kembali.");
+      setShowErrorModal(true);
       setIsSubmitting(false);
       return;
     }
@@ -299,6 +325,7 @@ export function EventDialog({
       setErrorMessage(
         "Silakan buat kalender terlebih dahulu sebelum menambah event"
       );
+      setShowErrorModal(true);
       setIsSubmitting(false);
       return;
     }
@@ -306,6 +333,7 @@ export function EventDialog({
     // Ensure we have valid dates
     if (!formData.startDate || !formData.endDate) {
       setErrorMessage("Tanggal mulai dan selesai harus diisi");
+      setShowErrorModal(true);
       setIsSubmitting(false);
       return;
     }
@@ -369,7 +397,9 @@ export function EventDialog({
       onClose();
     } catch (error) {
       console.error("Error saving event:", error);
-      setErrorMessage((error as Error).message);
+      const friendlyMessage = formatErrorMessage((error as Error).message);
+      setErrorMessage(friendlyMessage);
+      setShowErrorModal(true);
       setIsSubmitting(false);
       // Don't close the dialog so user can fix the issue
     }
@@ -417,34 +447,6 @@ export function EventDialog({
               </Button>
             </div>
           </div>
-
-          {/* Error Alert */}
-          {errorMessage && (
-            <div className="mx-8 mt-6 p-4 bg-red-50 border border-red-200 rounded-xl">
-              <div className="flex items-start gap-3">
-                <div className="flex-shrink-0">
-                  <div className="w-5 h-5 bg-red-500 rounded-full flex items-center justify-center">
-                    <X className="h-3 w-3 text-white" />
-                  </div>
-                </div>
-                <div className="flex-1">
-                  <h3 className="text-sm font-medium text-red-800 mb-1">
-                    Terjadi Kesalahan
-                  </h3>
-                  <p className="text-sm text-red-700">{errorMessage}</p>
-                </div>
-                <Button
-                  type="button"
-                  variant="ghost"
-                  size="sm"
-                  onClick={() => setErrorMessage(null)}
-                  className="flex-shrink-0 h-6 w-6 p-0 text-red-500 hover:text-red-700 hover:bg-red-100"
-                >
-                  <X className="h-4 w-4" />
-                </Button>
-              </div>
-            </div>
-          )}
 
           <form onSubmit={handleSubmit} className="p-8 space-y-8">
             {/* Basic Information */}
@@ -1022,6 +1024,69 @@ export function EventDialog({
           </form>
         </div>
       </DialogContent>
+
+      {/* Error Modal */}
+      <Dialog open={showErrorModal} onOpenChange={setShowErrorModal}>
+        <DialogContent className="max-w-md p-0 bg-white border-0 shadow-2xl rounded-2xl overflow-hidden">
+          <div className="relative">
+            {/* Header with red gradient */}
+            <div className="bg-gradient-to-r from-red-500 to-red-600 p-6 text-white">
+              <div className="flex items-center gap-3">
+                <div className="p-2 bg-white/20 rounded-full">
+                  <X className="h-5 w-5" />
+                </div>
+                <div>
+                  <h2 className="text-lg font-semibold">Oops!</h2>
+                  <p className="text-red-100 text-sm">Terjadi kesalahan</p>
+                </div>
+              </div>
+            </div>
+
+            {/* Content */}
+            <div className="p-6">
+              <div className="flex items-start gap-4">
+                <div className="flex-shrink-0">
+                  <div className="w-12 h-12 bg-red-100 rounded-full flex items-center justify-center">
+                    <svg
+                      className="w-6 h-6 text-red-600"
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth={2}
+                        d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L3.732 16.5c-.77.833.192 2.5 1.732 2.5z"
+                      />
+                    </svg>
+                  </div>
+                </div>
+                <div className="flex-1">
+                  <h3 className="text-lg font-semibold text-gray-900 mb-2">
+                    Gagal Menyimpan Event
+                  </h3>
+                  <p className="text-gray-600 leading-relaxed">
+                    {errorMessage}
+                  </p>
+                </div>
+              </div>
+            </div>
+
+            {/* Footer */}
+            <div className="px-6 pb-6">
+              <div className="flex gap-3">
+                <Button
+                  onClick={() => setShowErrorModal(false)}
+                  className="flex-1 bg-gradient-to-r from-red-500 to-red-600 hover:from-red-600 hover:to-red-700 text-white border-0 rounded-xl h-11 shadow-lg hover:shadow-xl transition-all duration-200"
+                >
+                  Mengerti
+                </Button>
+              </div>
+            </div>
+          </div>
+        </DialogContent>
+      </Dialog>
     </Dialog>
   );
 }
