@@ -1,19 +1,28 @@
-'use client';
+"use client";
 
-import React, { useState } from 'react';
+import React, { useState } from "react";
 import {
   Dialog,
   DialogContent,
   DialogHeader,
   DialogTitle,
   DialogDescription,
-} from '@/components/ui/dialog';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { useAuthStore } from '@/store/authStore';
-import { Mail, User, Lock, UserPlus, LogIn, Eye, EyeOff, X } from 'lucide-react';
+} from "@/components/ui/dialog";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { useAuthStore } from "@/store/authStore";
+import {
+  Mail,
+  User,
+  Lock,
+  UserPlus,
+  LogIn,
+  Eye,
+  EyeOff,
+  X,
+} from "lucide-react";
 
 interface AuthDialogProps {
   isOpen: boolean;
@@ -21,20 +30,20 @@ interface AuthDialogProps {
 }
 
 export function AuthDialog({ isOpen, onClose }: AuthDialogProps) {
-  const { register, login, isLoading, error } = useAuthStore();
+  const { register, login, isLoading, error, setError } = useAuthStore();
   const [showPassword, setShowPassword] = useState(false);
   const [showRegisterPassword, setShowRegisterPassword] = useState(false);
-  
+
   const [loginData, setLoginData] = useState({
-    emailOrUsername: '',
-    password: '',
+    emailOrUsername: "",
+    password: "",
   });
 
   const [registerData, setRegisterData] = useState({
-    email: '',
-    username: '',
-    password: '',
-    name: '',
+    email: "",
+    username: "",
+    password: "",
+    name: "",
   });
 
   const handleLogin = async (e: React.FormEvent) => {
@@ -59,13 +68,18 @@ export function AuthDialog({ isOpen, onClose }: AuthDialogProps) {
 
   const handleDialogOpenChange = (open: boolean) => {
     if (!open) {
+      setError(null); // Clear any errors when closing dialog
       onClose();
     }
   };
 
+  const handleTabChange = (value: string) => {
+    setError(null); // Clear errors when switching tabs
+  };
+
   return (
     <Dialog open={isOpen} onOpenChange={handleDialogOpenChange}>
-      <DialogContent 
+      <DialogContent
         className="max-w-lg p-0 overflow-hidden bg-white/90 backdrop-blur-2xl border-0 shadow-3xl rounded-[2rem]"
         showCloseButton={false}
       >
@@ -73,7 +87,7 @@ export function AuthDialog({ isOpen, onClose }: AuthDialogProps) {
           {/* Enhanced Background gradient */}
           <div className="absolute inset-0 bg-gradient-to-br from-blue-500/15 via-purple-500/10 to-pink-500/15 rounded-[2rem]"></div>
           <div className="absolute inset-0 bg-gradient-to-tl from-white/20 via-white/10 to-transparent rounded-[2rem] pointer-events-none"></div>
-          
+
           <div className="relative z-10 p-10">
             {/* Enhanced Custom Close Button */}
             <button
@@ -83,7 +97,7 @@ export function AuthDialog({ isOpen, onClose }: AuthDialogProps) {
             >
               <X className="h-5 w-5 text-gray-500 hover:text-gray-700 group-hover:rotate-90 transition-transform duration-300" />
             </button>
-            
+
             <DialogHeader className="text-center mb-10">
               <div className="mx-auto mb-6 relative group">
                 <div className="absolute -inset-4 bg-gradient-to-r from-blue-500 to-purple-600 rounded-3xl blur-2xl opacity-75 group-hover:opacity-100 animate-pulse"></div>
@@ -95,20 +109,25 @@ export function AuthDialog({ isOpen, onClose }: AuthDialogProps) {
                 Selamat Datang
               </DialogTitle>
               <DialogDescription className="text-gray-600 text-xl font-light leading-relaxed">
-                Masuk atau daftar untuk melanjutkan ke <span className="font-semibold text-purple-600">Chronica</span>
+                Masuk atau daftar untuk melanjutkan ke{" "}
+                <span className="font-semibold text-purple-600">Chronica</span>
               </DialogDescription>
             </DialogHeader>
 
-            <Tabs defaultValue="login" className="w-full">
+            <Tabs
+              defaultValue="login"
+              className="w-full"
+              onValueChange={handleTabChange}
+            >
               <TabsList className="grid w-full grid-cols-2 bg-white/30 backdrop-blur-sm rounded-3xl p-2 mb-10 border border-white/20 shadow-lg h-16 items-center">
-                <TabsTrigger 
-                  value="login" 
+                <TabsTrigger
+                  value="login"
                   className="h-12 rounded-2xl data-[state=active]:bg-gradient-to-r data-[state=active]:from-blue-500 data-[state=active]:to-blue-600 data-[state=active]:text-white data-[state=active]:shadow-xl text-gray-600 font-semibold transition-all duration-300 hover:bg-white/20 flex items-center justify-center"
                 >
                   <LogIn className="h-5 w-5 mr-2" />
                   Masuk
                 </TabsTrigger>
-                <TabsTrigger 
+                <TabsTrigger
                   value="register"
                   className="h-12 rounded-2xl data-[state=active]:bg-gradient-to-r data-[state=active]:from-purple-500 data-[state=active]:to-purple-600 data-[state=active]:text-white data-[state=active]:shadow-xl text-gray-600 font-semibold transition-all duration-300 hover:bg-white/20 flex items-center justify-center"
                 >
@@ -120,7 +139,10 @@ export function AuthDialog({ isOpen, onClose }: AuthDialogProps) {
               <TabsContent value="login" className="space-y-6">
                 <form onSubmit={handleLogin} className="space-y-6">
                   <div className="space-y-2">
-                    <Label htmlFor="loginEmailOrUsername" className="text-sm font-medium text-gray-700">
+                    <Label
+                      htmlFor="loginEmailOrUsername"
+                      className="text-sm font-medium text-gray-700"
+                    >
                       Email atau Username
                     </Label>
                     <div className="relative">
@@ -130,7 +152,12 @@ export function AuthDialog({ isOpen, onClose }: AuthDialogProps) {
                       <Input
                         id="loginEmailOrUsername"
                         value={loginData.emailOrUsername}
-                        onChange={(e) => setLoginData({ ...loginData, emailOrUsername: e.target.value })}
+                        onChange={(e) =>
+                          setLoginData({
+                            ...loginData,
+                            emailOrUsername: e.target.value,
+                          })
+                        }
                         placeholder="Masukkan email atau username"
                         className="pl-12 h-14 rounded-2xl border-gray-200/50 bg-white/50 backdrop-blur-sm focus:border-blue-500 focus:ring-blue-500/20 focus:bg-white/80 transition-all duration-300 text-base shadow-sm"
                         required
@@ -139,7 +166,10 @@ export function AuthDialog({ isOpen, onClose }: AuthDialogProps) {
                   </div>
 
                   <div className="space-y-2">
-                    <Label htmlFor="loginPassword" className="text-sm font-medium text-gray-700">
+                    <Label
+                      htmlFor="loginPassword"
+                      className="text-sm font-medium text-gray-700"
+                    >
                       Password
                     </Label>
                     <div className="relative">
@@ -150,7 +180,12 @@ export function AuthDialog({ isOpen, onClose }: AuthDialogProps) {
                         id="loginPassword"
                         type={showPassword ? "text" : "password"}
                         value={loginData.password}
-                        onChange={(e) => setLoginData({ ...loginData, password: e.target.value })}
+                        onChange={(e) =>
+                          setLoginData({
+                            ...loginData,
+                            password: e.target.value,
+                          })
+                        }
                         placeholder="Masukkan password"
                         className="pl-12 pr-12 h-14 rounded-2xl border-gray-200/50 bg-white/50 backdrop-blur-sm focus:border-blue-500 focus:ring-blue-500/20 focus:bg-white/80 transition-all duration-300 text-base shadow-sm"
                         required
@@ -160,19 +195,32 @@ export function AuthDialog({ isOpen, onClose }: AuthDialogProps) {
                         onClick={() => setShowPassword(!showPassword)}
                         className="absolute inset-y-0 right-0 pr-3 flex items-center text-gray-400 hover:text-gray-600"
                       >
-                        {showPassword ? <EyeOff className="h-5 w-5" /> : <Eye className="h-5 w-5" />}
+                        {showPassword ? (
+                          <EyeOff className="h-5 w-5" />
+                        ) : (
+                          <Eye className="h-5 w-5" />
+                        )}
                       </button>
                     </div>
                   </div>
 
                   {error && (
-                    <div className="p-4 bg-red-50 border border-red-200 rounded-xl">
-                      <div className="text-red-600 text-sm font-medium">{error}</div>
+                    <div className="p-4 bg-red-50/80 backdrop-blur-sm border border-red-200/50 rounded-2xl shadow-lg">
+                      <div className="flex items-center gap-3">
+                        <div className="flex-shrink-0">
+                          <div className="w-6 h-6 bg-red-100 rounded-full flex items-center justify-center">
+                            <X className="h-4 w-4 text-red-500" />
+                          </div>
+                        </div>
+                        <div className="text-red-700 text-sm font-medium leading-relaxed">
+                          {error}
+                        </div>
+                      </div>
                     </div>
                   )}
 
-                  <Button 
-                    type="submit" 
+                  <Button
+                    type="submit"
                     className="w-full h-14 bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white rounded-2xl shadow-xl hover:shadow-2xl hover:shadow-blue-500/25 transform hover:scale-[1.02] transition-all duration-300 border-0 font-semibold text-base"
                     disabled={isLoading}
                   >
@@ -194,7 +242,10 @@ export function AuthDialog({ isOpen, onClose }: AuthDialogProps) {
               <TabsContent value="register" className="space-y-6">
                 <form onSubmit={handleRegister} className="space-y-6">
                   <div className="space-y-2">
-                    <Label htmlFor="registerEmail" className="text-sm font-medium text-gray-700">
+                    <Label
+                      htmlFor="registerEmail"
+                      className="text-sm font-medium text-gray-700"
+                    >
                       Email *
                     </Label>
                     <div className="relative">
@@ -205,16 +256,24 @@ export function AuthDialog({ isOpen, onClose }: AuthDialogProps) {
                         id="registerEmail"
                         type="email"
                         value={registerData.email}
-                        onChange={(e) => setRegisterData({ ...registerData, email: e.target.value })}
+                        onChange={(e) =>
+                          setRegisterData({
+                            ...registerData,
+                            email: e.target.value,
+                          })
+                        }
                         placeholder="nama@email.com"
-                        className="pl-10 h-12 rounded-xl border-gray-200 focus:border-purple-500 focus:ring-purple-500 transition-all duration-200"
+                        className="pl-12 h-14 rounded-2xl border-gray-200/50 bg-white/50 backdrop-blur-sm focus:border-purple-500 focus:ring-purple-500/20 focus:bg-white/80 transition-all duration-300 text-base shadow-sm"
                         required
                       />
                     </div>
                   </div>
 
                   <div className="space-y-2">
-                    <Label htmlFor="registerUsername" className="text-sm font-medium text-gray-700">
+                    <Label
+                      htmlFor="registerUsername"
+                      className="text-sm font-medium text-gray-700"
+                    >
                       Username *
                     </Label>
                     <div className="relative">
@@ -224,9 +283,14 @@ export function AuthDialog({ isOpen, onClose }: AuthDialogProps) {
                       <Input
                         id="registerUsername"
                         value={registerData.username}
-                        onChange={(e) => setRegisterData({ ...registerData, username: e.target.value })}
+                        onChange={(e) =>
+                          setRegisterData({
+                            ...registerData,
+                            username: e.target.value,
+                          })
+                        }
                         placeholder="username_anda"
-                        className="pl-10 h-12 rounded-xl border-gray-200 focus:border-purple-500 focus:ring-purple-500 transition-all duration-200"
+                        className="pl-12 h-14 rounded-2xl border-gray-200/50 bg-white/50 backdrop-blur-sm focus:border-purple-500 focus:ring-purple-500/20 focus:bg-white/80 transition-all duration-300 text-base shadow-sm"
                         required
                         minLength={3}
                       />
@@ -234,7 +298,10 @@ export function AuthDialog({ isOpen, onClose }: AuthDialogProps) {
                   </div>
 
                   <div className="space-y-2">
-                    <Label htmlFor="registerName" className="text-sm font-medium text-gray-700">
+                    <Label
+                      htmlFor="registerName"
+                      className="text-sm font-medium text-gray-700"
+                    >
                       Nama Lengkap
                     </Label>
                     <div className="relative">
@@ -244,15 +311,23 @@ export function AuthDialog({ isOpen, onClose }: AuthDialogProps) {
                       <Input
                         id="registerName"
                         value={registerData.name}
-                        onChange={(e) => setRegisterData({ ...registerData, name: e.target.value })}
+                        onChange={(e) =>
+                          setRegisterData({
+                            ...registerData,
+                            name: e.target.value,
+                          })
+                        }
                         placeholder="Nama lengkap Anda"
-                        className="pl-10 h-12 rounded-xl border-gray-200 focus:border-purple-500 focus:ring-purple-500 transition-all duration-200"
+                        className="pl-12 h-14 rounded-2xl border-gray-200/50 bg-white/50 backdrop-blur-sm focus:border-purple-500 focus:ring-purple-500/20 focus:bg-white/80 transition-all duration-300 text-base shadow-sm"
                       />
                     </div>
                   </div>
 
                   <div className="space-y-2">
-                    <Label htmlFor="registerPassword" className="text-sm font-medium text-gray-700">
+                    <Label
+                      htmlFor="registerPassword"
+                      className="text-sm font-medium text-gray-700"
+                    >
                       Password *
                     </Label>
                     <div className="relative">
@@ -263,31 +338,51 @@ export function AuthDialog({ isOpen, onClose }: AuthDialogProps) {
                         id="registerPassword"
                         type={showRegisterPassword ? "text" : "password"}
                         value={registerData.password}
-                        onChange={(e) => setRegisterData({ ...registerData, password: e.target.value })}
+                        onChange={(e) =>
+                          setRegisterData({
+                            ...registerData,
+                            password: e.target.value,
+                          })
+                        }
                         placeholder="Minimal 6 karakter"
-                        className="pl-10 pr-10 h-12 rounded-xl border-gray-200 focus:border-purple-500 focus:ring-purple-500 transition-all duration-200"
+                        className="pl-12 pr-12 h-14 rounded-2xl border-gray-200/50 bg-white/50 backdrop-blur-sm focus:border-purple-500 focus:ring-purple-500/20 focus:bg-white/80 transition-all duration-300 text-base shadow-sm"
                         required
                         minLength={6}
                       />
                       <button
                         type="button"
-                        onClick={() => setShowRegisterPassword(!showRegisterPassword)}
+                        onClick={() =>
+                          setShowRegisterPassword(!showRegisterPassword)
+                        }
                         className="absolute inset-y-0 right-0 pr-3 flex items-center text-gray-400 hover:text-gray-600"
                       >
-                        {showRegisterPassword ? <EyeOff className="h-5 w-5" /> : <Eye className="h-5 w-5" />}
+                        {showRegisterPassword ? (
+                          <EyeOff className="h-5 w-5" />
+                        ) : (
+                          <Eye className="h-5 w-5" />
+                        )}
                       </button>
                     </div>
                   </div>
 
                   {error && (
-                    <div className="p-4 bg-red-50 border border-red-200 rounded-xl">
-                      <div className="text-red-600 text-sm font-medium">{error}</div>
+                    <div className="p-4 bg-red-50/80 backdrop-blur-sm border border-red-200/50 rounded-2xl shadow-lg">
+                      <div className="flex items-center gap-3">
+                        <div className="flex-shrink-0">
+                          <div className="w-6 h-6 bg-red-100 rounded-full flex items-center justify-center">
+                            <X className="h-4 w-4 text-red-500" />
+                          </div>
+                        </div>
+                        <div className="text-red-700 text-sm font-medium leading-relaxed">
+                          {error}
+                        </div>
+                      </div>
                     </div>
                   )}
 
-                  <Button 
-                    type="submit" 
-                    className="w-full h-12 bg-gradient-to-r from-purple-500 to-purple-600 hover:from-purple-600 hover:to-purple-700 text-white rounded-xl shadow-lg hover:shadow-xl transform hover:scale-[1.02] transition-all duration-200 border-0"
+                  <Button
+                    type="submit"
+                    className="w-full h-14 bg-gradient-to-r from-purple-500 to-purple-600 hover:from-purple-600 hover:to-purple-700 text-white rounded-2xl shadow-xl hover:shadow-2xl hover:shadow-purple-500/25 transform hover:scale-[1.02] transition-all duration-300 border-0 font-semibold text-base"
                     disabled={isLoading}
                   >
                     {isLoading ? (
@@ -310,4 +405,4 @@ export function AuthDialog({ isOpen, onClose }: AuthDialogProps) {
       </DialogContent>
     </Dialog>
   );
-} 
+}

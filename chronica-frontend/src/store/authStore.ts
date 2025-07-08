@@ -1,5 +1,5 @@
-import { create } from 'zustand';
-import { persist } from 'zustand/middleware';
+import { create } from "zustand";
+import { persist } from "zustand/middleware";
 
 export interface User {
   id: string;
@@ -13,20 +13,72 @@ interface AuthStore {
   token: string | null;
   isLoading: boolean;
   error: string | null;
-  
+
   // Actions
   setUser: (user: User) => void;
   setToken: (token: string) => void;
   setLoading: (loading: boolean) => void;
   setError: (error: string | null) => void;
   logout: () => void;
-  
+
   // API calls
-  register: (data: { email: string; username: string; password: string; name?: string }) => Promise<void>;
+  register: (data: {
+    email: string;
+    username: string;
+    password: string;
+    name?: string;
+  }) => Promise<void>;
   login: (data: { emailOrUsername: string; password: string }) => Promise<void>;
 }
 
-const API_BASE_URL = 'http://localhost:3001';
+const API_BASE_URL = "http://localhost:3001";
+
+// Helper function to handle API errors
+const handleApiError = async (
+  response: Response,
+  defaultMessage: string
+): Promise<string> => {
+  try {
+    const errorData = await response.json();
+    return errorData.message || defaultMessage;
+  } catch (parseError) {
+    // If JSON parsing fails, return status-based error message
+    switch (response.status) {
+      case 401:
+        return "Email/username atau password salah";
+      case 409:
+        return "Email atau username sudah digunakan";
+      case 400:
+        return "Data yang dikirim tidak valid";
+      case 500:
+        return "Terjadi kesalahan server. Silakan coba lagi.";
+      default:
+        return defaultMessage;
+    }
+  }
+};
+
+// Helper function to handle network errors
+const getNetworkErrorMessage = (error: Error): string => {
+  const message = error.message.toLowerCase();
+
+  if (
+    message.includes("failed to fetch") ||
+    message.includes("network error")
+  ) {
+    return "Tidak dapat terhubung ke server. Periksa koneksi internet Anda.";
+  }
+
+  if (message.includes("timeout")) {
+    return "Koneksi timeout. Silakan coba lagi.";
+  }
+
+  if (message.includes("cors")) {
+    return "Terjadi masalah CORS. Silakan hubungi administrator.";
+  }
+
+  return "Terjadi kesalahan jaringan. Silakan coba lagi.";
+};
 
 export const useAuthStore = create<AuthStore>()(
   persist(
@@ -40,31 +92,42 @@ export const useAuthStore = create<AuthStore>()(
       setToken: (token) => set({ token }),
       setLoading: (loading) => set({ isLoading: loading }),
       setError: (error) => set({ error }),
-      
+
       logout: () => set({ user: null, token: null }),
 
       register: async (data) => {
         set({ isLoading: true, error: null });
         try {
           const response = await fetch(`${API_BASE_URL}/auth/register`, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
             body: JSON.stringify(data),
           });
 
           if (!response.ok) {
-            const errorData = await response.json();
-            throw new Error(errorData.message || 'Gagal mendaftar');
+            const errorMessage = await handleApiError(
+              response,
+              "Gagal mendaftar"
+            );
+            throw new Error(errorMessage);
           }
 
           const result = await response.json();
-          set({ 
-            user: result.user, 
-            token: result.access_token, 
-            isLoading: false 
+          set({
+            user: result.user,
+            token: result.access_token,
+            isLoading: false,
           });
         } catch (error) {
-          set({ error: (error as Error).message, isLoading: false });
+          let errorMessage: string;
+
+          if (error instanceof TypeError && error.message.includes("fetch")) {
+            errorMessage = getNetworkErrorMessage(error);
+          } else {
+            errorMessage = (error as Error).message;
+          }
+
+          set({ error: errorMessage, isLoading: false });
           throw error;
         }
       },
@@ -73,31 +136,39 @@ export const useAuthStore = create<AuthStore>()(
         set({ isLoading: true, error: null });
         try {
           const response = await fetch(`${API_BASE_URL}/auth/login`, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
             body: JSON.stringify(data),
           });
 
           if (!response.ok) {
-            const errorData = await response.json();
-            throw new Error(errorData.message || 'Gagal login');
+            const errorMessage = await handleApiError(response, "Gagal login");
+            throw new Error(errorMessage);
           }
 
           const result = await response.json();
-          set({ 
-            user: result.user, 
-            token: result.access_token, 
-            isLoading: false 
+          set({
+            user: result.user,
+            token: result.access_token,
+            isLoading: false,
           });
         } catch (error) {
-          set({ error: (error as Error).message, isLoading: false });
+          let errorMessage: string;
+
+          if (error instanceof TypeError && error.message.includes("fetch")) {
+            errorMessage = getNetworkErrorMessage(error);
+          } else {
+            errorMessage = (error as Error).message;
+          }
+
+          set({ error: errorMessage, isLoading: false });
           throw error;
         }
       },
     }),
     {
-      name: 'auth-storage',
+      name: "auth-storage",
       partialize: (state) => ({ user: state.user, token: state.token }),
     }
   )
-); 
+);

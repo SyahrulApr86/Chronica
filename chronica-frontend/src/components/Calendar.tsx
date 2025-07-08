@@ -1,34 +1,52 @@
-'use client';
+"use client";
 
-import React, { useState, useEffect } from 'react';
-import { Calendar as CalendarPrimitive } from '@/components/ui/calendar';
-import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Plus, LogOut, User, Calendar as CalendarIcon, Sparkles, Timer } from 'lucide-react';
-import { format, isSameDay, isToday, differenceInMinutes, startOfMonth, endOfMonth, isWithinInterval } from 'date-fns';
-import { id as localeId } from 'date-fns/locale';
-import { EventDialog } from './EventDialog';
-import { EventList } from './EventList';
-import { AuthDialog } from './AuthDialog';
-import { WeekView } from './WeekView';
-import { useEventStore } from '@/store/eventStore';
-import { useAuthStore } from '@/store/authStore';
-import { useCalendarStore } from '@/store/calendarStore';
-import { CalendarSelector } from './CalendarSelector';
+import React, { useState, useEffect } from "react";
+import { Calendar as CalendarPrimitive } from "@/components/ui/calendar";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import {
+  Plus,
+  LogOut,
+  User,
+  Calendar as CalendarIcon,
+  Sparkles,
+  Timer,
+} from "lucide-react";
+import {
+  format,
+  isSameDay,
+  isToday,
+  differenceInMinutes,
+  startOfMonth,
+  endOfMonth,
+  isWithinInterval,
+} from "date-fns";
+import { id as localeId } from "date-fns/locale";
+import { EventDialog } from "./EventDialog";
+import { EventList } from "./EventList";
+import { AuthDialog } from "./AuthDialog";
+import { WeekView } from "./WeekView";
+import { useEventStore } from "@/store/eventStore";
+import { useAuthStore } from "@/store/authStore";
+import { useCalendarStore } from "@/store/calendarStore";
+import { CalendarSelector } from "./CalendarSelector";
 
 // Function to calculate total duration for events in a month
 const calculateMonthlyDuration = (events: any[], date: Date): string => {
   const monthStart = startOfMonth(date);
   const monthEnd = endOfMonth(date);
-  
-  const monthlyEvents = events.filter(event => {
+
+  const monthlyEvents = events.filter((event) => {
     const eventDate = new Date(event.startTime);
     return isWithinInterval(eventDate, { start: monthStart, end: monthEnd });
   });
 
   const totalMinutes = monthlyEvents.reduce((total, event) => {
     if (event.allDay) return total; // Skip all-day events
-    const duration = differenceInMinutes(new Date(event.endTime), new Date(event.startTime));
+    const duration = differenceInMinutes(
+      new Date(event.endTime),
+      new Date(event.startTime)
+    );
     return total + duration;
   }, 0);
 
@@ -49,7 +67,7 @@ const calculateMonthlyDuration = (events: any[], date: Date): string => {
   } else if (minutes > 0) {
     return `${minutes} menit`;
   } else {
-    return '0 menit';
+    return "0 menit";
   }
 };
 
@@ -58,18 +76,18 @@ export function Calendar() {
   const [isEventDialogOpen, setIsEventDialogOpen] = useState(false);
   const [isAuthDialogOpen, setIsAuthDialogOpen] = useState(false);
   const [editingEvent, setEditingEvent] = useState(null);
-  const [viewMode, setViewMode] = useState<'month' | 'week'>('month');
+  const [viewMode, setViewMode] = useState<"month" | "week">("month");
 
   const { events, fetchEvents, isLoading } = useEventStore();
   const { user, token, logout } = useAuthStore();
-  const { 
-    calendars, 
-    selectedCalendar, 
-    setSelectedCalendar, 
+  const {
+    calendars,
+    selectedCalendar,
+    setSelectedCalendar,
     fetchCalendars,
     createCalendar,
     editCalendar,
-    deleteCalendar 
+    deleteCalendar,
   } = useCalendarStore();
 
   // Close auth dialog when user logs in
@@ -82,15 +100,23 @@ export function Calendar() {
   // Fetch calendars when user is logged in
   useEffect(() => {
     if (user && token) {
-      fetchCalendars();
+      fetchCalendars(token);
     }
   }, [user, token, fetchCalendars]);
 
   // Fetch events when user is logged in and calendar is selected
   useEffect(() => {
     if (user && token && selectedCalendar) {
-      const startOfMonth = new Date(selectedDate.getFullYear(), selectedDate.getMonth(), 1);
-      const endOfMonth = new Date(selectedDate.getFullYear(), selectedDate.getMonth() + 1, 0);
+      const startOfMonth = new Date(
+        selectedDate.getFullYear(),
+        selectedDate.getMonth(),
+        1
+      );
+      const endOfMonth = new Date(
+        selectedDate.getFullYear(),
+        selectedDate.getMonth() + 1,
+        0
+      );
       fetchEvents(token, startOfMonth, endOfMonth, selectedCalendar.id);
     }
   }, [user, token, selectedDate, selectedCalendar, fetchEvents]);
@@ -98,12 +124,12 @@ export function Calendar() {
   // Don't allow creating events if no calendar selected
   const canCreateEvent = selectedCalendar !== null;
 
-  const eventsForSelectedDate = events.filter(event =>
+  const eventsForSelectedDate = events.filter((event) =>
     isSameDay(event.startTime, selectedDate)
   );
 
   const getEventsForDate = (date: Date) => {
-    return events.filter(event => isSameDay(event.startTime, date));
+    return events.filter((event) => isSameDay(event.startTime, date));
   };
 
   const handleDateSelect = (date: Date | undefined) => {
@@ -114,7 +140,7 @@ export function Calendar() {
 
   const handleCreateEvent = () => {
     if (!canCreateEvent) {
-      alert('Silakan buat kalender terlebih dahulu sebelum menambah event.');
+      alert("Silakan buat kalender terlebih dahulu sebelum menambah event.");
       return;
     }
     setEditingEvent(null);
@@ -133,7 +159,7 @@ export function Calendar() {
 
   const handleTimeSlotClick = (date: Date, hour: number) => {
     if (!canCreateEvent) {
-      alert('Silakan buat kalender terlebih dahulu sebelum menambah event.');
+      alert("Silakan buat kalender terlebih dahulu sebelum menambah event.");
       return;
     }
     const eventDate = new Date(date);
@@ -155,18 +181,21 @@ export function Calendar() {
         {/* Enhanced Background decorations */}
         <div className="absolute inset-0">
           <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-purple-900/20 via-slate-900/40 to-indigo-900/60"></div>
-          <div className="absolute inset-0 bg-[conic-gradient(from_0deg_at_50%_50%,_var(--tw-gradient-stops))] from-purple-500/10 via-pink-500/5 to-indigo-500/10 animate-spin" style={{animationDuration: '20s'}}></div>
+          <div
+            className="absolute inset-0 bg-[conic-gradient(from_0deg_at_50%_50%,_var(--tw-gradient-stops))] from-purple-500/10 via-pink-500/5 to-indigo-500/10 animate-spin"
+            style={{ animationDuration: "20s" }}
+          ></div>
         </div>
-        
+
         {/* Floating orbs */}
         <div className="absolute top-1/4 left-1/4 w-64 h-64 bg-gradient-to-r from-purple-400/30 to-pink-400/30 rounded-full mix-blend-multiply filter blur-xl animate-float"></div>
         <div className="absolute top-1/3 right-1/4 w-80 h-80 bg-gradient-to-r from-blue-400/25 to-indigo-400/25 rounded-full mix-blend-multiply filter blur-xl animate-float-delayed"></div>
         <div className="absolute bottom-1/4 left-1/3 w-72 h-72 bg-gradient-to-r from-pink-400/20 to-purple-400/20 rounded-full mix-blend-multiply filter blur-xl animate-float-slow"></div>
-        
+
         {/* Glass morphism card */}
         <div className="text-center relative z-10 backdrop-blur-xl bg-white/5 p-16 rounded-[2rem] border border-white/10 shadow-2xl max-w-2xl mx-auto">
           <div className="absolute inset-0 bg-gradient-to-br from-white/10 via-white/5 to-transparent rounded-[2rem] pointer-events-none"></div>
-          
+
           <div className="relative z-10">
             <div className="flex items-center justify-center mb-8">
               <div className="relative group">
@@ -177,17 +206,18 @@ export function Calendar() {
                 <Sparkles className="absolute -top-2 -right-2 h-8 w-8 text-yellow-300 animate-bounce" />
               </div>
             </div>
-            
+
             <h1 className="text-7xl font-black text-transparent bg-clip-text bg-gradient-to-r from-white via-purple-200 to-pink-200 mb-6 tracking-tight">
               Chronica
             </h1>
-            
+
             <p className="text-xl text-gray-200 mb-12 max-w-lg mx-auto leading-relaxed font-light">
-              Revolusi cara Anda mengelola waktu dengan platform kalender yang elegan dan powerful
+              Revolusi cara Anda mengelola waktu dengan platform kalender yang
+              elegan dan powerful
             </p>
-            
+
             <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
-              <Button 
+              <Button
                 onClick={() => setIsAuthDialogOpen(true)}
                 className="group relative bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white px-10 py-4 text-lg font-semibold rounded-2xl shadow-2xl hover:shadow-purple-500/25 transform hover:scale-105 transition-all duration-300 border-0 overflow-hidden"
               >
@@ -195,7 +225,7 @@ export function Calendar() {
                 <User className="mr-3 h-6 w-6" />
                 <span className="relative z-10">Mulai Sekarang</span>
               </Button>
-              
+
               <div className="flex items-center gap-2 text-gray-300 text-sm">
                 <div className="w-2 h-2 bg-green-400 rounded-full animate-pulse"></div>
                 <span>Gratis • Tanpa Batasan • Aman</span>
@@ -203,9 +233,9 @@ export function Calendar() {
             </div>
           </div>
         </div>
-        
-        <AuthDialog 
-          isOpen={isAuthDialogOpen} 
+
+        <AuthDialog
+          isOpen={isAuthDialogOpen}
           onClose={() => setIsAuthDialogOpen(false)}
         />
       </div>
@@ -221,7 +251,7 @@ export function Calendar() {
         <div className="absolute bottom-0 right-0 w-[600px] h-[600px] bg-gradient-to-tl from-pink-200/20 to-yellow-200/20 rounded-full mix-blend-multiply filter blur-3xl animate-float-delayed"></div>
         <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-[400px] h-[400px] bg-gradient-to-r from-indigo-200/15 to-purple-200/15 rounded-full mix-blend-multiply filter blur-2xl animate-float-slow"></div>
       </div>
-      
+
       <div className="max-w-7xl mx-auto relative z-10 p-6">
         {/* Enhanced Header */}
         <div className="flex flex-col lg:flex-row justify-between items-start lg:items-center mb-12 gap-6">
@@ -239,10 +269,14 @@ export function Calendar() {
               <div className="flex items-center gap-3 text-gray-600">
                 <div className="flex items-center gap-2">
                   <div className="w-3 h-3 bg-gradient-to-r from-green-400 to-emerald-500 rounded-full animate-pulse shadow-lg"></div>
-                  <span className="font-medium">Selamat datang, {user.name || user.username}!</span>
+                  <span className="font-medium">
+                    Selamat datang, {user.name || user.username}!
+                  </span>
                 </div>
                 <div className="hidden sm:block w-1 h-1 bg-gray-300 rounded-full"></div>
-                <span className="hidden sm:inline text-sm text-gray-500">Atur jadwal Anda dengan mudah</span>
+                <span className="hidden sm:inline text-sm text-gray-500">
+                  Atur jadwal Anda dengan mudah
+                </span>
               </div>
             </div>
           </div>
@@ -250,23 +284,23 @@ export function Calendar() {
             {/* View Mode Toggle */}
             <div className="flex items-center bg-white/80 backdrop-blur-sm rounded-2xl p-1 shadow-lg border border-gray-200">
               <Button
-                onClick={() => setViewMode('month')}
-                variant={viewMode === 'month' ? 'default' : 'ghost'}
+                onClick={() => setViewMode("month")}
+                variant={viewMode === "month" ? "default" : "ghost"}
                 className={`px-4 py-2 rounded-xl text-sm font-medium transition-all duration-300 ${
-                  viewMode === 'month' 
-                    ? 'bg-gradient-to-r from-blue-600 to-purple-600 text-white shadow-md' 
-                    : 'text-gray-600 hover:text-gray-800 hover:bg-gray-100'
+                  viewMode === "month"
+                    ? "bg-gradient-to-r from-blue-600 to-purple-600 text-white shadow-md"
+                    : "text-gray-600 hover:text-gray-800 hover:bg-gray-100"
                 }`}
               >
                 Bulan
               </Button>
               <Button
-                onClick={() => setViewMode('week')}
-                variant={viewMode === 'week' ? 'default' : 'ghost'}
+                onClick={() => setViewMode("week")}
+                variant={viewMode === "week" ? "default" : "ghost"}
                 className={`px-4 py-2 rounded-xl text-sm font-medium transition-all duration-300 ${
-                  viewMode === 'week' 
-                    ? 'bg-gradient-to-r from-blue-600 to-purple-600 text-white shadow-md' 
-                    : 'text-gray-600 hover:text-gray-800 hover:bg-gray-100'
+                  viewMode === "week"
+                    ? "bg-gradient-to-r from-blue-600 to-purple-600 text-white shadow-md"
+                    : "text-gray-600 hover:text-gray-800 hover:bg-gray-100"
                 }`}
               >
                 Minggu
@@ -277,13 +311,17 @@ export function Calendar() {
               onClick={handleCreateEvent}
               disabled={!canCreateEvent}
               className={`group px-6 py-3 rounded-2xl font-semibold shadow-xl transition-all duration-300 transform border-0 ${
-                canCreateEvent 
-                  ? 'bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white hover:shadow-blue-500/25 hover:scale-105' 
-                  : 'bg-gray-300 text-gray-500 cursor-not-allowed'
+                canCreateEvent
+                  ? "bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white hover:shadow-blue-500/25 hover:scale-105"
+                  : "bg-gray-300 text-gray-500 cursor-not-allowed"
               }`}
-              title={!canCreateEvent ? 'Buat kalender terlebih dahulu' : ''}
+              title={!canCreateEvent ? "Buat kalender terlebih dahulu" : ""}
             >
-              <Plus className={`mr-2 h-5 w-5 transition-transform duration-300 ${canCreateEvent ? 'group-hover:rotate-90' : ''}`} />
+              <Plus
+                className={`mr-2 h-5 w-5 transition-transform duration-300 ${
+                  canCreateEvent ? "group-hover:rotate-90" : ""
+                }`}
+              />
               Tambah Event
             </Button>
             <Button
@@ -311,7 +349,8 @@ export function Calendar() {
                   </div>
                 </div>
                 <span className="bg-gradient-to-r from-orange-600 to-amber-600 bg-clip-text text-transparent tracking-tight">
-                  Statistik {format(selectedDate, 'MMMM yyyy', { locale: localeId })}
+                  Statistik{" "}
+                  {format(selectedDate, "MMMM yyyy", { locale: localeId })}
                 </span>
               </CardTitle>
             </CardHeader>
@@ -326,16 +365,24 @@ export function Calendar() {
                       </div>
                     </div>
                     <div>
-                      <span className="text-base font-bold text-blue-900">Total Events</span>
-                      <div className="text-xs text-blue-600 font-medium">Bulan ini</div>
+                      <span className="text-base font-bold text-blue-900">
+                        Total Events
+                      </span>
+                      <div className="text-xs text-blue-600 font-medium">
+                        Bulan ini
+                      </div>
                     </div>
                   </div>
                   <div className="text-right">
-                    <span className="text-3xl font-black text-blue-600">{events.length}</span>
-                    <div className="text-xs text-blue-500 font-medium">events</div>
+                    <span className="text-3xl font-black text-blue-600">
+                      {events.length}
+                    </span>
+                    <div className="text-xs text-blue-500 font-medium">
+                      events
+                    </div>
                   </div>
                 </div>
-                
+
                 <div className="group flex items-center justify-between p-4 bg-gradient-to-br from-purple-50/80 to-purple-100/50 backdrop-blur-sm rounded-2xl border border-purple-200/30 hover:shadow-lg transition-all duration-300">
                   <div className="flex items-center gap-3">
                     <div className="relative">
@@ -345,8 +392,12 @@ export function Calendar() {
                       </div>
                     </div>
                     <div>
-                      <span className="text-base font-bold text-purple-900">Total Durasi</span>
-                      <div className="text-xs text-purple-600 font-medium">Waktu produktif</div>
+                      <span className="text-base font-bold text-purple-900">
+                        Total Durasi
+                      </span>
+                      <div className="text-xs text-purple-600 font-medium">
+                        Waktu produktif
+                      </div>
                     </div>
                   </div>
                   <div className="text-right">
@@ -355,7 +406,7 @@ export function Calendar() {
                     </span>
                   </div>
                 </div>
-                
+
                 <div className="text-center p-3 bg-gradient-to-r from-gray-50/80 to-gray-100/50 backdrop-blur-sm rounded-xl border border-gray-200/30">
                   <span className="text-xs text-gray-600 font-medium flex items-center justify-center gap-2">
                     <div className="w-1.5 h-1.5 bg-amber-400 rounded-full animate-pulse"></div>
@@ -379,20 +430,27 @@ export function Calendar() {
                     </div>
                   </div>
                   <span className="bg-gradient-to-r from-purple-600 to-pink-600 bg-clip-text text-transparent tracking-tight">
-                    {format(selectedDate, 'dd MMMM yyyy', { locale: localeId })}
+                    {format(selectedDate, "dd MMMM yyyy", { locale: localeId })}
                   </span>
                 </div>
                 <div className="flex items-center gap-2">
-                  <div className={`px-3 py-1.5 rounded-xl text-xs font-bold shadow-lg transition-all duration-300 ${
-                    eventsForSelectedDate.length > 0 
-                      ? 'bg-gradient-to-r from-green-500/10 to-emerald-500/10 border border-green-200/50 text-green-700' 
-                      : 'bg-gradient-to-r from-gray-500/10 to-gray-600/10 border border-gray-200/50 text-gray-500'
-                  }`}>
+                  <div
+                    className={`px-3 py-1.5 rounded-xl text-xs font-bold shadow-lg transition-all duration-300 ${
+                      eventsForSelectedDate.length > 0
+                        ? "bg-gradient-to-r from-green-500/10 to-emerald-500/10 border border-green-200/50 text-green-700"
+                        : "bg-gradient-to-r from-gray-500/10 to-gray-600/10 border border-gray-200/50 text-gray-500"
+                    }`}
+                  >
                     <span className="flex items-center gap-1.5">
-                      <div className={`w-1.5 h-1.5 rounded-full animate-pulse ${
-                        eventsForSelectedDate.length > 0 ? 'bg-green-500' : 'bg-gray-400'
-                      }`}></div>
-                      {eventsForSelectedDate.length} Event{eventsForSelectedDate.length !== 1 ? 's' : ''}
+                      <div
+                        className={`w-1.5 h-1.5 rounded-full animate-pulse ${
+                          eventsForSelectedDate.length > 0
+                            ? "bg-green-500"
+                            : "bg-gray-400"
+                        }`}
+                      ></div>
+                      {eventsForSelectedDate.length} Event
+                      {eventsForSelectedDate.length !== 1 ? "s" : ""}
                     </span>
                   </div>
                 </div>
@@ -420,15 +478,19 @@ export function Calendar() {
             calendars={calendars}
             selectedCalendar={selectedCalendar}
             onCalendarSelect={setSelectedCalendar}
-            onCalendarCreate={createCalendar}
-            onCalendarUpdate={editCalendar}
-            onCalendarDelete={deleteCalendar}
+            onCalendarCreate={(calendarData) =>
+              createCalendar(token!, calendarData)
+            }
+            onCalendarUpdate={(id, calendarData) =>
+              editCalendar(token!, id, calendarData)
+            }
+            onCalendarDelete={(id) => deleteCalendar(token!, id)}
           />
         </div>
 
         {/* Calendar Section - Now full width */}
         <div className="w-full">
-          {viewMode === 'month' ? (
+          {viewMode === "month" ? (
             <Card className="group shadow-2xl border-0 bg-white/80 backdrop-blur-xl rounded-[2rem] overflow-hidden hover:shadow-3xl transition-all duration-500 hover:scale-[1.02]">
               <div className="absolute inset-0 bg-gradient-to-br from-white/20 via-white/10 to-transparent pointer-events-none"></div>
               <CardHeader className="relative pb-8 bg-gradient-to-br from-blue-50/80 to-purple-50/80 backdrop-blur-sm border-b border-white/20">
@@ -438,7 +500,7 @@ export function Calendar() {
                       <CalendarIcon className="h-8 w-8 text-white" />
                     </div>
                     <span className="bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent tracking-tight">
-                      {format(selectedDate, 'MMMM yyyy', { locale: localeId })}
+                      {format(selectedDate, "MMMM yyyy", { locale: localeId })}
                     </span>
                   </div>
                   <div className="flex items-center gap-3 flex-wrap">
@@ -450,7 +512,9 @@ export function Calendar() {
                     </div>
                     <div className="flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-purple-500/10 to-purple-600/10 backdrop-blur-sm border border-purple-200/50 text-purple-700 rounded-2xl text-sm font-semibold shadow-lg">
                       <Timer className="h-4 w-4" />
-                      <span>{calculateMonthlyDuration(events, selectedDate)}</span>
+                      <span>
+                        {calculateMonthlyDuration(events, selectedDate)}
+                      </span>
                     </div>
                   </div>
                 </CardTitle>
@@ -463,22 +527,28 @@ export function Calendar() {
                   locale={localeId}
                   className="w-full max-w-4xl mx-auto"
                   classNames={{
-                    months: "flex flex-col sm:flex-row space-y-4 sm:space-x-4 sm:space-y-0",
+                    months:
+                      "flex flex-col sm:flex-row space-y-4 sm:space-x-4 sm:space-y-0",
                     month: "space-y-6",
-                    caption: "flex justify-center pt-2 relative items-center mb-8",
+                    caption:
+                      "flex justify-center pt-2 relative items-center mb-8",
                     caption_label: "text-2xl font-bold text-gray-700",
                     nav: "space-x-2 flex items-center",
-                    nav_button: "h-12 w-12 bg-gradient-to-br from-gray-100 to-gray-200 hover:from-gray-200 hover:to-gray-300 rounded-2xl transition-all duration-300 shadow-lg hover:shadow-xl",
+                    nav_button:
+                      "h-12 w-12 bg-gradient-to-br from-gray-100 to-gray-200 hover:from-gray-200 hover:to-gray-300 rounded-2xl transition-all duration-300 shadow-lg hover:shadow-xl",
                     nav_button_previous: "absolute left-2",
                     nav_button_next: "absolute right-2",
                     table: "w-full border-collapse space-y-2",
                     head_row: "flex mb-4",
-                    head_cell: "text-gray-600 rounded-xl w-20 h-12 font-bold text-base uppercase tracking-wide flex items-center justify-center",
+                    head_cell:
+                      "text-gray-600 rounded-xl w-20 h-12 font-bold text-base uppercase tracking-wide flex items-center justify-center",
                     row: "flex w-full mt-3",
                     cell: "text-center text-base p-1 relative first:[&:has([aria-selected])]:rounded-l-md last:[&:has([aria-selected])]:rounded-r-md focus-within:relative focus-within:z-20",
                     day: "h-20 w-20 p-0 font-semibold aria-selected:opacity-100 hover:bg-blue-50 rounded-2xl transition-all duration-300 hover:scale-110 text-lg",
-                    day_selected: "bg-gradient-to-br from-blue-500 to-purple-600 text-white hover:from-blue-600 hover:to-purple-700 shadow-xl scale-110",
-                    day_today: "bg-gradient-to-br from-orange-100 to-yellow-100 text-orange-800 font-black border-2 border-orange-400 shadow-lg",
+                    day_selected:
+                      "bg-gradient-to-br from-blue-500 to-purple-600 text-white hover:from-blue-600 hover:to-purple-700 shadow-xl scale-110",
+                    day_today:
+                      "bg-gradient-to-br from-orange-100 to-yellow-100 text-orange-800 font-black border-2 border-orange-400 shadow-lg",
                     day_outside: "text-gray-300 opacity-50",
                     day_disabled: "text-gray-300 opacity-30",
                   }}
@@ -491,8 +561,16 @@ export function Calendar() {
 
                       return (
                         <div className="relative w-full h-full flex flex-col items-center justify-center group">
-                          <span className={`text-lg font-bold ${isSelected ? 'text-white' : isCurrentDay ? 'text-orange-800' : 'text-gray-700'} transition-all duration-300`}>
-                            {format(date, 'd')}
+                          <span
+                            className={`text-lg font-bold ${
+                              isSelected
+                                ? "text-white"
+                                : isCurrentDay
+                                ? "text-orange-800"
+                                : "text-gray-700"
+                            } transition-all duration-300`}
+                          >
+                            {format(date, "d")}
                           </span>
                           {hasEvents && (
                             <div className="flex gap-1.5 mt-2 flex-wrap justify-center absolute -bottom-2">
@@ -505,7 +583,10 @@ export function Calendar() {
                                 />
                               ))}
                               {dayEvents.length > 4 && (
-                                <div className="w-2.5 h-2.5 rounded-full bg-gray-500 shadow-lg transition-all duration-300 group-hover:scale-150 border border-white/20" title={`+${dayEvents.length - 4} lagi`} />
+                                <div
+                                  className="w-2.5 h-2.5 rounded-full bg-gray-500 shadow-lg transition-all duration-300 group-hover:scale-150 border border-white/20"
+                                  title={`+${dayEvents.length - 4} lagi`}
+                                />
                               )}
                             </div>
                           )}
@@ -536,11 +617,11 @@ export function Calendar() {
         userId={user.id}
         selectedDate={selectedDate}
       />
-      
+
       <AuthDialog
         isOpen={isAuthDialogOpen}
         onClose={() => setIsAuthDialogOpen(false)}
       />
     </div>
   );
-} 
+}
