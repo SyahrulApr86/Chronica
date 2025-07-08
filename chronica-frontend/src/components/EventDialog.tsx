@@ -465,347 +465,346 @@ export function EventDialog({
           </div>
 
           <form onSubmit={handleSubmit} className="p-12">
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-16">
-              {/* Left Column - Basic Information */}
-              <div className="space-y-8">
-                {/* Basic Information */}
-                <div className="space-y-6">
-                  <div className="flex items-center gap-3 mb-6 pb-3 border-b border-gray-100">
-                    <div className="p-2 bg-blue-50 rounded-lg">
-                      <CalendarDays className="h-5 w-5 text-blue-600" />
+            {/* Single Wide Layout */}
+            <div className="max-w-none w-full space-y-12">
+              {/* Basic Information Section */}
+              <div className="bg-white rounded-2xl border border-gray-200 p-8 shadow-sm">
+                <div className="flex items-center gap-3 mb-8 pb-4 border-b border-gray-100">
+                  <div className="p-3 bg-blue-50 rounded-lg">
+                    <CalendarDays className="h-6 w-6 text-blue-600" />
+                  </div>
+                  <h3 className="text-2xl font-semibold text-gray-800">
+                    Informasi Dasar
+                  </h3>
+                </div>
+
+                <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                    <div className="space-y-3">
+                      <Label
+                        htmlFor="title"
+                        className="text-sm font-medium text-gray-700"
+                      >
+                        Judul Event *
+                      </Label>
+                      <Input
+                        id="title"
+                        value={formData.title}
+                        onChange={(e) =>
+                          setFormData({ ...formData, title: e.target.value })
+                        }
+                        placeholder="Masukkan judul event yang menarik"
+                        className="h-16 rounded-xl border-gray-200 focus:border-blue-500 focus:ring-blue-500 text-lg px-6"
+                        required
+                      />
                     </div>
-                    <h3 className="text-xl font-semibold text-gray-800">
-                      Informasi Dasar
-                    </h3>
-                  </div>
 
-                  <div className="space-y-3">
-                    <Label
-                      htmlFor="title"
-                      className="text-sm font-medium text-gray-700"
-                    >
-                      Judul Event *
-                    </Label>
-                    <Input
-                      id="title"
-                      value={formData.title}
-                      onChange={(e) =>
-                        setFormData({ ...formData, title: e.target.value })
-                      }
-                      placeholder="Masukkan judul event yang menarik"
-                      className="h-16 rounded-xl border-gray-200 focus:border-blue-500 focus:ring-blue-500 text-lg px-6"
-                      required
-                    />
-                  </div>
+                    <div className="space-y-3">
+                      <Label className="text-sm font-medium text-gray-700">
+                        Kalender
+                      </Label>
+                      <Select
+                        value={
+                          formData.calendarId ||
+                          selectedCalendar?.id ||
+                          (calendars.length > 0 ? calendars[0].id : "")
+                        }
+                        onValueChange={(value) =>
+                          setFormData({ ...formData, calendarId: value })
+                        }
+                      >
+                        <SelectTrigger className="h-16 rounded-xl border-gray-200 focus:border-blue-500 focus:ring-blue-500">
+                          <SelectValue placeholder="Pilih kalender" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          {calendars.map((calendar) => (
+                            <SelectItem key={calendar.id} value={calendar.id}>
+                              <div className="flex items-center gap-3">
+                                <div
+                                  className="w-4 h-4 rounded-full"
+                                  style={{ backgroundColor: calendar.color }}
+                                />
+                                <span>{calendar.name}</span>
+                                {calendar.isDefault && (
+                                  <span className="text-xs bg-blue-100 text-blue-600 px-2 py-1 rounded-full font-medium">
+                                    Default
+                                  </span>
+                                )}
+                              </div>
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                    </div>
 
-                  <div className="space-y-3">
-                    <Label className="text-sm font-medium text-gray-700">
-                      Kalender
-                    </Label>
-                    <Select
-                      value={
-                        formData.calendarId ||
-                        selectedCalendar?.id ||
-                        (calendars.length > 0 ? calendars[0].id : "")
-                      }
-                      onValueChange={(value) =>
-                        setFormData({ ...formData, calendarId: value })
-                      }
-                    >
-                      <SelectTrigger className="h-16 rounded-xl border-gray-200 focus:border-blue-500 focus:ring-blue-500">
-                        <SelectValue placeholder="Pilih kalender" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        {calendars.map((calendar) => (
-                          <SelectItem key={calendar.id} value={calendar.id}>
-                            <div className="flex items-center gap-3">
-                              <div
-                                className="w-4 h-4 rounded-full"
-                                style={{ backgroundColor: calendar.color }}
-                              />
-                              <span>{calendar.name}</span>
-                              {calendar.isDefault && (
-                                <span className="text-xs bg-blue-100 text-blue-600 px-2 py-1 rounded-full font-medium">
-                                  Default
-                                </span>
-                              )}
-                            </div>
-                          </SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
-                  </div>
+                    <div className="space-y-3 lg:col-span-2">
+                      <Label
+                        htmlFor="description"
+                        className="text-sm font-medium text-gray-700"
+                      >
+                        Deskripsi
+                      </Label>
+                      <Textarea
+                        id="description"
+                        value={formData.description}
+                        onChange={(e) =>
+                          setFormData({
+                            ...formData,
+                            description: e.target.value,
+                          })
+                        }
+                        placeholder="Deskripsikan event Anda dengan detail..."
+                        rows={4}
+                        className="rounded-xl border-gray-200 focus:border-blue-500 focus:ring-blue-500 resize-none px-6 py-4"
+                      />
+                    </div>
 
-                  <div className="space-y-3">
-                    <Label
-                      htmlFor="description"
-                      className="text-sm font-medium text-gray-700"
-                    >
-                      Deskripsi
-                    </Label>
-                    <Textarea
-                      id="description"
-                      value={formData.description}
-                      onChange={(e) =>
-                        setFormData({
-                          ...formData,
-                          description: e.target.value,
-                        })
-                      }
-                      placeholder="Deskripsikan event Anda dengan detail..."
-                      rows={5}
-                      className="rounded-xl border-gray-200 focus:border-blue-500 focus:ring-blue-500 resize-none px-6 py-4"
-                    />
-                  </div>
-
-                  <div className="space-y-3">
-                    <Label
-                      htmlFor="location"
-                      className="text-sm font-medium text-gray-700 flex items-center gap-2"
-                    >
-                      <MapPin className="h-4 w-4" />
-                      Lokasi
-                    </Label>
-                    <Input
-                      id="location"
-                      value={formData.location}
-                      onChange={(e) =>
-                        setFormData({ ...formData, location: e.target.value })
-                      }
-                      placeholder="Dimana event ini akan berlangsung?"
-                      className="h-16 rounded-xl border-gray-200 focus:border-blue-500 focus:ring-blue-500 px-6"
-                    />
+                    <div className="space-y-3 lg:col-span-2">
+                      <Label
+                        htmlFor="location"
+                        className="text-sm font-medium text-gray-700 flex items-center gap-2"
+                      >
+                        <MapPin className="h-4 w-4" />
+                        Lokasi
+                      </Label>
+                      <Input
+                        id="location"
+                        value={formData.location}
+                        onChange={(e) =>
+                          setFormData({ ...formData, location: e.target.value })
+                        }
+                        placeholder="Dimana event ini akan berlangsung?"
+                        className="h-16 rounded-xl border-gray-200 focus:border-blue-500 focus:ring-blue-500 px-6"
+                      />
+                    </div>
                   </div>
                 </div>
+
+              {/* Time Settings Section */}
+              <div className="bg-white rounded-2xl border border-gray-200 p-8 shadow-sm">
+                <div className="flex items-center gap-3 mb-8 pb-4 border-b border-gray-100">
+                  <div className="p-3 bg-purple-50 rounded-lg">
+                    <Timer className="h-6 w-6 text-purple-600" />
+                  </div>
+                  <h3 className="text-2xl font-semibold text-gray-800">
+                    Waktu & Durasi
+                  </h3>
+                  <div className="flex items-center gap-2 px-3 py-1 bg-blue-50 text-blue-700 rounded-full text-sm font-medium">
+                    <Clock className="h-4 w-4" />
+                    Interval 15 menit
+                  </div>
+                </div>
+
+                <div className="flex items-center space-x-3 p-6 bg-gray-50 rounded-xl mb-8">
+                  <Checkbox
+                    id="allDay"
+                    checked={formData.allDay}
+                    onCheckedChange={(checked) =>
+                      setFormData({ ...formData, allDay: !!checked })
+                    }
+                  />
+                  <Label
+                    htmlFor="allDay"
+                    className="text-lg font-medium text-gray-700 flex items-center gap-2"
+                  >
+                    <Clock className="h-5 w-5" />
+                    Event sepanjang hari
+                  </Label>
+                </div>
+
+                {!formData.allDay && (
+                  <div className="grid grid-cols-1 xl:grid-cols-2 gap-12">
+                    {/* Start Time */}
+                    <div className="space-y-6">
+                      <h4 className="text-lg font-semibold text-gray-800 border-b border-gray-200 pb-2">
+                        Waktu Mulai
+                      </h4>
+                      <div className="grid grid-cols-3 gap-4">
+                        <div className="space-y-3">
+                          <Label
+                            htmlFor="startDate"
+                            className="text-sm font-medium text-gray-600"
+                          >
+                            Tanggal
+                          </Label>
+                          <Input
+                            id="startDate"
+                            type="date"
+                            value={formData.startDate}
+                            onChange={(e) =>
+                              setFormData({
+                                ...formData,
+                                startDate: e.target.value,
+                              })
+                            }
+                            className="h-16 rounded-xl border-gray-200 focus:border-blue-500 focus:ring-blue-500 px-4"
+                            required
+                          />
+                        </div>
+                        <div className="space-y-3">
+                          <Label
+                            htmlFor="startHour"
+                            className="text-sm font-medium text-gray-600"
+                          >
+                            Jam
+                          </Label>
+                          <Select
+                            value={formData.startHour}
+                            onValueChange={(value: any) =>
+                              setFormData({ ...formData, startHour: value })
+                            }
+                          >
+                            <SelectTrigger className="h-16 rounded-xl">
+                              <SelectValue />
+                            </SelectTrigger>
+                            <SelectContent>
+                              {hourOptions.map((option) => (
+                                <SelectItem
+                                  key={option.value}
+                                  value={option.value}
+                                >
+                                  {option.label}
+                                </SelectItem>
+                              ))}
+                            </SelectContent>
+                          </Select>
+                        </div>
+                        <div className="space-y-3">
+                          <Label
+                            htmlFor="startMinute"
+                            className="text-sm font-medium text-gray-600"
+                          >
+                            Menit
+                          </Label>
+                          <Select
+                            value={formData.startMinute}
+                            onValueChange={(value: any) =>
+                              setFormData({ ...formData, startMinute: value })
+                            }
+                          >
+                            <SelectTrigger className="h-16 rounded-xl">
+                              <SelectValue />
+                            </SelectTrigger>
+                            <SelectContent>
+                              {minuteOptions.map((option) => (
+                                <SelectItem
+                                  key={option.value}
+                                  value={option.value}
+                                >
+                                  {option.label}
+                                </SelectItem>
+                              ))}
+                            </SelectContent>
+                          </Select>
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* End Time */}
+                    <div className="space-y-6">
+                      <h4 className="text-lg font-semibold text-gray-800 border-b border-gray-200 pb-2">
+                        Waktu Selesai
+                      </h4>
+                      <div className="grid grid-cols-3 gap-4">
+                        <div className="space-y-3">
+                          <Label
+                            htmlFor="endDate"
+                            className="text-sm font-medium text-gray-600"
+                          >
+                            Tanggal
+                          </Label>
+                          <Input
+                            id="endDate"
+                            type="date"
+                            value={formData.endDate}
+                            onChange={(e) =>
+                              setFormData({
+                                ...formData,
+                                endDate: e.target.value,
+                              })
+                            }
+                            className="h-16 rounded-xl border-gray-200 focus:border-blue-500 focus:ring-blue-500 px-4"
+                            required
+                          />
+                        </div>
+                        <div className="space-y-3">
+                          <Label
+                            htmlFor="endHour"
+                            className="text-sm font-medium text-gray-600"
+                          >
+                            Jam
+                          </Label>
+                          <Select
+                            value={formData.endHour}
+                            onValueChange={(value: any) =>
+                              setFormData({ ...formData, endHour: value })
+                            }
+                          >
+                            <SelectTrigger className="h-16 rounded-xl">
+                              <SelectValue />
+                            </SelectTrigger>
+                            <SelectContent>
+                              {hourOptions.map((option) => (
+                                <SelectItem
+                                  key={option.value}
+                                  value={option.value}
+                                >
+                                  {option.label}
+                                </SelectItem>
+                              ))}
+                            </SelectContent>
+                          </Select>
+                        </div>
+                        <div className="space-y-3">
+                          <Label
+                            htmlFor="endMinute"
+                            className="text-sm font-medium text-gray-600"
+                          >
+                            Menit
+                          </Label>
+                          <Select
+                            value={formData.endMinute}
+                            onValueChange={(value: any) =>
+                              setFormData({ ...formData, endMinute: value })
+                            }
+                          >
+                            <SelectTrigger className="h-16 rounded-xl">
+                              <SelectValue />
+                            </SelectTrigger>
+                            <SelectContent>
+                              {minuteOptions.map((option) => (
+                                <SelectItem
+                                  key={option.value}
+                                  value={option.value}
+                                >
+                                  {option.label}
+                                </SelectItem>
+                              ))}
+                            </SelectContent>
+                          </Select>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                )}
               </div>
 
-              {/* Right Column - Time Settings & Recurrence */}
-              <div className="space-y-8">
-                {/* Time Settings */}
-                <div className="space-y-6">
-                  <div className="flex items-center gap-3 mb-6 pb-3 border-b border-gray-100">
-                    <div className="p-2 bg-purple-50 rounded-lg">
-                      <Timer className="h-5 w-5 text-purple-600" />
-                    </div>
-                    <h3 className="text-xl font-semibold text-gray-800">
-                      Waktu & Durasi
-                    </h3>
-                    <div className="flex items-center gap-2 px-3 py-1 bg-blue-50 text-blue-700 rounded-full text-xs font-medium">
-                      <Clock className="h-3 w-3" />
-                      Interval 15 menit
-                    </div>
+              {/* Color & Settings Section */}
+              <div className="bg-white rounded-2xl border border-gray-200 p-8 shadow-sm">
+                <div className="flex items-center gap-3 mb-8 pb-4 border-b border-gray-100">
+                  <div className="p-3 bg-pink-50 rounded-lg">
+                    <Palette className="h-6 w-6 text-pink-600" />
                   </div>
-
-                  <div className="flex items-center space-x-3 p-5 bg-gray-50 rounded-xl">
-                    <Checkbox
-                      id="allDay"
-                      checked={formData.allDay}
-                      onCheckedChange={(checked) =>
-                        setFormData({ ...formData, allDay: !!checked })
-                      }
-                    />
-                    <Label
-                      htmlFor="allDay"
-                      className="text-sm font-medium text-gray-700 flex items-center gap-2"
-                    >
-                      <Clock className="h-4 w-4" />
-                      Event sepanjang hari
-                    </Label>
-                  </div>
-
-                  {!formData.allDay && (
-                    <div className="space-y-6">
-                      {/* Start Time */}
-                      <div className="space-y-4">
-                        <h4 className="text-sm font-semibold text-gray-800">
-                          Waktu Mulai
-                        </h4>
-                        <div className="grid grid-cols-3 gap-4">
-                          <div className="space-y-3">
-                            <Label
-                              htmlFor="startDate"
-                              className="text-xs font-medium text-gray-600"
-                            >
-                              Tanggal
-                            </Label>
-                            <Input
-                              id="startDate"
-                              type="date"
-                              value={formData.startDate}
-                              onChange={(e) =>
-                                setFormData({
-                                  ...formData,
-                                  startDate: e.target.value,
-                                })
-                              }
-                              className="h-16 rounded-xl border-gray-200 focus:border-blue-500 focus:ring-blue-500 px-4"
-                              required
-                            />
-                          </div>
-                          <div className="space-y-2">
-                            <Label
-                              htmlFor="startHour"
-                              className="text-xs font-medium text-gray-600"
-                            >
-                              Jam
-                            </Label>
-                            <Select
-                              value={formData.startHour}
-                              onValueChange={(value: any) =>
-                                setFormData({ ...formData, startHour: value })
-                              }
-                            >
-                              <SelectTrigger className="h-16 rounded-xl">
-                                <SelectValue />
-                              </SelectTrigger>
-                              <SelectContent>
-                                {hourOptions.map((option) => (
-                                  <SelectItem
-                                    key={option.value}
-                                    value={option.value}
-                                  >
-                                    {option.label}
-                                  </SelectItem>
-                                ))}
-                              </SelectContent>
-                            </Select>
-                          </div>
-                          <div className="space-y-2">
-                            <Label
-                              htmlFor="startMinute"
-                              className="text-xs font-medium text-gray-600"
-                            >
-                              Menit
-                            </Label>
-                            <Select
-                              value={formData.startMinute}
-                              onValueChange={(value: any) =>
-                                setFormData({ ...formData, startMinute: value })
-                              }
-                            >
-                              <SelectTrigger className="h-16 rounded-xl">
-                                <SelectValue />
-                              </SelectTrigger>
-                              <SelectContent>
-                                {minuteOptions.map((option) => (
-                                  <SelectItem
-                                    key={option.value}
-                                    value={option.value}
-                                  >
-                                    {option.label}
-                                  </SelectItem>
-                                ))}
-                              </SelectContent>
-                            </Select>
-                          </div>
-                        </div>
-                      </div>
-
-                      {/* End Time */}
-                      <div className="space-y-4">
-                        <h4 className="text-sm font-semibold text-gray-800">
-                          Waktu Selesai
-                        </h4>
-                        <div className="grid grid-cols-3 gap-4">
-                          <div className="space-y-2">
-                            <Label
-                              htmlFor="endDate"
-                              className="text-xs font-medium text-gray-600"
-                            >
-                              Tanggal
-                            </Label>
-                            <Input
-                              id="endDate"
-                              type="date"
-                              value={formData.endDate}
-                              onChange={(e) =>
-                                setFormData({
-                                  ...formData,
-                                  endDate: e.target.value,
-                                })
-                              }
-                              className="h-16 rounded-xl border-gray-200 focus:border-blue-500 focus:ring-blue-500 px-4"
-                              required
-                            />
-                          </div>
-                          <div className="space-y-2">
-                            <Label
-                              htmlFor="endHour"
-                              className="text-xs font-medium text-gray-600"
-                            >
-                              Jam
-                            </Label>
-                            <Select
-                              value={formData.endHour}
-                              onValueChange={(value: any) =>
-                                setFormData({ ...formData, endHour: value })
-                              }
-                            >
-                              <SelectTrigger className="h-16 rounded-xl">
-                                <SelectValue />
-                              </SelectTrigger>
-                              <SelectContent>
-                                {hourOptions.map((option) => (
-                                  <SelectItem
-                                    key={option.value}
-                                    value={option.value}
-                                  >
-                                    {option.label}
-                                  </SelectItem>
-                                ))}
-                              </SelectContent>
-                            </Select>
-                          </div>
-                          <div className="space-y-2">
-                            <Label
-                              htmlFor="endMinute"
-                              className="text-xs font-medium text-gray-600"
-                            >
-                              Menit
-                            </Label>
-                            <Select
-                              value={formData.endMinute}
-                              onValueChange={(value: any) =>
-                                setFormData({ ...formData, endMinute: value })
-                              }
-                            >
-                              <SelectTrigger className="h-16 rounded-xl">
-                                <SelectValue />
-                              </SelectTrigger>
-                              <SelectContent>
-                                {minuteOptions.map((option) => (
-                                  <SelectItem
-                                    key={option.value}
-                                    value={option.value}
-                                  >
-                                    {option.label}
-                                  </SelectItem>
-                                ))}
-                              </SelectContent>
-                            </Select>
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                  )}
+                  <h3 className="text-2xl font-semibold text-gray-800">
+                    Tampilan & Pengaturan
+                  </h3>
                 </div>
 
-                {/* Color & Settings */}
-                <div className="space-y-6">
-                  <div className="flex items-center gap-3 mb-6 pb-3 border-b border-gray-100">
-                    <div className="p-2 bg-pink-50 rounded-lg">
-                      <Palette className="h-5 w-5 text-pink-600" />
-                    </div>
-                    <h3 className="text-xl font-semibold text-gray-800">
-                      Tampilan & Pengaturan
-                    </h3>
-                  </div>
-
-                  <div className="space-y-2">
-                    <Label className="text-sm font-medium text-gray-700">
+                <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                  <div className="space-y-4">
+                    <Label className="text-lg font-medium text-gray-700">
                       Warna Event
                     </Label>
-                    <div className="grid grid-cols-4 gap-3">
+                    <div className="grid grid-cols-4 gap-4">
                       {colorOptions.map((option) => (
                         <button
                           key={option.value}
@@ -813,14 +812,14 @@ export function EventDialog({
                           onClick={() =>
                             setFormData({ ...formData, color: option.value })
                           }
-                          className={`group relative p-3 rounded-xl border-2 transition-all duration-200 hover:scale-105 ${
+                          className={`group relative p-4 rounded-xl border-2 transition-all duration-200 hover:scale-105 ${
                             formData.color === option.value
                               ? "border-gray-800 shadow-lg"
                               : "border-gray-200 hover:border-gray-300"
                           }`}
                         >
                           <div
-                            className={`w-8 h-8 rounded-lg bg-gradient-to-br ${option.preview} mx-auto mb-2 shadow-sm`}
+                            className={`w-10 h-10 rounded-lg bg-gradient-to-br ${option.preview} mx-auto mb-2 shadow-sm`}
                           />
                           <span className="text-xs font-medium text-gray-600 text-center block">
                             {option.label.split(" ")[1]}
@@ -830,54 +829,57 @@ export function EventDialog({
                     </div>
                   </div>
 
-                  <div className="flex items-center space-x-3 p-5 bg-yellow-50 rounded-xl">
-                    <Checkbox
-                      id="allowOverlap"
-                      checked={formData.allowOverlap}
-                      onCheckedChange={(checked) =>
-                        setFormData({ ...formData, allowOverlap: !!checked })
-                      }
-                    />
-                    <Label
-                      htmlFor="allowOverlap"
-                      className="text-sm font-medium text-gray-700"
-                    >
-                      Izinkan overlap dengan event lain
-                    </Label>
+                  <div className="space-y-6">
+                    <div className="flex items-center space-x-4 p-6 bg-yellow-50 rounded-xl">
+                      <Checkbox
+                        id="allowOverlap"
+                        checked={formData.allowOverlap}
+                        onCheckedChange={(checked) =>
+                          setFormData({ ...formData, allowOverlap: !!checked })
+                        }
+                      />
+                      <Label
+                        htmlFor="allowOverlap"
+                        className="text-lg font-medium text-gray-700"
+                      >
+                        Izinkan overlap dengan event lain
+                      </Label>
+                    </div>
                   </div>
                 </div>
+              </div>
 
-                {/* Recurrence Settings */}
-                <div className="space-y-6">
-                  <div className="flex items-center space-x-3 p-5 bg-blue-50 rounded-xl">
-                    <Checkbox
-                      id="isRecurring"
-                      checked={formData.isRecurring}
-                      onCheckedChange={(checked) =>
-                        setFormData({ ...formData, isRecurring: !!checked })
-                      }
-                    />
-                    <Label
-                      htmlFor="isRecurring"
-                      className="text-sm font-medium text-gray-700 flex items-center gap-2"
-                    >
-                      <Repeat className="h-4 w-4" />
-                      Event berulang
-                    </Label>
-                  </div>
+              {/* Recurrence Settings Section */}
+              <div className="bg-white rounded-2xl border border-gray-200 p-8 shadow-sm">
+                <div className="flex items-center space-x-4 p-6 bg-blue-50 rounded-xl mb-8">
+                  <Checkbox
+                    id="isRecurring"
+                    checked={formData.isRecurring}
+                    onCheckedChange={(checked) =>
+                      setFormData({ ...formData, isRecurring: !!checked })
+                    }
+                  />
+                  <Label
+                    htmlFor="isRecurring"
+                    className="text-lg font-medium text-gray-700 flex items-center gap-2"
+                  >
+                    <Repeat className="h-5 w-5" />
+                    Event berulang
+                  </Label>
+                </div>
 
-                  {formData.isRecurring && (
-                    <div className="space-y-6 p-6 border-2 border-dashed border-blue-200 rounded-2xl bg-blue-50/50">
-                      <div className="flex items-center gap-3 mb-4">
-                        <div className="p-2 bg-blue-100 rounded-lg">
-                          <Settings className="h-4 w-4 text-blue-600" />
-                        </div>
-                        <h4 className="font-semibold text-gray-800">
-                          Pengaturan Pengulangan
-                        </h4>
+                {formData.isRecurring && (
+                  <div className="space-y-8 p-8 border-2 border-dashed border-blue-200 rounded-2xl bg-blue-50/50">
+                    <div className="flex items-center gap-3 mb-6 pb-4 border-b border-blue-200">
+                      <div className="p-3 bg-blue-100 rounded-lg">
+                        <Settings className="h-5 w-5 text-blue-600" />
                       </div>
+                      <h4 className="text-xl font-semibold text-gray-800">
+                        Pengaturan Pengulangan
+                      </h4>
+                    </div>
 
-                      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
                         <div className="space-y-2">
                           <Label className="text-sm font-medium text-gray-700">
                             Frekuensi
