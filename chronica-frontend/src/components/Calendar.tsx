@@ -209,8 +209,8 @@ export function Calendar() {
     return events.filter((event) => isSameDay(event.startTime, date));
   };
 
-  const handleDateSelect = (date: Date | Date[] | null) => {
-    if (date && !Array.isArray(date)) {
+  const handleDateSelect = (date: Date | undefined) => {
+    if (date) {
       setSelectedDate(date);
     }
   };
@@ -849,9 +849,36 @@ export function Calendar() {
                         mode="single"
                         selected={selectedDate}
                         onSelect={handleDateSelect}
-                        className="w-full max-w-4xl mx-auto [&_.react-calendar]:w-full [&_.react-calendar__navigation]:justify-center [&_.react-calendar__navigation]:pt-2 [&_.react-calendar__navigation]:mb-8 [&_.react-calendar__navigation__label]:text-2xl [&_.react-calendar__navigation__label]:font-bold [&_.react-calendar__navigation__label]:text-gray-700 [&_.react-calendar__navigation__arrow]:h-12 [&_.react-calendar__navigation__arrow]:w-12 [&_.react-calendar__navigation__arrow]:bg-gradient-to-br [&_.react-calendar__navigation__arrow]:from-gray-100 [&_.react-calendar__navigation__arrow]:to-gray-200 [&_.react-calendar__navigation__arrow]:hover:from-gray-200 [&_.react-calendar__navigation__arrow]:hover:to-gray-300 [&_.react-calendar__navigation__arrow]:rounded-2xl [&_.react-calendar__navigation__arrow]:transition-all [&_.react-calendar__navigation__arrow]:duration-300 [&_.react-calendar__navigation__arrow]:shadow-lg [&_.react-calendar__navigation__arrow]:hover:shadow-xl [&_.react-calendar__navigation__prev-button]:absolute [&_.react-calendar__navigation__prev-button]:left-2 [&_.react-calendar__navigation__next-button]:absolute [&_.react-calendar__navigation__next-button]:right-2 [&_.react-calendar__month-view__weekdays]:mb-4 [&_.react-calendar__month-view__weekdays__weekday]:text-gray-600 [&_.react-calendar__month-view__weekdays__weekday]:rounded-xl [&_.react-calendar__month-view__weekdays__weekday]:w-20 [&_.react-calendar__month-view__weekdays__weekday]:h-12 [&_.react-calendar__month-view__weekdays__weekday]:font-bold [&_.react-calendar__month-view__weekdays__weekday]:text-base [&_.react-calendar__month-view__weekdays__weekday]:uppercase [&_.react-calendar__month-view__weekdays__weekday]:tracking-wide [&_.react-calendar__month-view__weekdays__weekday]:flex [&_.react-calendar__month-view__weekdays__weekday]:items-center [&_.react-calendar__month-view__weekdays__weekday]:justify-center [&_.react-calendar__month-view__days]:gap-3 [&_.react-calendar__tile]:h-20 [&_.react-calendar__tile]:w-20 [&_.react-calendar__tile]:font-semibold [&_.react-calendar__tile]:hover:bg-blue-50 [&_.react-calendar__tile]:rounded-2xl [&_.react-calendar__tile]:transition-all [&_.react-calendar__tile]:duration-300 [&_.react-calendar__tile]:hover:scale-110 [&_.react-calendar__tile]:text-lg [&_.react-calendar__tile--active]:bg-gradient-to-br [&_.react-calendar__tile--active]:from-blue-500 [&_.react-calendar__tile--active]:to-purple-600 [&_.react-calendar__tile--active]:text-white [&_.react-calendar__tile--active]:hover:from-blue-600 [&_.react-calendar__tile--active]:hover:to-purple-700 [&_.react-calendar__tile--active]:shadow-xl [&_.react-calendar__tile--active]:scale-110 [&_.react-calendar__tile--now]:bg-gradient-to-br [&_.react-calendar__tile--now]:from-orange-100 [&_.react-calendar__tile--now]:to-yellow-100 [&_.react-calendar__tile--now]:text-orange-800 [&_.react-calendar__tile--now]:font-black [&_.react-calendar__tile--now]:border-2 [&_.react-calendar__tile--now]:border-orange-400 [&_.react-calendar__tile--now]:shadow-lg [&_.react-calendar__tile--neighboringMonth]:text-gray-300 [&_.react-calendar__tile--neighboringMonth]:opacity-50 [&_.react-calendar__tile:disabled]:text-gray-300 [&_.react-calendar__tile:disabled]:opacity-30"
+                        locale={localeId}
+                        className="w-full max-w-4xl mx-auto"
+                        classNames={{
+                          months:
+                            "flex flex-col sm:flex-row space-y-4 sm:space-x-4 sm:space-y-0",
+                          month: "space-y-6",
+                          caption:
+                            "flex justify-center pt-2 relative items-center mb-8",
+                          caption_label: "text-2xl font-bold text-gray-700",
+                          nav: "space-x-2 flex items-center",
+                          nav_button:
+                            "h-12 w-12 bg-gradient-to-br from-gray-100 to-gray-200 hover:from-gray-200 hover:to-gray-300 rounded-2xl transition-all duration-300 shadow-lg hover:shadow-xl",
+                          nav_button_previous: "absolute left-2",
+                          nav_button_next: "absolute right-2",
+                          table: "w-full border-collapse space-y-2",
+                          head_row: "flex mb-4",
+                          head_cell:
+                            "text-gray-600 rounded-xl w-20 h-12 font-bold text-base uppercase tracking-wide flex items-center justify-center",
+                          row: "flex w-full mt-3",
+                          cell: "text-center text-base p-1 relative first:[&:has([aria-selected])]:rounded-l-md last:[&:has([aria-selected])]:rounded-r-md focus-within:relative focus-within:z-20",
+                          day: "h-20 w-20 p-0 font-semibold aria-selected:opacity-100 hover:bg-blue-50 rounded-2xl transition-all duration-300 hover:scale-110 text-lg",
+                          day_selected:
+                            "bg-gradient-to-br from-blue-500 to-purple-600 text-white hover:from-blue-600 hover:to-purple-700 shadow-xl scale-110",
+                          day_today:
+                            "bg-gradient-to-br from-orange-100 to-yellow-100 text-orange-800 font-black border-2 border-orange-400 shadow-lg [&[aria-selected=true]]:bg-gradient-to-br [&[aria-selected=true]]:from-blue-500 [&[aria-selected=true]]:to-purple-600 [&[aria-selected=true]]:border-yellow-400 [&[aria-selected=true]]:border-4",
+                          day_outside: "text-gray-300 opacity-50",
+                          day_disabled: "text-gray-300 opacity-30",
+                        }}
                         components={{
-                          DayContent: ({ date }: { date: Date }) => {
+                          DayContent: ({ date }) => {
                             const dayEvents = getEventsForDate(date);
                             const hasEvents = dayEvents.length > 0;
                             const isSelected = isSameDay(date, selectedDate);
