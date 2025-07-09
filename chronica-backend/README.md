@@ -96,3 +96,110 @@ Nest is an MIT-licensed open source project. It can grow thanks to the sponsors 
 ## License
 
 Nest is [MIT licensed](https://github.com/nestjs/nest/blob/master/LICENSE).
+
+# Chronica Backend
+
+NestJS backend application for Chronica calendar system.
+
+## Development Setup
+
+1. Install dependencies:
+
+```bash
+npm install
+```
+
+2. Setup git hooks (for development):
+
+```bash
+npm run setup:dev
+```
+
+3. Setup environment:
+
+```bash
+cp .env.example .env
+# Edit .env with your configuration
+```
+
+4. Run database migrations:
+
+```bash
+npx prisma migrate dev
+```
+
+5. Start development server:
+
+```bash
+npm run start:dev
+```
+
+## Production Deployment
+
+### Docker Production
+
+For production deployment using Docker, git hooks (husky) are automatically disabled using `HUSKY=0` environment variable. The Dockerfile is optimized for production with:
+
+- Node.js 20 Alpine (required for NestJS 11+)
+- Production-only dependencies (`npm ci --omit=dev`)
+- Non-root user for security
+- Health checks for container orchestration
+
+```bash
+# Build and run with Docker Compose
+docker compose up --build
+
+# Or build individual service
+docker build -t chronica-backend -f Dockerfile --target production .
+```
+
+### Manual Production Setup
+
+1. Install production dependencies only:
+
+```bash
+NODE_ENV=production HUSKY=0 npm ci --omit=dev
+```
+
+2. Build the application:
+
+```bash
+npm run build
+```
+
+3. Run database migrations:
+
+```bash
+npx prisma migrate deploy
+```
+
+4. Start production server:
+
+```bash
+npm run start:prod
+```
+
+## Environment Variables
+
+| Variable       | Description           | Development    | Production     |
+| -------------- | --------------------- | -------------- | -------------- |
+| `HUSKY`        | Skip git hooks setup  | `0` (optional) | `0` (required) |
+| `NODE_ENV`     | Environment mode      | `development`  | `production`   |
+| `DATABASE_URL` | PostgreSQL connection | Required       | Required       |
+| `JWT_SECRET`   | JWT signing secret    | Required       | Required       |
+| `PORT`         | Server port           | `3005`         | `3005`         |
+
+## Scripts
+
+- `npm run start:dev` - Development server with hot reload
+- `npm run start:prod` - Production server
+- `npm run build` - Build for production
+- `npm run setup:dev` - Setup git hooks for development
+- `npm run lint` - Lint and fix code
+- `npm run test` - Run tests
+
+## Notes
+
+- Git hooks (husky) are only needed for development
+- Production builds automatically skip husky setup via `HUSKY=0`
+- Use Node.js 20+ for compatibility with NestJS 11+
