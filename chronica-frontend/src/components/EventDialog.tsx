@@ -52,12 +52,10 @@ export function EventDialog({
   const [color, setColor] = useState("#3B82F6");
   const [allowOverlap, setAllowOverlap] = useState(true);
   const [isRecurring, setIsRecurring] = useState(false);
-  const [recurrenceRule, setRecurrenceRule] = useState<Partial<RecurrenceRule>>(
-    {
-      frequency: "DAILY",
-      interval: 1,
-    }
-  );
+  const [recurrenceRule, setRecurrenceRule] = useState<RecurrenceRule>({
+    frequency: "DAILY",
+    interval: 1,
+  });
 
   const { createEvent, updateEvent } = useEventStore();
   const { selectedCalendar } = useCalendarStore();
@@ -110,7 +108,8 @@ export function EventDialog({
       isRecurring,
       ...(isRecurring && {
         recurrenceRule: {
-          ...recurrenceRule,
+          frequency: recurrenceRule.frequency,
+          interval: recurrenceRule.interval,
           endDate: recurrenceRule.endDate,
           count: recurrenceRule.count,
           daysOfWeek: recurrenceRule.daysOfWeek,
