@@ -35,7 +35,7 @@ export function AuthDialog({ isOpen, onClose }: AuthDialogProps) {
   const [showRegisterPassword, setShowRegisterPassword] = useState(false);
 
   const [loginData, setLoginData] = useState({
-    email: "",
+    emailOrUsername: "",
     password: "",
   });
 
@@ -49,7 +49,7 @@ export function AuthDialog({ isOpen, onClose }: AuthDialogProps) {
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
-      await login(loginData.email, loginData.password);
+      await login(loginData.emailOrUsername, loginData.password);
       onClose();
     } catch {
       // Error handled by store
@@ -156,11 +156,11 @@ export function AuthDialog({ isOpen, onClose }: AuthDialogProps) {
                       </div>
                       <Input
                         id="loginEmailOrUsername"
-                        value={loginData.email}
+                        value={loginData.emailOrUsername}
                         onChange={(e) =>
                           setLoginData({
                             ...loginData,
-                            email: e.target.value,
+                            emailOrUsername: e.target.value,
                           })
                         }
                         placeholder="Masukkan email atau username"
