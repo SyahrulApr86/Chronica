@@ -208,9 +208,17 @@ export class EventsService {
   }
 
   async getEventById(userId: string, eventId: string): Promise<Event> {
+    // Handle recurring event instances
+    let actualEventId = eventId;
+
+    // If this is a recurring event instance (contains underscore), extract the original event ID
+    if (eventId.includes('_')) {
+      actualEventId = eventId.split('_')[0];
+    }
+
     const event = await this.prisma.event.findFirst({
       where: {
-        id: eventId,
+        id: actualEventId,
         userId,
       },
       include: {
@@ -231,7 +239,15 @@ export class EventsService {
     eventId: string,
     updateEventDto: UpdateEventDto,
   ): Promise<Event> {
-    const existingEvent = await this.getEventById(userId, eventId);
+    // Handle recurring event instances
+    let actualEventId = eventId;
+
+    // If this is a recurring event instance (contains underscore), extract the original event ID
+    if (eventId.includes('_')) {
+      actualEventId = eventId.split('_')[0];
+    }
+
+    const existingEvent = await this.getEventById(userId, actualEventId);
 
     const startTime = updateEventDto.startTime
       ? new Date(updateEventDto.startTime)
@@ -250,14 +266,14 @@ export class EventsService {
           userId,
           startTime,
           endTime,
-          eventId,
+          actualEventId,
           existingEvent.calendarId,
         );
       }
     }
 
     const event = await this.prisma.event.update({
-      where: { id: eventId },
+      where: { id: actualEventId },
       data: {
         title: updateEventDto.title,
         description: updateEventDto.description,
@@ -315,10 +331,18 @@ export class EventsService {
   }
 
   async deleteEvent(userId: string, eventId: string): Promise<void> {
-    const event = await this.getEventById(userId, eventId);
+    // Handle recurring event instances
+    let actualEventId = eventId;
+
+    // If this is a recurring event instance (contains underscore), extract the original event ID
+    if (eventId.includes('_')) {
+      actualEventId = eventId.split('_')[0];
+    }
+
+    const event = await this.getEventById(userId, actualEventId);
 
     await this.prisma.event.delete({
-      where: { id: eventId },
+      where: { id: actualEventId },
     });
   }
 

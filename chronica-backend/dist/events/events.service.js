@@ -164,9 +164,13 @@ let EventsService = class EventsService {
         return expandedEvents;
     }
     async getEventById(userId, eventId) {
+        let actualEventId = eventId;
+        if (eventId.includes('_')) {
+            actualEventId = eventId.split('_')[0];
+        }
         const event = await this.prisma.event.findFirst({
             where: {
-                id: eventId,
+                id: actualEventId,
                 userId,
             },
             include: {
@@ -180,7 +184,11 @@ let EventsService = class EventsService {
         return event;
     }
     async updateEvent(userId, eventId, updateEventDto) {
-        const existingEvent = await this.getEventById(userId, eventId);
+        let actualEventId = eventId;
+        if (eventId.includes('_')) {
+            actualEventId = eventId.split('_')[0];
+        }
+        const existingEvent = await this.getEventById(userId, actualEventId);
         const startTime = updateEventDto.startTime
             ? new Date(updateEventDto.startTime)
             : existingEvent.startTime;
@@ -190,11 +198,11 @@ let EventsService = class EventsService {
         if (updateEventDto.allowOverlap === false ||
             (!updateEventDto.allowOverlap && !existingEvent.allowOverlap)) {
             if (updateEventDto.startTime || updateEventDto.endTime) {
-                await this.checkForOverlap(userId, startTime, endTime, eventId, existingEvent.calendarId);
+                await this.checkForOverlap(userId, startTime, endTime, actualEventId, existingEvent.calendarId);
             }
         }
         const event = await this.prisma.event.update({
-            where: { id: eventId },
+            where: { id: actualEventId },
             data: {
                 title: updateEventDto.title,
                 description: updateEventDto.description,
@@ -244,9 +252,13 @@ let EventsService = class EventsService {
         return event;
     }
     async deleteEvent(userId, eventId) {
-        const event = await this.getEventById(userId, eventId);
+        let actualEventId = eventId;
+        if (eventId.includes('_')) {
+            actualEventId = eventId.split('_')[0];
+        }
+        const event = await this.getEventById(userId, actualEventId);
         await this.prisma.event.delete({
-            where: { id: eventId },
+            where: { id: actualEventId },
         });
     }
     async checkForOverlap(userId, startTime, endTime, excludeEventId, calendarId) {
