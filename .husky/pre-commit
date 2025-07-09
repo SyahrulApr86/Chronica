@@ -1,5 +1,22 @@
 #!/usr/bin/env sh
-# Frontend pre-commit hook
+# Frontend and Backend pre-commit hooks
+
+echo "🔍 Running pre-commit checks..."
+
+# Frontend checks
+echo "📱 Checking Frontend (Next.js)..."
 cd chronica-frontend
-echo "Running TypeScript check and ESLint fix in chronica-frontend..."
-tsc -b && npx eslint . --fix 
+echo "   - TypeScript compilation check..."
+tsc -b
+echo "   - ESLint fix..."
+npx eslint . --fix
+
+# Backend checks  
+echo "🔧 Checking Backend (NestJS)..."
+cd ../chronica-backend
+echo "   - Build check..." 
+npm run build
+echo "   - ESLint fix..."
+npm run lint
+
+echo "✅ All pre-commit checks passed!" 
