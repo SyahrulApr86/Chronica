@@ -163,6 +163,27 @@ export function Calendar() {
     }
   }, [user, token, fetchCalendars]);
 
+  // Reset selectedCalendar when user logs out
+  useEffect(() => {
+    if (!user || !token) {
+      setSelectedCalendar(null);
+    }
+  }, [user, token, setSelectedCalendar]);
+
+  // Auto-select default calendar when calendars are loaded
+  useEffect(() => {
+    if (calendars.length > 0 && !selectedCalendar) {
+      // Look for default calendar first
+      const defaultCalendar = calendars.find((cal) => cal.isDefault);
+      if (defaultCalendar) {
+        setSelectedCalendar(defaultCalendar);
+      } else {
+        // If no default calendar, select the first one
+        setSelectedCalendar(calendars[0]);
+      }
+    }
+  }, [calendars, selectedCalendar, setSelectedCalendar]);
+
   // Fetch events when user is logged in and calendar is selected
   useEffect(() => {
     if (user && token && selectedCalendar) {
