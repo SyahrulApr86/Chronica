@@ -35,7 +35,7 @@ export const useEventStore = create<EventState>()((set) => ({
         : `${BACKEND_URL}/events`;
       const response = await fetch(url, {
         headers: {
-          Authorization: token,
+          Authorization: `Bearer ${token}`,
         },
       });
 
@@ -60,7 +60,7 @@ export const useEventStore = create<EventState>()((set) => ({
       const response = await fetch(`${BACKEND_URL}/events`, {
         method: "POST",
         headers: {
-          Authorization: token,
+          Authorization: `Bearer ${token}`,
           "Content-Type": "application/json",
         },
         body: JSON.stringify(event),
@@ -90,7 +90,7 @@ export const useEventStore = create<EventState>()((set) => ({
       const response = await fetch(`${BACKEND_URL}/events/${id}`, {
         method: "PUT",
         headers: {
-          Authorization: token,
+          Authorization: `Bearer ${token}`,
           "Content-Type": "application/json",
         },
         body: JSON.stringify(event),
@@ -120,7 +120,7 @@ export const useEventStore = create<EventState>()((set) => ({
       const response = await fetch(`${BACKEND_URL}/events/${id}`, {
         method: "DELETE",
         headers: {
-          Authorization: token,
+          Authorization: `Bearer ${token}`,
         },
       });
 
