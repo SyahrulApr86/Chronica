@@ -137,7 +137,12 @@ export function Calendar() {
   );
   const [viewMode, setViewMode] = useState<"month" | "week" | "list">("month");
 
-  const { events, fetchEvents, deleteEvent, isLoading } = useEventStore();
+  const {
+    events,
+    fetchEvents,
+    deleteEvent,
+    isLoading: eventsLoading,
+  } = useEventStore();
   const { user, token, logout } = useAuthStore();
   const {
     calendars,
@@ -147,6 +152,7 @@ export function Calendar() {
     createCalendar,
     updateCalendar,
     deleteCalendar,
+    isLoading: calendarsLoading,
   } = useCalendarStore();
 
   // Close auth dialog when user logs in
@@ -270,38 +276,55 @@ export function Calendar() {
     setEventToDelete(null);
   };
 
-  // Show loading screen while rehydrating
+  // Show loading screen while rehydrating or loading initial data
   const [hasMounted, setHasMounted] = useState(false);
+  const [hasInitialDataLoaded, setHasInitialDataLoaded] = useState(false);
 
   useEffect(() => {
     setHasMounted(true);
   }, []);
 
-  if (!hasMounted) {
+  // Mark initial data as loaded when we have calendars or confirmed no calendars exist
+  useEffect(() => {
+    if (user && token && !calendarsLoading) {
+      setHasInitialDataLoaded(true);
+    }
+    if (!user || !token) {
+      setHasInitialDataLoaded(false);
+    }
+  }, [user, token, calendarsLoading]);
+
+  // Comprehensive loading state to prevent FOUC
+  const isInitialLoading =
+    !hasMounted || (user && token && !hasInitialDataLoaded);
+
+  if (isInitialLoading) {
     return (
       <ClientOnly>
-        <div className="min-h-screen bg-gradient-to-br from-slate-900 via-purple-900 to-indigo-900 flex items-center justify-center">
+        <div className="min-h-screen bg-gradient-to-br from-slate-50 to-blue-50 flex items-center justify-center">
           <div className="text-center">
             <div className="relative group mb-8">
-              <div className="absolute -inset-4 bg-gradient-to-r from-purple-500 to-pink-500 rounded-full blur-lg opacity-75 animate-pulse"></div>
-              <div className="relative p-6 bg-gradient-to-br from-purple-600 to-pink-600 rounded-2xl shadow-2xl">
+              <div className="absolute -inset-4 bg-gradient-to-r from-blue-500 to-purple-600 rounded-full blur-lg opacity-75 animate-pulse"></div>
+              <div className="relative p-6 bg-gradient-to-br from-blue-600 to-purple-600 rounded-2xl shadow-2xl">
                 <CalendarIcon className="h-16 w-16 text-white animate-bounce" />
               </div>
             </div>
-            <h1 className="text-4xl font-black text-transparent bg-clip-text bg-gradient-to-r from-white via-purple-200 to-pink-200 mb-4">
+            <h1 className="text-4xl font-black text-transparent bg-clip-text bg-gradient-to-r from-blue-600 via-purple-600 to-blue-800 mb-4">
               Chronica
             </h1>
-            <div className="flex items-center justify-center gap-2 text-gray-300">
-              <div className="w-2 h-2 bg-white rounded-full animate-pulse"></div>
+            <div className="flex items-center justify-center gap-2 text-gray-600">
+              <div className="w-2 h-2 bg-blue-500 rounded-full animate-pulse"></div>
               <div
-                className="w-2 h-2 bg-white rounded-full animate-pulse"
+                className="w-2 h-2 bg-blue-500 rounded-full animate-pulse"
                 style={{ animationDelay: "0.2s" }}
               ></div>
               <div
-                className="w-2 h-2 bg-white rounded-full animate-pulse"
+                className="w-2 h-2 bg-blue-500 rounded-full animate-pulse"
                 style={{ animationDelay: "0.4s" }}
               ></div>
-              <span className="ml-2 text-sm">Memuat...</span>
+              <span className="ml-2 text-sm font-medium">
+                {!hasMounted ? "Memuat aplikasi..." : "Memuat data kalender..."}
+              </span>
             </div>
           </div>
         </div>
@@ -687,7 +710,7 @@ export function Calendar() {
                     </CardTitle>
                   </CardHeader>
                   <CardContent className="p-6">
-                    {isLoading ? (
+                    {eventsLoading ? (
                       <div className="text-center py-4">
                         <div className="animate-spin rounded-full h-6 w-6 border-2 border-blue-600 border-t-transparent mx-auto mb-2"></div>
                         <div className="text-gray-500 text-sm">

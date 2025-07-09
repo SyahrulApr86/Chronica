@@ -12,6 +12,7 @@ interface Calendar {
 interface CalendarState {
   calendars: Calendar[];
   selectedCalendar: Calendar | null;
+  isLoading: boolean;
   setCalendars: (calendars: Calendar[]) => void;
   setSelectedCalendar: (calendar: Calendar | null) => void;
   fetchCalendars: (token: string) => Promise<void>;
@@ -30,11 +31,13 @@ interface CalendarState {
 const useCalendarStore = create<CalendarState>()((set) => ({
   calendars: [],
   selectedCalendar: null,
+  isLoading: false,
   setCalendars: (calendars) => set({ calendars }),
   setSelectedCalendar: (calendar) => set({ selectedCalendar: calendar }),
 
   fetchCalendars: async (token) => {
     try {
+      set({ isLoading: true });
       const response = await fetch("/api/calendars", {
         headers: {
           Authorization: `Bearer ${token}`,
@@ -46,14 +49,16 @@ const useCalendarStore = create<CalendarState>()((set) => ({
       }
 
       const data = await response.json();
-      set({ calendars: data });
+      set({ calendars: data, isLoading: false });
     } catch (error) {
+      set({ isLoading: false });
       throw error;
     }
   },
 
   createCalendar: async (token, calendar) => {
     try {
+      set({ isLoading: true });
       const response = await fetch("/api/calendars", {
         method: "POST",
         headers: {
@@ -71,14 +76,17 @@ const useCalendarStore = create<CalendarState>()((set) => ({
       set((state) => ({
         calendars: [...state.calendars, newCalendar],
         selectedCalendar: newCalendar,
+        isLoading: false,
       }));
     } catch (error) {
+      set({ isLoading: false });
       throw error;
     }
   },
 
   updateCalendar: async (token, id, calendar) => {
     try {
+      set({ isLoading: true });
       const response = await fetch(`/api/calendars/${id}`, {
         method: "PUT",
         headers: {
@@ -101,14 +109,17 @@ const useCalendarStore = create<CalendarState>()((set) => ({
           state.selectedCalendar?.id === id
             ? updatedCalendar
             : state.selectedCalendar,
+        isLoading: false,
       }));
     } catch (error) {
+      set({ isLoading: false });
       throw error;
     }
   },
 
   deleteCalendar: async (token, id) => {
     try {
+      set({ isLoading: true });
       const response = await fetch(`/api/calendars/${id}`, {
         method: "DELETE",
         headers: {
@@ -124,8 +135,10 @@ const useCalendarStore = create<CalendarState>()((set) => ({
         calendars: state.calendars.filter((c) => c.id !== id),
         selectedCalendar:
           state.selectedCalendar?.id === id ? null : state.selectedCalendar,
+        isLoading: false,
       }));
     } catch (error) {
+      set({ isLoading: false });
       throw error;
     }
   },
