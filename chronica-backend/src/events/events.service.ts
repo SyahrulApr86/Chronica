@@ -6,8 +6,13 @@ import {
 } from '@nestjs/common';
 import { PrismaService } from '../prisma.service';
 import { CreateEventDto, UpdateEventDto } from './dto/event.dto';
-import { Event, RecurrenceFrequency } from '../../generated/prisma';
+import { Event } from '../../generated/prisma';
 import { CalendarsService } from '../calendars/calendars.service';
+import {
+  EventWhereCondition,
+  EventWithRecurrence,
+  RecurrenceRule,
+} from './events.interfaces';
 
 @Injectable()
 export class EventsService {
@@ -90,7 +95,7 @@ export class EventsService {
     endDate?: Date,
     calendarId?: string,
   ): Promise<Event[]> {
-    const where: any = { userId };
+    const where: EventWhereCondition = { userId };
 
     if (calendarId) {
       where.calendarId = calendarId;
@@ -153,7 +158,7 @@ export class EventsService {
     startDate?: Date,
     endDate?: Date,
   ): Promise<Event[]> {
-    const where: any = { userId };
+    const where: EventWhereCondition = { userId };
 
     if (startDate && endDate) {
       where.OR = [
@@ -339,7 +344,8 @@ export class EventsService {
       actualEventId = eventId.split('_')[0];
     }
 
-    const event = await this.getEventById(userId, actualEventId);
+    // Validate event exists and belongs to user
+    await this.getEventById(userId, actualEventId);
 
     await this.prisma.event.delete({
       where: { id: actualEventId },
@@ -353,7 +359,10 @@ export class EventsService {
     excludeEventId?: string,
     calendarId?: string,
   ): Promise<void> {
-    const whereClause: any = {
+    const whereClause: EventWhereCondition & {
+      id?: { not: string };
+      allowOverlap?: boolean;
+    } = {
       userId,
       id: excludeEventId ? { not: excludeEventId } : undefined,
       allowOverlap: false,
@@ -393,11 +402,11 @@ export class EventsService {
   }
 
   private generateRecurringInstances(
-    event: any,
+    event: EventWithRecurrence,
     startDate?: Date,
     endDate?: Date,
   ): Event[] {
-    if (!event.recurrenceRule) return [event];
+    if (!event.recurrenceRule) return [event as Event];
 
     const instances: Event[] = [];
     const rule = event.recurrenceRule;
@@ -413,10 +422,11 @@ export class EventsService {
     while (currentDate <= maxDate && count < maxCount) {
       if (currentDate >= minDate) {
         // Check if this date is not in exceptions
-        const isException = rule.exceptions.some(
-          (exception: Date) =>
-            exception.toDateString() === currentDate.toDateString(),
-        );
+        const isException =
+          rule.exceptions?.some(
+            (exception: Date) =>
+              exception.toDateString() === currentDate.toDateString(),
+          ) || false;
 
         if (!isException) {
           const instanceStart = new Date(currentDate);
@@ -427,7 +437,7 @@ export class EventsService {
             id: `${event.id}_${currentDate.toISOString()}`,
             startTime: instanceStart,
             endTime: instanceEnd,
-          });
+          } as Event);
         }
       }
 
@@ -443,15 +453,15 @@ export class EventsService {
     return instances;
   }
 
-  private getNextOccurrence(currentDate: Date, rule: any): Date {
+  private getNextOccurrence(currentDate: Date, rule: RecurrenceRule): Date {
     const nextDate = new Date(currentDate);
 
     switch (rule.frequency) {
-      case RecurrenceFrequency.DAILY:
+      case 'DAILY':
         nextDate.setDate(nextDate.getDate() + rule.interval);
         break;
 
-      case RecurrenceFrequency.WEEKLY:
+      case 'WEEKLY':
         if (rule.daysOfWeek && rule.daysOfWeek.length > 0) {
           // Find next day of week
           const currentDay = nextDate.getDay();
@@ -472,7 +482,7 @@ export class EventsService {
         }
         break;
 
-      case RecurrenceFrequency.MONTHLY:
+      case 'MONTHLY':
         if (rule.dayOfMonth) {
           nextDate.setMonth(nextDate.getMonth() + rule.interval);
           nextDate.setDate(rule.dayOfMonth);
@@ -481,7 +491,7 @@ export class EventsService {
         }
         break;
 
-      case RecurrenceFrequency.YEARLY:
+      case 'YEARLY':
         nextDate.setFullYear(nextDate.getFullYear() + rule.interval);
         if (rule.monthOfYear) {
           nextDate.setMonth(rule.monthOfYear - 1);

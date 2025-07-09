@@ -9,4 +9,4 @@ import { CalendarsModule } from '../calendars/calendars.module';
   controllers: [EventsController],
   providers: [EventsService, PrismaService],
 })
-export class EventsModule {} 
+export class EventsModule {}

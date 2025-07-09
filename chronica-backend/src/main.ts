@@ -4,7 +4,7 @@ import { AppModule } from './app.module';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
-  
+
   // Enable CORS for frontend
   app.enableCors({
     origin: ['http://localhost:3000', 'http://localhost:3001'],
@@ -25,4 +25,7 @@ async function bootstrap() {
   await app.listen(port);
   console.log(`🚀 Chronica Backend running on http://localhost:${port}`);
 }
-bootstrap();
+bootstrap().catch((error) => {
+  console.error('Error starting application:', error);
+  process.exit(1);
+});

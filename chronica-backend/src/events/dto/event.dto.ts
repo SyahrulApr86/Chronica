@@ -1,4 +1,13 @@
-import { IsString, IsOptional, IsBoolean, IsDateString, IsEnum, IsInt, IsArray, Min } from 'class-validator';
+import {
+  IsString,
+  IsOptional,
+  IsBoolean,
+  IsDateString,
+  IsEnum,
+  IsInt,
+  IsArray,
+  Min,
+} from 'class-validator';
 import { Type } from 'class-transformer';
 import { RecurrenceFrequency } from '../../../generated/prisma';
 
@@ -123,4 +132,4 @@ export class UpdateEventDto {
   @IsBoolean()
   @IsOptional()
   allowOverlap?: boolean;
-} 
+}

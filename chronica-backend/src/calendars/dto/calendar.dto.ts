@@ -1,4 +1,4 @@
-import { IsString, IsOptional, IsBoolean, IsHexColor } from 'class-validator';
+import { IsString, IsOptional, IsBoolean } from 'class-validator';
 
 export class CreateCalendarDto {
   @IsString()
@@ -33,4 +33,4 @@ export class UpdateCalendarDto {
   @IsOptional()
   @IsBoolean()
   isDefault?: boolean;
-} 
+}

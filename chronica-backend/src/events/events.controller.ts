@@ -15,6 +15,7 @@ import {
 import { AuthGuard } from '@nestjs/passport';
 import { EventsService } from './events.service';
 import { CreateEventDto, UpdateEventDto } from './dto/event.dto';
+import { User } from '../types/user.interface';
 
 @Controller('events')
 @UseGuards(AuthGuard('jwt'))
@@ -23,13 +24,16 @@ export class EventsController {
 
   @Post()
   @HttpCode(HttpStatus.CREATED)
-  async createEvent(@Body() createEventDto: CreateEventDto, @Request() req) {
+  async createEvent(
+    @Body() createEventDto: CreateEventDto,
+    @Request() req: { user: User },
+  ) {
     return this.eventsService.createEvent(req.user.id, createEventDto);
   }
 
   @Get('all')
   async getAllEvents(
-    @Request() req,
+    @Request() req: { user: User },
     @Query('startDate') startDate?: string,
     @Query('endDate') endDate?: string,
   ) {
@@ -41,7 +45,7 @@ export class EventsController {
 
   @Get()
   async getEvents(
-    @Request() req,
+    @Request() req: { user: User },
     @Query('startDate') startDate?: string,
     @Query('endDate') endDate?: string,
     @Query('calendarId') calendarId?: string,
@@ -53,7 +57,10 @@ export class EventsController {
   }
 
   @Get(':id')
-  async getEventById(@Param('id') eventId: string, @Request() req) {
+  async getEventById(
+    @Param('id') eventId: string,
+    @Request() req: { user: User },
+  ) {
     return this.eventsService.getEventById(req.user.id, eventId);
   }
 
@@ -61,14 +68,17 @@ export class EventsController {
   async updateEvent(
     @Param('id') eventId: string,
     @Body() updateEventDto: UpdateEventDto,
-    @Request() req,
+    @Request() req: { user: User },
   ) {
     return this.eventsService.updateEvent(req.user.id, eventId, updateEventDto);
   }
 
   @Delete(':id')
   @HttpCode(HttpStatus.NO_CONTENT)
-  async deleteEvent(@Param('id') eventId: string, @Request() req) {
+  async deleteEvent(
+    @Param('id') eventId: string,
+    @Request() req: { user: User },
+  ) {
     return this.eventsService.deleteEvent(req.user.id, eventId);
   }
 }

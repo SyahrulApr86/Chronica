@@ -1,4 +1,8 @@
-import { Injectable, ConflictException, UnauthorizedException } from '@nestjs/common';
+import {
+  Injectable,
+  ConflictException,
+  UnauthorizedException,
+} from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import * as bcrypt from 'bcrypt';
 import { PrismaService } from '../prisma.service';
@@ -17,10 +21,7 @@ export class AuthService {
     // Check if user already exists
     const existingUser = await this.prisma.user.findFirst({
       where: {
-        OR: [
-          { email },
-          { username },
-        ],
+        OR: [{ email }, { username }],
       },
     });
 
@@ -42,7 +43,11 @@ export class AuthService {
     });
 
     // Generate JWT token
-    const payload = { sub: user.id, email: user.email, username: user.username };
+    const payload = {
+      sub: user.id,
+      email: user.email,
+      username: user.username,
+    };
     const token = this.jwtService.sign(payload);
 
     return {
@@ -62,10 +67,7 @@ export class AuthService {
     // Find user by email or username
     const user = await this.prisma.user.findFirst({
       where: {
-        OR: [
-          { email: emailOrUsername },
-          { username: emailOrUsername },
-        ],
+        OR: [{ email: emailOrUsername }, { username: emailOrUsername }],
       },
     });
 
@@ -80,7 +82,11 @@ export class AuthService {
     }
 
     // Generate JWT token
-    const payload = { sub: user.id, email: user.email, username: user.username };
+    const payload = {
+      sub: user.id,
+      email: user.email,
+      username: user.username,
+    };
     const token = this.jwtService.sign(payload);
 
     return {
@@ -107,4 +113,4 @@ export class AuthService {
 
     return user;
   }
-} 
+}
