@@ -67,7 +67,15 @@ export const useEventStore = create<EventState>()((set) => ({
       });
 
       if (!response.ok) {
-        throw new Error("Failed to create event");
+        // Parse error response from backend
+        let errorMessage = "Failed to create event";
+        try {
+          const errorData = await response.json();
+          errorMessage = errorData.message || errorMessage;
+        } catch {
+          // If response body is not JSON, use default message
+        }
+        throw new Error(errorMessage);
       }
 
       const newEvent = await response.json();
@@ -97,7 +105,15 @@ export const useEventStore = create<EventState>()((set) => ({
       });
 
       if (!response.ok) {
-        throw new Error("Failed to update event");
+        // Parse error response from backend
+        let errorMessage = "Failed to update event";
+        try {
+          const errorData = await response.json();
+          errorMessage = errorData.message || errorMessage;
+        } catch {
+          // If response body is not JSON, use default message
+        }
+        throw new Error(errorMessage);
       }
 
       const updatedEvent = await response.json();
