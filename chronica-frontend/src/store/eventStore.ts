@@ -68,7 +68,7 @@ interface EventStore {
   removeEvent: (token: string, id: string) => Promise<void>;
 }
 
-const API_BASE_URL = "http://localhost:3001";
+const API_BASE_URL = "/api";
 
 const getAuthHeaders = (token: string) => ({
   "Content-Type": "application/json",

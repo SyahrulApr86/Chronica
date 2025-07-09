@@ -239,8 +239,8 @@ export function Calendar() {
 
       if (response.ok) {
         // Refresh events after deletion
-        fetchEvents(format(selectedDate, "yyyy-MM-dd"));
-        fetchAllEvents(user?.id || "");
+        fetchEvents(token!);
+        fetchAllEvents(token!);
       }
     } catch (error) {
       console.error("Error deleting event:", error);

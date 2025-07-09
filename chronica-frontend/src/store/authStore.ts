@@ -34,7 +34,7 @@ interface AuthStore {
   login: (data: { emailOrUsername: string; password: string }) => Promise<void>;
 }
 
-const API_BASE_URL = "http://localhost:3001";
+const API_BASE_URL = "/api";
 
 // Helper function to handle API errors
 const handleApiError = async (

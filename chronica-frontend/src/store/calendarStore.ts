@@ -49,7 +49,7 @@ interface CalendarStore {
   deleteCalendar: (token: string, id: string) => Promise<void>;
 }
 
-const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:3001";
+const API_BASE_URL = "/api";
 
 // Helper function to ensure calendar has _count property
 const ensureCalendarCount = (calendar: any): Calendar => ({
