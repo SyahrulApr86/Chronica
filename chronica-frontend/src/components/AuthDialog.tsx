@@ -51,7 +51,7 @@ export function AuthDialog({ isOpen, onClose }: AuthDialogProps) {
     try {
       await login(loginData);
       onClose();
-    } catch (error) {
+    } catch {
       // Error handled by store
     }
   };
@@ -61,7 +61,7 @@ export function AuthDialog({ isOpen, onClose }: AuthDialogProps) {
     try {
       await register(registerData);
       onClose();
-    } catch (error) {
+    } catch {
       // Error handled by store
     }
   };
@@ -73,7 +73,7 @@ export function AuthDialog({ isOpen, onClose }: AuthDialogProps) {
     }
   };
 
-  const handleTabChange = (value: string) => {
+  const handleTabChange = () => {
     setError(null); // Clear errors when switching tabs
   };
 

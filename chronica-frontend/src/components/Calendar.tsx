@@ -1,5 +1,6 @@
 "use client";
 
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import React, { useState, useEffect } from "react";
 import { Calendar as CalendarPrimitive } from "@/components/ui/calendar";
 import { Button } from "@/components/ui/button";
@@ -28,7 +29,7 @@ import { AuthDialog } from "./AuthDialog";
 import { WeekView } from "./WeekView";
 import { EventsListView } from "./EventsListView";
 import { useEventStore } from "@/store/eventStore";
-import { useAuthStore, useAuthHydration } from "@/store/authStore";
+import { useAuthHydration } from "@/store/authStore";
 import { useCalendarStore } from "@/store/calendarStore";
 import { CalendarSelector } from "./CalendarSelector";
 

@@ -1,0 +1,93 @@
+services:
+  # PostgreSQL Database
+  postgres:
+    image: postgres:15-alpine
+    container_name: chronica-postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: chronica
+      POSTGRES_USER: chronica_user
+      POSTGRES_PASSWORD: chronica_password
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./chronica-backend/prisma/schema.prisma:/docker-entrypoint-initdb.d/schema.prisma
+    ports:
+      - "15432:5432"
+    networks:
+      - chronica-network
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U chronica_user -d chronica"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # Backend Service (NestJS)
+  backend:
+    build:
+      context: ./chronica-backend
+      dockerfile: Dockerfile
+      target: production
+    container_name: chronica-backend
+    restart: unless-stopped
+    environment:
+      NODE_ENV: production
+      DATABASE_URL: postgresql://chronica_user:chronica_password@postgres:5432/chronica
+      JWT_SECRET: your-super-secret-jwt-key-change-this-in-production
+      PORT: 3005
+    ports:
+      - "3005:3005"
+    depends_on:
+      postgres:
+        condition: service_healthy
+    networks:
+      - chronica-network
+    volumes:
+      - ./chronica-backend/prisma:/app/prisma
+    command: >
+      sh -c "
+        npx prisma generate &&
+        npx prisma migrate deploy &&
+        node dist/main
+      "
+    healthcheck:
+      test: ["CMD-SHELL", "curl -f http://localhost:3005/health || exit 1"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+  # Frontend Service (Next.js)
+  frontend:
+    build:
+      context: ./chronica-frontend
+      dockerfile: Dockerfile
+      target: runner
+    container_name: chronica-frontend
+    restart: unless-stopped
+    environment:
+      NODE_ENV: production
+      NEXT_PUBLIC_BACKEND_URL: http://localhost:3005
+      PORT: 3004
+    ports:
+      - "3004:3004"
+    depends_on:
+      backend:
+        condition: service_healthy
+    networks:
+      - chronica-network
+    healthcheck:
+      test: ["CMD-SHELL", "curl -f http://localhost:3004 || exit 1"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+# Networks
+networks:
+  chronica-network:
+    driver: bridge
+    name: chronica-network
+
+# Volumes
+volumes:
+  postgres_data:
+    driver: local
+    name: chronica-postgres-data
