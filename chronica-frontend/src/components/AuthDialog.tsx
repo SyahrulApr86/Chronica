@@ -35,21 +35,20 @@ export function AuthDialog({ isOpen, onClose }: AuthDialogProps) {
   const [showRegisterPassword, setShowRegisterPassword] = useState(false);
 
   const [loginData, setLoginData] = useState({
-    emailOrUsername: "",
+    email: "",
     password: "",
   });
 
   const [registerData, setRegisterData] = useState({
     email: "",
-    username: "",
-    password: "",
     name: "",
+    password: "",
   });
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
-      await login(loginData);
+      await login(loginData.email, loginData.password);
       onClose();
     } catch {
       // Error handled by store
@@ -59,7 +58,11 @@ export function AuthDialog({ isOpen, onClose }: AuthDialogProps) {
   const handleRegister = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
-      await register(registerData);
+      await register(
+        registerData.name,
+        registerData.email,
+        registerData.password
+      );
       onClose();
     } catch {
       // Error handled by store
@@ -151,11 +154,11 @@ export function AuthDialog({ isOpen, onClose }: AuthDialogProps) {
                       </div>
                       <Input
                         id="loginEmailOrUsername"
-                        value={loginData.emailOrUsername}
+                        value={loginData.email}
                         onChange={(e) =>
                           setLoginData({
                             ...loginData,
-                            emailOrUsername: e.target.value,
+                            email: e.target.value,
                           })
                         }
                         placeholder="Masukkan email atau username"
@@ -285,11 +288,11 @@ export function AuthDialog({ isOpen, onClose }: AuthDialogProps) {
                       </div>
                       <Input
                         id="registerUsername"
-                        value={registerData.username}
+                        value={registerData.name}
                         onChange={(e) =>
                           setRegisterData({
                             ...registerData,
-                            username: e.target.value,
+                            name: e.target.value,
                           })
                         }
                         placeholder="username_anda"

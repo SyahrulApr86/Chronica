@@ -1,65 +1,61 @@
 "use client";
 
-import React, { useState } from "react";
-import { Button } from "@/components/ui/button";
-import { Card, CardContent } from "@/components/ui/card";
-import { Dialog, DialogContent, DialogTitle } from "@/components/ui/dialog";
+import { useState } from "react";
+import { format } from "date-fns";
 import {
-  Clock,
-  MapPin,
-  Edit,
-  Trash2,
-  Repeat,
+  AlertTriangle,
   Calendar,
+  Clock,
+  Edit,
+  MapPin,
+  Repeat,
   Sparkles,
   Timer,
-  AlertTriangle,
-  X,
+  Trash2,
 } from "lucide-react";
-import {
-  format,
-  differenceInMinutes,
-  differenceInHours,
-  differenceInDays,
-} from "date-fns";
-import { useEventStore, Event } from "@/store/eventStore";
-import { useAuthStore } from "@/store/authStore";
-import { useCalendarStore } from "@/store/calendarStore";
+import { Card, CardContent } from "./ui/card";
+import { Button } from "./ui/button";
+import { Dialog, DialogContent, DialogTitle } from "./ui/dialog";
+import useEventStore from "@/store/eventStore";
+
+interface Event {
+  id: string;
+  title: string;
+  description?: string;
+  startTime: Date;
+  endTime: Date;
+  allDay: boolean;
+  location?: string;
+  color: string;
+  isRecurring: boolean;
+}
 
 interface EventListProps {
   events: Event[];
   onEventEdit: (event: Event) => void;
 }
 
-// Function to calculate and format event duration
 const formatDuration = (startTime: Date, endTime: Date): string => {
-  const totalMinutes = differenceInMinutes(endTime, startTime);
-  const days = Math.floor(totalMinutes / (24 * 60));
-  const hours = Math.floor((totalMinutes % (24 * 60)) / 60);
-  const minutes = totalMinutes % 60;
+  const minutes = Math.round(
+    (endTime.getTime() - startTime.getTime()) / (1000 * 60)
+  );
+  const hours = Math.floor(minutes / 60);
+  const remainingMinutes = minutes % 60;
 
-  if (days > 0) {
-    if (hours > 0) {
-      return `${days} hari ${hours} jam`;
-    }
-    return `${days} hari`;
-  } else if (hours > 0) {
-    if (minutes > 0) {
-      return `${hours} jam ${minutes} menit`;
-    }
+  if (hours === 0) {
+    return `${minutes} menit`;
+  } else if (remainingMinutes === 0) {
     return `${hours} jam`;
   } else {
-    return `${minutes} menit`;
+    return `${hours} jam ${remainingMinutes} menit`;
   }
 };
 
 export function EventList({ events, onEventEdit }: EventListProps) {
-  const { removeEvent, isLoading } = useEventStore();
-  const { token } = useAuthStore();
-  const { fetchCalendars } = useCalendarStore();
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [eventToDelete, setEventToDelete] = useState<Event | null>(null);
   const [isDeleting, setIsDeleting] = useState(false);
+  const { deleteEvent } = useEventStore();
 
   const handleDeleteClick = (event: Event) => {
     setEventToDelete(event);
@@ -67,18 +63,17 @@ export function EventList({ events, onEventEdit }: EventListProps) {
   };
 
   const handleConfirmDelete = async () => {
-    if (!token || !eventToDelete) return;
+    if (!eventToDelete) return;
 
     setIsDeleting(true);
     try {
-      await removeEvent(token, eventToDelete.id);
-      await fetchCalendars(token); // Refresh calendar data to update event counter
+      await deleteEvent(eventToDelete.id);
       setShowDeleteModal(false);
-      setEventToDelete(null);
     } catch (error) {
       console.error("Error deleting event:", error);
     } finally {
       setIsDeleting(false);
+      setEventToDelete(null);
     }
   };
 
@@ -89,9 +84,9 @@ export function EventList({ events, onEventEdit }: EventListProps) {
 
   if (events.length === 0) {
     return (
-      <div className="text-center py-12">
-        <div className="relative">
-          <div className="w-20 h-20 mx-auto mb-6 bg-gradient-to-br from-gray-100 to-gray-200 rounded-2xl flex items-center justify-center">
+      <div className="text-center py-8">
+        <div className="relative inline-block mb-4">
+          <div className="relative p-4 bg-gray-100 rounded-2xl">
             <Calendar className="h-10 w-10 text-gray-400" />
             <Sparkles className="absolute -top-1 -right-1 h-5 w-5 text-yellow-400 animate-pulse" />
           </div>
@@ -100,7 +95,7 @@ export function EventList({ events, onEventEdit }: EventListProps) {
           Belum ada event
         </div>
         <div className="text-gray-500">
-          Klik "Tambah Event" untuk membuat jadwal baru
+          Klik &quot;Tambah Event&quot; untuk membuat jadwal baru
         </div>
       </div>
     );
@@ -172,12 +167,6 @@ export function EventList({ events, onEventEdit }: EventListProps) {
                       </span>
                     </div>
                   )}
-
-                  {!event.allowOverlap && (
-                    <div className="flex items-center gap-1 px-2 py-1 bg-yellow-50 text-yellow-700 rounded-lg text-xs font-medium">
-                      <span>No Overlap</span>
-                    </div>
-                  )}
                 </div>
               </div>
 
@@ -195,7 +184,7 @@ export function EventList({ events, onEventEdit }: EventListProps) {
                   variant="ghost"
                   size="sm"
                   onClick={() => handleDeleteClick(event)}
-                  disabled={isLoading}
+                  disabled={isDeleting}
                   className="h-9 w-9 p-0 hover:bg-red-50 hover:text-red-600 rounded-xl transition-all duration-200 hover:scale-110 disabled:opacity-50"
                 >
                   <Trash2 className="h-4 w-4" />
@@ -297,20 +286,10 @@ export function EventList({ events, onEventEdit }: EventListProps) {
                 </Button>
                 <Button
                   onClick={handleConfirmDelete}
+                  className="flex-1 bg-gradient-to-r from-red-500 to-red-600 hover:from-red-600 hover:to-red-700 text-white rounded-xl h-11 shadow-lg shadow-red-500/25"
                   disabled={isDeleting}
-                  className="flex-1 bg-gradient-to-r from-red-500 to-red-600 hover:from-red-600 hover:to-red-700 text-white border-0 rounded-xl h-11 shadow-lg hover:shadow-xl transition-all duration-200 disabled:opacity-50"
                 >
-                  {isDeleting ? (
-                    <>
-                      <div className="animate-spin rounded-full h-4 w-4 border-2 border-white border-t-transparent mr-2"></div>
-                      Menghapus...
-                    </>
-                  ) : (
-                    <>
-                      <Trash2 className="h-4 w-4 mr-2" />
-                      Hapus Event
-                    </>
-                  )}
+                  {isDeleting ? "Menghapus..." : "Hapus"}
                 </Button>
               </div>
             </div>
