@@ -274,6 +274,120 @@ export function Calendar() {
     );
   }
 
+  // Show welcome screen when user is authenticated but has no calendars
+  if (user && calendars.length === 0) {
+    return (
+      <>
+        <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50/50 to-indigo-100/80 relative overflow-hidden">
+          {/* Enhanced Background elements */}
+          <div className="absolute inset-0">
+            <div className="absolute inset-0 bg-gradient-to-br from-blue-500/5 via-purple-500/5 to-pink-500/5"></div>
+            <div className="absolute top-0 left-0 w-full h-full bg-[radial-gradient(circle_500px_at_50%_200px,rgba(255,255,255,0.1),transparent)]"></div>
+          </div>
+
+          {/* Header with user info */}
+          <div className="relative p-6 md:p-8 lg:p-10">
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-10">
+              {/* Logo and Title */}
+              <div className="flex items-center gap-4">
+                <div className="relative group">
+                  <div className="absolute -inset-2 bg-gradient-to-r from-blue-500 to-purple-600 rounded-full blur-lg opacity-75 group-hover:opacity-100 transition-opacity duration-300"></div>
+                  <div className="relative p-4 bg-gradient-to-br from-blue-500 to-purple-600 rounded-2xl shadow-2xl">
+                    <CalendarIcon className="h-8 w-8 text-white" />
+                  </div>
+                </div>
+                <div>
+                  <h1 className="text-4xl font-black text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-purple-600">
+                    Chronica
+                  </h1>
+                  <div className="flex items-center gap-2 text-sm text-gray-600 mt-1">
+                    <Globe className="h-4 w-4 text-green-500" />
+                    <span>Selamat datang, {user.name || user.username}!</span>
+                    <span className="text-gray-400">
+                      Atur jadwal Anda dengan mudah
+                    </span>
+                  </div>
+                </div>
+              </div>
+
+              {/* User Actions */}
+              <div className="flex items-center gap-4">
+                <Button
+                  onClick={handleLogout}
+                  variant="outline"
+                  className="bg-white/80 backdrop-blur-sm border-gray-200 text-gray-700 hover:bg-gray-100 rounded-2xl shadow-lg"
+                >
+                  Logout
+                </Button>
+              </div>
+            </div>
+          </div>
+
+          {/* Main Welcome Content */}
+          <div className="relative flex items-center justify-center p-6 md:p-8 lg:p-10">
+            <div className="w-full max-w-2xl">
+              <Card className="group shadow-3xl border-0 bg-white/80 backdrop-blur-xl rounded-[2rem] overflow-hidden hover:shadow-3xl transition-all duration-500">
+                <div className="absolute inset-0 bg-gradient-to-br from-white/20 via-white/10 to-transparent pointer-events-none"></div>
+
+                <CardContent className="relative p-8 md:p-12 text-center">
+                  {/* Logo and Icon */}
+                  <div className="relative group mb-8">
+                    <div className="absolute -inset-4 bg-gradient-to-r from-blue-500 to-purple-600 rounded-full blur-lg opacity-75 animate-pulse"></div>
+                    <div className="relative p-6 bg-gradient-to-br from-blue-500 to-purple-600 rounded-2xl shadow-2xl mx-auto w-fit">
+                      <CalendarIcon className="h-16 w-16 text-white" />
+                    </div>
+                  </div>
+
+                  {/* Title */}
+                  <h1 className="text-4xl md:text-5xl font-black text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-purple-600 mb-6">
+                    Selamat Datang di Chronica!
+                  </h1>
+
+                  {/* Description */}
+                  <p className="text-gray-600 mb-8 text-lg leading-relaxed max-w-lg mx-auto">
+                    Untuk memulai menggunakan Chronica, Anda perlu membuat
+                    kalender terlebih dahulu. Kalender akan menjadi tempat untuk
+                    menyimpan dan mengatur semua event Anda.
+                  </p>
+
+                  {/* Create Calendar Button */}
+                  <CalendarSelector
+                    calendars={calendars}
+                    selectedCalendar={selectedCalendar}
+                    onCalendarSelect={setSelectedCalendar}
+                    onCalendarCreate={handleCreateCalendar}
+                    onCalendarUpdate={handleUpdateCalendar}
+                    onCalendarDelete={handleDeleteCalendar}
+                  />
+
+                  {/* Helper Text */}
+                  <div className="flex items-center justify-center gap-2 text-blue-600 mt-6">
+                    <div className="w-2 h-2 bg-blue-500 rounded-full animate-pulse"></div>
+                    <span className="text-sm font-medium">
+                      Klik "Tambah" di atas untuk memulai
+                    </span>
+                  </div>
+                </CardContent>
+              </Card>
+            </div>
+          </div>
+        </div>
+
+        {/* EventDialog and AuthDialog */}
+        <EventDialog
+          isOpen={isEventDialogOpen}
+          onClose={() => setIsEventDialogOpen(false)}
+          event={editingEvent}
+          selectedDate={selectedDate}
+        />
+        <AuthDialog
+          isOpen={isAuthDialogOpen}
+          onClose={() => setIsAuthDialogOpen(false)}
+        />
+      </>
+    );
+  }
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50/50 to-indigo-100/80 relative overflow-hidden">
       {/* Enhanced Background elements */}
@@ -356,18 +470,6 @@ export function Calendar() {
                 <Plus className="h-5 w-5 mr-2" />
                 Tambah
               </Button>
-            </div>
-          )}
-
-          {/* Show empty state if no calendars */}
-          {user && calendars.length === 0 && (
-            <div className="text-center py-8">
-              <div className="flex items-center justify-center gap-3 mb-4">
-                <div className="w-2 h-2 bg-blue-500 rounded-full animate-pulse"></div>
-                <span className="text-sm font-medium">
-                  Klik &quot;Tambah&quot; di atas untuk memulai
-                </span>
-              </div>
             </div>
           )}
 
