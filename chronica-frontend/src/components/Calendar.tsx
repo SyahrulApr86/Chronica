@@ -127,7 +127,7 @@ export function Calendar() {
   );
   const [viewMode, setViewMode] = useState<"month" | "week" | "list">("month");
 
-  const { events, fetchEvents, isLoading } = useEventStore();
+  const { events, fetchEvents, deleteEvent, isLoading } = useEventStore();
   const { user, token, logout } = useAuthStore();
   const {
     calendars,
@@ -215,22 +215,20 @@ export function Calendar() {
   };
 
   const handleDeleteEvent = async (eventId: string) => {
-    try {
-      const response = await fetch(`/api/events/${eventId}`, {
-        method: "DELETE",
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
+    if (!confirm("Apakah Anda yakin ingin menghapus event ini?")) {
+      return;
+    }
 
-      if (response.ok) {
-        // Refresh events after deletion
-        if (selectedCalendar) {
-          fetchEvents(token!, selectedCalendar.id);
-        }
+    try {
+      await deleteEvent(token!, eventId);
+
+      // Refresh events after deletion
+      if (selectedCalendar) {
+        await fetchEvents(token!, selectedCalendar.id);
       }
     } catch (error) {
       console.error("Error deleting event:", error);
+      alert("Gagal menghapus event. Silakan coba lagi.");
     }
   };
 
@@ -588,6 +586,7 @@ export function Calendar() {
                       <EventList
                         events={eventsForSelectedDate}
                         onEventEdit={handleEditEvent}
+                        onEventDelete={handleDeleteEvent}
                       />
                     )}
                   </CardContent>
