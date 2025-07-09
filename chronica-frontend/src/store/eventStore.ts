@@ -1,51 +1,41 @@
 import { create } from "zustand";
-
-interface Event {
-  id: string;
-  title: string;
-  description?: string;
-  startTime: Date;
-  endTime: Date;
-  allDay: boolean;
-  location?: string;
-  color: string;
-  calendarId: string;
-  allowOverlap: boolean;
-  isRecurring: boolean;
-  recurringPattern?: string;
-  recurringEndDate?: Date;
-}
+import type { CalendarEvent } from "@/types/event";
 
 interface EventState {
-  events: Event[];
-  allEvents: Event[];
+  events: CalendarEvent[];
   isLoading: boolean;
-  setEvents: (events: Event[]) => void;
-  setAllEvents: (events: Event[]) => void;
-  fetchEvents: (token: string) => Promise<void>;
-  fetchAllEvents: (token: string) => Promise<void>;
-  createEvent: (token: string, event: Omit<Event, "id">) => Promise<void>;
+  error: string | null;
+  setEvents: (events: CalendarEvent[]) => void;
+  fetchEvents: (token: string, calendarId?: string) => Promise<void>;
+  createEvent: (
+    token: string,
+    event: Omit<CalendarEvent, "id">
+  ) => Promise<void>;
   updateEvent: (
     token: string,
     id: string,
-    event: Partial<Event>
+    event: Partial<CalendarEvent>
   ) => Promise<void>;
   deleteEvent: (token: string, id: string) => Promise<void>;
 }
 
-const useEventStore = create<EventState>()((set) => ({
+const BACKEND_URL =
+  process.env.NEXT_PUBLIC_BACKEND_URL || "http://localhost:3001";
+
+export const useEventStore = create<EventState>()((set) => ({
   events: [],
-  allEvents: [],
   isLoading: false,
-
+  error: null,
   setEvents: (events) => set({ events }),
-  setAllEvents: (events) => set({ allEvents: events }),
-
-  fetchEvents: async (token) => {
+  fetchEvents: async (token, calendarId) => {
     try {
-      const response = await fetch("/api/events", {
+      set({ isLoading: true, error: null });
+      const url = calendarId
+        ? `${BACKEND_URL}/events?calendarId=${calendarId}`
+        : `${BACKEND_URL}/events`;
+      const response = await fetch(url, {
         headers: {
-          Authorization: `Bearer ${token}`,
+          Authorization: token,
         },
       });
 
@@ -54,38 +44,24 @@ const useEventStore = create<EventState>()((set) => ({
       }
 
       const data = await response.json();
-      set({ events: data });
+      set({ events: data, isLoading: false });
     } catch (error) {
-      throw error;
-    }
-  },
-
-  fetchAllEvents: async (token) => {
-    try {
-      const response = await fetch("/api/events/all", {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
+      set({
+        error:
+          error instanceof Error ? error.message : "Failed to fetch events",
+        isLoading: false,
       });
-
-      if (!response.ok) {
-        throw new Error("Failed to fetch all events");
-      }
-
-      const data = await response.json();
-      set({ allEvents: data });
-    } catch (error) {
       throw error;
     }
   },
-
   createEvent: async (token, event) => {
     try {
-      const response = await fetch("/api/events", {
+      set({ isLoading: true, error: null });
+      const response = await fetch(`${BACKEND_URL}/events`, {
         method: "POST",
         headers: {
+          Authorization: token,
           "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
         },
         body: JSON.stringify(event),
       });
@@ -97,20 +73,25 @@ const useEventStore = create<EventState>()((set) => ({
       const newEvent = await response.json();
       set((state) => ({
         events: [...state.events, newEvent],
-        allEvents: [...state.allEvents, newEvent],
+        isLoading: false,
       }));
     } catch (error) {
+      set({
+        error:
+          error instanceof Error ? error.message : "Failed to create event",
+        isLoading: false,
+      });
       throw error;
     }
   },
-
   updateEvent: async (token, id, event) => {
     try {
-      const response = await fetch(`/api/events/${id}`, {
+      set({ isLoading: true, error: null });
+      const response = await fetch(`${BACKEND_URL}/events/${id}`, {
         method: "PUT",
         headers: {
+          Authorization: token,
           "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
         },
         body: JSON.stringify(event),
       });
@@ -122,19 +103,24 @@ const useEventStore = create<EventState>()((set) => ({
       const updatedEvent = await response.json();
       set((state) => ({
         events: state.events.map((e) => (e.id === id ? updatedEvent : e)),
-        allEvents: state.allEvents.map((e) => (e.id === id ? updatedEvent : e)),
+        isLoading: false,
       }));
     } catch (error) {
+      set({
+        error:
+          error instanceof Error ? error.message : "Failed to update event",
+        isLoading: false,
+      });
       throw error;
     }
   },
-
   deleteEvent: async (token, id) => {
     try {
-      const response = await fetch(`/api/events/${id}`, {
+      set({ isLoading: true, error: null });
+      const response = await fetch(`${BACKEND_URL}/events/${id}`, {
         method: "DELETE",
         headers: {
-          Authorization: `Bearer ${token}`,
+          Authorization: token,
         },
       });
 
@@ -144,9 +130,14 @@ const useEventStore = create<EventState>()((set) => ({
 
       set((state) => ({
         events: state.events.filter((e) => e.id !== id),
-        allEvents: state.allEvents.filter((e) => e.id !== id),
+        isLoading: false,
       }));
     } catch (error) {
+      set({
+        error:
+          error instanceof Error ? error.message : "Failed to delete event",
+        isLoading: false,
+      });
       throw error;
     }
   },

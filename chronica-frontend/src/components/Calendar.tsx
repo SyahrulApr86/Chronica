@@ -1,6 +1,5 @@
 "use client";
 
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import { useEffect, useState } from "react";
 import {
   format,
@@ -22,10 +21,13 @@ import { EventDialog } from "./EventDialog";
 import { AuthDialog } from "./AuthDialog";
 import { EventList } from "./EventList";
 import { EventsListView } from "./EventsListView";
-import type { Event } from "@/types/event";
+import type { CalendarEvent } from "@/types/event";
 
 // Function to calculate total duration for events in a month
-const calculateMonthlyDuration = (events: Event[], date: Date): string => {
+const calculateMonthlyDuration = (
+  events: CalendarEvent[],
+  date: Date
+): string => {
   const monthStart = new Date(date.getFullYear(), date.getMonth(), 1);
   const monthEnd = new Date(date.getFullYear(), date.getMonth() + 1, 0);
 
@@ -53,7 +55,7 @@ export function Calendar() {
   const [selectedDate, setSelectedDate] = useState<Date>(new Date());
   const [isEventDialogOpen, setIsEventDialogOpen] = useState(false);
   const [isAuthDialogOpen, setIsAuthDialogOpen] = useState(false);
-  const [editingEvent, setEditingEvent] = useState<Event | undefined>(
+  const [editingEvent, setEditingEvent] = useState<CalendarEvent | undefined>(
     undefined
   );
   const [viewMode, setViewMode] = useState<"month" | "week" | "list">("month");
@@ -71,7 +73,7 @@ export function Calendar() {
     fetchCalendars,
   } = useCalendarStore();
 
-  const [setSelectedEvent] = useState<Event | undefined>(
+  const [selectedEvent, setSelectedEvent] = useState<CalendarEvent | undefined>(
     undefined
   );
 
@@ -140,7 +142,7 @@ export function Calendar() {
     setIsEventDialogOpen(true);
   };
 
-  const handleEditEvent = (event: Event) => {
+  const handleEditEvent = (event: CalendarEvent) => {
     setEditingEvent(event);
     setIsEventDialogOpen(true);
   };
@@ -162,7 +164,7 @@ export function Calendar() {
     setIsEventDialogOpen(true);
   };
 
-  const handleEventClick = (event: Event) => {
+  const handleEventClick = (event: CalendarEvent) => {
     setSelectedEvent(event);
     setIsEventDialogOpen(true);
   };

@@ -28,37 +28,13 @@ import {
 import useEventStore from "@/store/eventStore";
 import useCalendarStore from "@/store/calendarStore";
 import { useAuthStore } from "@/store/authStore";
+import type { CalendarEvent, RecurrenceRule } from "@/types/event";
 
 interface EventDialogProps {
   isOpen: boolean;
   onClose: () => void;
-  event?: Event;
+  event?: CalendarEvent;
   selectedDate: Date;
-}
-
-interface Event {
-  id?: string;
-  title: string;
-  description?: string;
-  startTime: Date;
-  endTime: Date;
-  allDay: boolean;
-  location?: string;
-  color: string;
-  calendarId: string;
-  allowOverlap: boolean;
-  isRecurring: boolean;
-  recurringPattern?: string;
-  recurringEndDate?: Date;
-  recurrenceRule?: RecurrenceRule;
-}
-
-interface RecurrenceRule {
-  frequency: "DAILY" | "WEEKLY" | "MONTHLY" | "YEARLY";
-  interval: number;
-  endDate?: Date;
-  count?: number;
-  daysOfWeek?: number[];
 }
 
 export function EventDialog({

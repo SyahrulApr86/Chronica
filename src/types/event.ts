@@ -1,13 +1,25 @@
-export interface RecurrenceRule {
-  frequency: "DAILY" | "WEEKLY" | "MONTHLY" | "YEARLY";
-  interval: number;
-  endDate?: Date;
-  count?: number;
-  daysOfWeek?: number[];
+export interface Calendar {
+  id: string;
+  name: string;
+  description?: string;
+  color: string;
+  isDefault: boolean;
+  _count?: {
+    events: number;
+  };
 }
 
-export interface CalendarEvent {
-  id?: string;
+export interface RecurrenceRule {
+  frequency: "DAILY" | "WEEKLY" | "MONTHLY" | "YEARLY";
+  interval?: number;
+  endDate?: Date;
+  daysOfWeek?: number[];
+  daysOfMonth?: number[];
+  monthsOfYear?: number[];
+}
+
+export interface Event {
+  id: string;
   title: string;
   description?: string;
   startTime: Date;
@@ -16,11 +28,11 @@ export interface CalendarEvent {
   location?: string;
   color: string;
   calendarId: string;
+  calendar?: Calendar;
   allowOverlap: boolean;
   isRecurring: boolean;
-  recurringPattern?: string;
-  recurringEndDate?: Date;
   recurrenceRule?: RecurrenceRule;
+  parentEventId?: string;
+  createdAt?: Date;
+  updatedAt?: Date;
 }
-
-export default CalendarEvent; 

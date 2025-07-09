@@ -14,13 +14,13 @@ import { id as localeId } from "date-fns/locale";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import { Button } from "./ui/button";
 import { Card } from "./ui/card";
-import type { Event } from "@/types/event";
+import type { CalendarEvent } from "@/types/event";
 
 interface WeekViewProps {
   selectedDate: Date;
   onDateChange: (date: Date) => void;
-  events: Event[];
-  onEventClick?: (event: Event) => void;
+  events: CalendarEvent[];
+  onEventClick?: (event: CalendarEvent) => void;
   onTimeSlotClick?: (date: Date, hour: number) => void;
 }
 
@@ -47,7 +47,7 @@ export function WeekView({
     return events.filter((event) => isSameDay(new Date(event.startTime), date));
   };
 
-  const getEventPosition = (event: Event) => {
+  const getEventPosition = (event: CalendarEvent) => {
     const startHour = new Date(event.startTime).getHours();
     const startMinute = new Date(event.startTime).getMinutes();
     const endHour = new Date(event.endTime).getHours();
@@ -60,7 +60,7 @@ export function WeekView({
     return { top, height: Math.max(height, 30) }; // Minimum height 30px
   };
 
-  const formatEventTime = (event: Event) => {
+  const formatEventTime = (event: CalendarEvent) => {
     const start = format(new Date(event.startTime), "HH:mm");
     const end = format(new Date(event.endTime), "HH:mm");
     return `${start} - ${end}`;

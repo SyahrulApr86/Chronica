@@ -30,27 +30,12 @@ import {
   endOfMonth,
 } from "date-fns";
 import { id as localeId } from "date-fns/locale";
-
-interface Event {
-  id: string;
-  title: string;
-  description?: string;
-  startTime: Date;
-  endTime: Date;
-  allDay: boolean;
-  location?: string;
-  color: string;
-  calendarId: string;
-  calendar?: {
-    name: string;
-    color: string;
-  };
-}
+import type { CalendarEvent } from "@/types/event";
 
 interface EventsListViewProps {
-  events: Event[];
+  events: CalendarEvent[];
   selectedDate: Date;
-  onEventEdit: (event: Event) => void;
+  onEventEdit: (event: CalendarEvent) => void;
   onEventDelete?: (eventId: string) => void;
 }
 
@@ -107,7 +92,7 @@ export function EventsListView({
     );
   }, [events, selectedDate, filterPeriod, searchTerm]);
 
-  const formatEventTime = (event: Event) => {
+  const formatEventTime = (event: CalendarEvent) => {
     if (event.allDay) {
       return "Sepanjang hari";
     }
@@ -119,7 +104,7 @@ export function EventsListView({
     return `${start} - ${end}`;
   };
 
-  const formatEventDate = (event: Event) => {
+  const formatEventDate = (event: CalendarEvent) => {
     return format(new Date(event.startTime), "dd MMM yyyy", {
       locale: localeId,
     });
