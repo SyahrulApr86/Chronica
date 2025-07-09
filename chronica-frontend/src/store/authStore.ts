@@ -13,6 +13,7 @@ interface AuthState {
   token: string | null;
   isLoading: boolean;
   error: string | null;
+  hasHydrated: boolean;
   setUser: (user: User | null) => void;
   setToken: (token: string | null) => void;
   setError: (error: string | null) => void;
@@ -33,6 +34,7 @@ export const useAuthStore = create<AuthState>()(
       token: null,
       isLoading: false,
       error: null,
+      hasHydrated: false,
       setUser: (user) => set({ user }),
       setToken: (token) => set({ token }),
       setError: (error) => set({ error }),
@@ -95,6 +97,11 @@ export const useAuthStore = create<AuthState>()(
       name: "auth-storage", // unique name for localStorage key
       // Only persist user and token, not loading/error states
       partialize: (state) => ({ user: state.user, token: state.token }),
+      onRehydrateStorage: () => (state) => {
+        if (state) {
+          state.hasHydrated = true;
+        }
+      },
     }
   )
 );

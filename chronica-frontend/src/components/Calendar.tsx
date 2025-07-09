@@ -143,7 +143,7 @@ export function Calendar() {
     deleteEvent,
     isLoading: eventsLoading,
   } = useEventStore();
-  const { user, token, logout } = useAuthStore();
+  const { user, token, logout, hasHydrated } = useAuthStore();
   const {
     calendars,
     selectedCalendar,
@@ -296,7 +296,7 @@ export function Calendar() {
 
   // Comprehensive loading state to prevent FOUC
   const isInitialLoading =
-    !hasMounted || (user && token && !hasInitialDataLoaded);
+    !hasMounted || !hasHydrated || (user && token && !hasInitialDataLoaded);
 
   if (isInitialLoading) {
     return (
@@ -323,7 +323,11 @@ export function Calendar() {
                 style={{ animationDelay: "0.4s" }}
               ></div>
               <span className="ml-2 text-sm font-medium">
-                {!hasMounted ? "Memuat aplikasi..." : "Memuat data kalender..."}
+                {!hasMounted
+                  ? "Memuat aplikasi..."
+                  : !hasHydrated
+                  ? "Memuat sesi..."
+                  : "Memuat data kalender..."}
               </span>
             </div>
           </div>
@@ -332,8 +336,8 @@ export function Calendar() {
     );
   }
 
-  // If not authenticated, show landing page
-  if (!user || !token) {
+  // If not authenticated after rehydration, show landing page
+  if (hasHydrated && (!user || !token)) {
     return (
       <ClientOnly>
         <div className="min-h-screen bg-gradient-to-br from-slate-900 via-purple-900 to-indigo-900 flex items-center justify-center p-4 relative overflow-hidden">
@@ -474,6 +478,12 @@ export function Calendar() {
         </div>
       </ClientOnly>
     );
+  }
+
+  // Type guard to ensure user and token are not null in authenticated section
+  if (!user || !token) {
+    // This should never happen due to the above condition, but satisfies TypeScript
+    return null;
   }
 
   return (
