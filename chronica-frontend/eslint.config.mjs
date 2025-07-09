@@ -10,6 +10,34 @@ const compat = new FlatCompat({
 });
 
 const eslintConfig = [
+  // Ignore files and directories
+  {
+    ignores: [
+      // Next.js build output
+      ".next/",
+      "out/",
+
+      // Build outputs
+      "dist/",
+      "build/",
+
+      // Dependencies
+      "node_modules/",
+
+      // Environment files
+      ".env*",
+
+      // Generated files
+      "*.d.ts",
+
+      // Logs
+      "*.log",
+
+      // Cache
+      ".cache/",
+      ".turbo/",
+    ],
+  },
   ...compat.extends("next/core-web-vitals", "next/typescript"),
 ];
 
