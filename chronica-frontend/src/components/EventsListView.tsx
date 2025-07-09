@@ -238,7 +238,7 @@ export function EventsListView({
                     </Button>
                     {onEventDelete && (
                       <Button
-                        onClick={() => onEventDelete(event.id)}
+                        onClick={() => event.id && onEventDelete(event.id)}
                         variant="ghost"
                         size="sm"
                         className="h-8 w-8 p-0 rounded-lg hover:bg-red-100 hover:text-red-600"
