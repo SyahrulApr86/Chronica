@@ -88,8 +88,13 @@ export function CalendarSelector({
   const { events } = useEventStore();
 
   // Function to get event count for a specific calendar
-  const getEventCount = (calendarId: string): number => {
-    return events.filter((event) => event.calendarId === calendarId).length;
+  const getEventCount = (calendar: Calendar): number => {
+    // For selected calendar, use real-time data from eventStore
+    if (selectedCalendar?.id === calendar.id) {
+      return events.filter((event) => event.calendarId === calendar.id).length;
+    }
+    // For non-selected calendars, use backend count
+    return calendar._count?.events || 0;
   };
 
   const handleCreateCalendar = () => {
@@ -258,7 +263,7 @@ export function CalendarSelector({
                       )}
                     </div>
                     <div className="flex items-center gap-2 text-sm text-gray-600">
-                      <span>{getEventCount(calendar.id)} events</span>
+                      <span>{getEventCount(calendar)} events</span>
                       {calendar.description && (
                         <>
                           <span>•</span>
@@ -296,7 +301,7 @@ export function CalendarSelector({
                   >
                     <Edit className="h-4 w-4 text-blue-600" />
                   </Button>
-                  {calendars.length > 1 && getEventCount(calendar.id) === 0 && (
+                  {calendars.length > 1 && getEventCount(calendar) === 0 && (
                     <Button
                       size="sm"
                       variant="ghost"
