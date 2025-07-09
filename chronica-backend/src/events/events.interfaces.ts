@@ -6,14 +6,28 @@ export interface EventWhereCondition {
     startTime?: {
       gte?: Date;
       lte?: Date;
+      gt?: Date;
+      lt?: Date;
     };
     endTime?: {
       gte?: Date;
       lte?: Date;
+      gt?: Date;
+      lt?: Date;
     };
     AND?: Array<{
-      startTime?: { lte: Date };
-      endTime?: { gte: Date };
+      startTime?: {
+        lte?: Date;
+        gte?: Date;
+        gt?: Date;
+        lt?: Date;
+      };
+      endTime?: {
+        gte?: Date;
+        lte?: Date;
+        gt?: Date;
+        lt?: Date;
+      };
     }>;
   }>;
 }

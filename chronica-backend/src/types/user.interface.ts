@@ -1,9 +1,8 @@
 export interface User {
   id: string;
   email: string;
-  name: string;
-  createdAt: Date;
-  updatedAt: Date;
+  username: string;
+  name: string | null;
 }
 
 export interface AuthenticatedRequest extends Request {
