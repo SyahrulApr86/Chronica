@@ -695,7 +695,7 @@ export function Calendar() {
                           day_selected:
                             "bg-gradient-to-br from-blue-500 to-purple-600 text-white hover:from-blue-600 hover:to-purple-700 shadow-xl scale-110",
                           day_today:
-                            "bg-gradient-to-br from-orange-100 to-yellow-100 text-orange-800 font-black border-2 border-orange-400 shadow-lg",
+                            "bg-gradient-to-br from-orange-100 to-yellow-100 text-orange-800 font-black border-2 border-orange-400 shadow-lg [&[aria-selected=true]]:bg-gradient-to-br [&[aria-selected=true]]:from-blue-500 [&[aria-selected=true]]:to-purple-600 [&[aria-selected=true]]:border-yellow-400 [&[aria-selected=true]]:border-4",
                           day_outside: "text-gray-300 opacity-50",
                           day_disabled: "text-gray-300 opacity-30",
                         }}
@@ -710,7 +710,9 @@ export function Calendar() {
                               <div className="relative w-full h-full flex flex-col items-center justify-center group">
                                 <span
                                   className={`text-lg font-bold ${
-                                    isSelected
+                                    isSelected && isCurrentDay
+                                      ? "text-yellow-300 drop-shadow-lg"
+                                      : isSelected
                                       ? "text-white"
                                       : isCurrentDay
                                       ? "text-orange-800"
