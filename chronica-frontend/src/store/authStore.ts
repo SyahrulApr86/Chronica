@@ -1,4 +1,5 @@
 import { create } from "zustand";
+import { persist } from "zustand/middleware";
 
 interface User {
   id: string;
@@ -25,67 +26,77 @@ interface AuthState {
   logout: () => void;
 }
 
-export const useAuthStore = create<AuthState>()((set) => ({
-  user: null,
-  token: null,
-  isLoading: false,
-  error: null,
-  setUser: (user) => set({ user }),
-  setToken: (token) => set({ token }),
-  setError: (error) => set({ error }),
-  login: async (emailOrUsername, password) => {
-    try {
-      set({ isLoading: true, error: null });
-      const response = await fetch("/api/auth/login", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ emailOrUsername, password }),
-      });
+export const useAuthStore = create<AuthState>()(
+  persist(
+    (set) => ({
+      user: null,
+      token: null,
+      isLoading: false,
+      error: null,
+      setUser: (user) => set({ user }),
+      setToken: (token) => set({ token }),
+      setError: (error) => set({ error }),
+      login: async (emailOrUsername, password) => {
+        try {
+          set({ isLoading: true, error: null });
+          const response = await fetch("/api/auth/login", {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({ emailOrUsername, password }),
+          });
 
-      if (!response.ok) {
-        throw new Error("Failed to login");
-      }
+          if (!response.ok) {
+            throw new Error("Failed to login");
+          }
 
-      const data = await response.json();
-      set({ user: data.user, token: data.token, isLoading: false });
-    } catch (error) {
-      set({
-        error: error instanceof Error ? error.message : "Failed to login",
-        isLoading: false,
-      });
-      throw error;
+          const data = await response.json();
+          set({ user: data.user, token: data.access_token, isLoading: false });
+        } catch (error) {
+          set({
+            error: error instanceof Error ? error.message : "Failed to login",
+            isLoading: false,
+          });
+          throw error;
+        }
+      },
+      register: async (email, username, password, name) => {
+        try {
+          set({ isLoading: true, error: null });
+          const response = await fetch("/api/auth/register", {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({ email, username, password, name }),
+          });
+
+          if (!response.ok) {
+            throw new Error("Failed to register");
+          }
+
+          const data = await response.json();
+          set({ user: data.user, token: data.access_token, isLoading: false });
+        } catch (error) {
+          set({
+            error:
+              error instanceof Error ? error.message : "Failed to register",
+            isLoading: false,
+          });
+          throw error;
+        }
+      },
+      logout: () => {
+        set({ user: null, token: null });
+      },
+    }),
+    {
+      name: "auth-storage", // unique name for localStorage key
+      // Only persist user and token, not loading/error states
+      partialize: (state) => ({ user: state.user, token: state.token }),
     }
-  },
-  register: async (email, username, password, name) => {
-    try {
-      set({ isLoading: true, error: null });
-      const response = await fetch("/api/auth/register", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ email, username, password, name }),
-      });
-
-      if (!response.ok) {
-        throw new Error("Failed to register");
-      }
-
-      const data = await response.json();
-      set({ user: data.user, token: data.token, isLoading: false });
-    } catch (error) {
-      set({
-        error: error instanceof Error ? error.message : "Failed to register",
-        isLoading: false,
-      });
-      throw error;
-    }
-  },
-  logout: () => {
-    set({ user: null, token: null });
-  },
-}));
+  )
+);
 
 export default useAuthStore;
