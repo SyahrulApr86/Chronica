@@ -41,6 +41,7 @@ export function AuthDialog({ isOpen, onClose }: AuthDialogProps) {
 
   const [registerData, setRegisterData] = useState({
     email: "",
+    username: "",
     name: "",
     password: "",
   });
@@ -59,9 +60,10 @@ export function AuthDialog({ isOpen, onClose }: AuthDialogProps) {
     e.preventDefault();
     try {
       await register(
-        registerData.name,
         registerData.email,
-        registerData.password
+        registerData.username,
+        registerData.password,
+        registerData.name
       );
       onClose();
     } catch {
@@ -288,11 +290,11 @@ export function AuthDialog({ isOpen, onClose }: AuthDialogProps) {
                       </div>
                       <Input
                         id="registerUsername"
-                        value={registerData.name}
+                        value={registerData.username}
                         onChange={(e) =>
                           setRegisterData({
                             ...registerData,
-                            name: e.target.value,
+                            username: e.target.value,
                           })
                         }
                         placeholder="username_anda"

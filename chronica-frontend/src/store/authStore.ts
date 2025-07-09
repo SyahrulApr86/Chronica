@@ -3,6 +3,7 @@ import { create } from "zustand";
 interface User {
   id: string;
   email: string;
+  username: string;
   name: string;
 }
 
@@ -15,7 +16,12 @@ interface AuthState {
   setToken: (token: string | null) => void;
   setError: (error: string | null) => void;
   login: (email: string, password: string) => Promise<void>;
-  register: (name: string, email: string, password: string) => Promise<void>;
+  register: (
+    email: string,
+    username: string,
+    password: string,
+    name?: string
+  ) => Promise<void>;
   logout: () => void;
 }
 
@@ -52,7 +58,7 @@ export const useAuthStore = create<AuthState>()((set) => ({
       throw error;
     }
   },
-  register: async (name, email, password) => {
+  register: async (email, username, password, name) => {
     try {
       set({ isLoading: true, error: null });
       const response = await fetch("/api/auth/register", {
@@ -60,7 +66,7 @@ export const useAuthStore = create<AuthState>()((set) => ({
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({ name, email, password }),
+        body: JSON.stringify({ email, username, password, name }),
       });
 
       if (!response.ok) {
