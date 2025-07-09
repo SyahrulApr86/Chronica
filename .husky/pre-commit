@@ -16,8 +16,6 @@ echo "🔧 Checking Backend (NestJS)..."
 cd ../chronica-backend
 echo "   - TypeScript compilation check..."
 tsc -b
-echo "   - Build check..." 
-npm run build
 echo "   - ESLint fix..."
 npm run lint
 
