@@ -364,7 +364,7 @@ export function Calendar() {
                   <div className="flex items-center justify-center gap-2 text-blue-600 mt-6">
                     <div className="w-2 h-2 bg-blue-500 rounded-full animate-pulse"></div>
                     <span className="text-sm font-medium">
-                      Klik "Tambah" di atas untuk memulai
+                      Klik &quot;Tambah&quot; di atas untuk memulai
                     </span>
                   </div>
                 </CardContent>

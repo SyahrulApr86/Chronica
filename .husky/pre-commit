@@ -1,5 +1,6 @@
 #!/usr/bin/env sh
 # Frontend and Backend pre-commit hooks
+set -e  # Exit immediately if a command exits with non-zero status
 
 echo "🔍 Running pre-commit checks..."
 
@@ -7,16 +8,16 @@ echo "🔍 Running pre-commit checks..."
 echo "📱 Checking Frontend (Next.js)..."
 cd chronica-frontend
 echo "   - TypeScript compilation check..."
-tsc -b
+tsc -b || { echo "❌ Frontend TypeScript compilation failed!"; exit 1; }
 echo "   - ESLint fix..."
-npx eslint . --fix
+npx eslint . --fix || { echo "❌ Frontend ESLint failed!"; exit 1; }
 
 # Backend checks  
 echo "🔧 Checking Backend (NestJS)..."
 cd ../chronica-backend
 echo "   - TypeScript compilation check..."
-tsc -b
+tsc -b || { echo "❌ Backend TypeScript compilation failed!"; exit 1; }
 echo "   - ESLint fix..."
-npm run lint
+npm run lint || { echo "❌ Backend ESLint failed!"; exit 1; }
 
 echo "✅ All pre-commit checks passed!" 
