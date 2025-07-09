@@ -4,6 +4,7 @@ import React, { useState, useEffect } from "react";
 import { Calendar as CalendarPrimitive } from "@/components/ui/calendar";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Dialog, DialogContent, DialogTitle } from "@/components/ui/dialog";
 import {
   Plus,
   LogOut,
@@ -11,6 +12,8 @@ import {
   Calendar as CalendarIcon,
   Sparkles,
   Timer,
+  Trash2,
+  AlertTriangle,
 } from "lucide-react";
 import {
   format,
@@ -122,6 +125,8 @@ export function Calendar() {
   const [selectedDate, setSelectedDate] = useState<Date>(new Date());
   const [isEventDialogOpen, setIsEventDialogOpen] = useState(false);
   const [isAuthDialogOpen, setIsAuthDialogOpen] = useState(false);
+  const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
+  const [eventToDelete, setEventToDelete] = useState<string | null>(null);
   const [editingEvent, setEditingEvent] = useState<CalendarEvent | undefined>(
     undefined
   );
@@ -214,22 +219,34 @@ export function Calendar() {
     setIsEventDialogOpen(true);
   };
 
-  const handleDeleteEvent = async (eventId: string) => {
-    if (!confirm("Apakah Anda yakin ingin menghapus event ini?")) {
-      return;
-    }
+  const handleDeleteEvent = (eventId: string) => {
+    setEventToDelete(eventId);
+    setIsDeleteDialogOpen(true);
+  };
+
+  const confirmDeleteEvent = async () => {
+    if (!eventToDelete) return;
 
     try {
-      await deleteEvent(token!, eventId);
+      await deleteEvent(token!, eventToDelete);
 
       // Refresh events after deletion
       if (selectedCalendar) {
         await fetchEvents(token!, selectedCalendar.id);
       }
+
+      // Close dialog and reset state
+      setIsDeleteDialogOpen(false);
+      setEventToDelete(null);
     } catch (error) {
       console.error("Error deleting event:", error);
       alert("Gagal menghapus event. Silakan coba lagi.");
     }
+  };
+
+  const cancelDeleteEvent = () => {
+    setIsDeleteDialogOpen(false);
+    setEventToDelete(null);
   };
 
   // Show loading screen while rehydrating
@@ -336,6 +353,80 @@ export function Calendar() {
             isOpen={isAuthDialogOpen}
             onClose={() => setIsAuthDialogOpen(false)}
           />
+
+          {/* Delete Confirmation Dialog */}
+          <Dialog open={isDeleteDialogOpen} onOpenChange={cancelDeleteEvent}>
+            <DialogContent className="max-w-md p-0 bg-white border-0 shadow-2xl rounded-2xl overflow-hidden">
+              <DialogTitle className="sr-only">
+                Konfirmasi Hapus Event
+              </DialogTitle>
+              <div className="relative">
+                {/* Header with red gradient */}
+                <div className="bg-gradient-to-r from-red-500 to-red-600 p-6 text-white">
+                  <div className="flex items-center gap-3">
+                    <div className="p-2 bg-white/20 rounded-full">
+                      <AlertTriangle className="h-6 w-6" />
+                    </div>
+                    <div>
+                      <h2 className="text-xl font-semibold">Hapus Event</h2>
+                      <p className="text-red-100 text-sm">
+                        Konfirmasi penghapusan
+                      </p>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Content */}
+                <div className="p-6">
+                  <div className="flex items-start gap-4">
+                    <div className="flex-shrink-0">
+                      <div className="w-12 h-12 bg-red-100 rounded-full flex items-center justify-center">
+                        <Trash2 className="w-6 h-6 text-red-600" />
+                      </div>
+                    </div>
+                    <div className="flex-1">
+                      <h3 className="text-lg font-semibold text-gray-900 mb-2">
+                        Yakin ingin menghapus event ini?
+                      </h3>
+                      <p className="text-gray-600 leading-relaxed mb-4">
+                        Event yang sudah dihapus tidak dapat dikembalikan.
+                        Pastikan Anda benar-benar ingin menghapus event ini.
+                      </p>
+
+                      <div className="bg-red-50 border border-red-200 rounded-xl p-4">
+                        <div className="flex items-center gap-2">
+                          <AlertTriangle className="h-4 w-4 text-red-600" />
+                          <span className="text-sm font-medium text-red-800">
+                            Tindakan ini tidak dapat dibatalkan
+                          </span>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Footer */}
+                <div className="px-6 pb-6">
+                  <div className="flex flex-col sm:flex-row gap-3">
+                    <Button
+                      onClick={cancelDeleteEvent}
+                      variant="outline"
+                      className="flex-1 h-11 rounded-xl border-gray-300 hover:bg-gray-50 font-medium"
+                    >
+                      Batal
+                    </Button>
+                    <Button
+                      onClick={confirmDeleteEvent}
+                      className="flex-1 h-11 bg-gradient-to-r from-red-500 to-red-600 hover:from-red-600 hover:to-red-700 text-white border-0 rounded-xl shadow-lg hover:shadow-xl transition-all duration-200 font-medium"
+                    >
+                      <Trash2 className="h-4 w-4 mr-2" />
+                      Hapus Event
+                    </Button>
+                  </div>
+                </div>
+              </div>
+            </DialogContent>
+          </Dialog>
         </div>
       </ClientOnly>
     );
