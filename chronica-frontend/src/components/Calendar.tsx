@@ -235,11 +235,6 @@ export function Calendar() {
     try {
       await deleteEvent(token!, eventToDelete);
 
-      // Refresh events after deletion
-      if (selectedCalendar) {
-        await fetchEvents(token!, selectedCalendar.id);
-      }
-
       // Close dialog and reset state
       setIsDeleteDialogOpen(false);
       setEventToDelete(null);
