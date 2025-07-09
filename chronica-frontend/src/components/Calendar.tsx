@@ -171,6 +171,7 @@ export function Calendar() {
     token,
     selectedDate,
     selectedCalendar,
+    viewMode,
     fetchEvents,
     fetchAllEvents,
   ]);
