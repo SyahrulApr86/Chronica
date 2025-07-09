@@ -601,105 +601,110 @@ export function Calendar() {
 
               {/* Calendar Section - Now full width */}
               <div className="w-full">
+                {/* Common Header for all view modes */}
+                <Card className="group shadow-2xl border-0 bg-white/80 backdrop-blur-xl rounded-[2rem] overflow-hidden hover:shadow-3xl transition-all duration-500 hover:scale-[1.02] mb-6">
+                  <div className="absolute inset-0 bg-gradient-to-br from-white/20 via-white/10 to-transparent pointer-events-none"></div>
+                  <CardHeader className="relative pb-6 bg-gradient-to-br from-blue-50/80 to-purple-50/80 backdrop-blur-sm border-b border-white/20">
+                    <CardTitle className="text-4xl font-black text-gray-800 flex flex-col lg:flex-row lg:items-center justify-between gap-4">
+                      <div className="flex items-center gap-4">
+                        <div className="p-3 bg-gradient-to-br from-blue-500 to-purple-600 rounded-2xl shadow-lg">
+                          <CalendarIcon className="h-8 w-8 text-white" />
+                        </div>
+                        <span className="bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent tracking-tight">
+                          {viewMode === "list"
+                            ? "Daftar Events"
+                            : format(
+                                selectedDate,
+                                viewMode === "month"
+                                  ? "MMMM yyyy"
+                                  : "d MMMM yyyy",
+                                {
+                                  locale: localeId,
+                                }
+                              )}
+                        </span>
+                      </div>
+                      <div className="flex items-center gap-3 flex-wrap">
+                        {/* View Mode Toggle */}
+                        <div className="flex items-center bg-white/80 backdrop-blur-sm rounded-2xl p-1 shadow-lg border border-gray-200">
+                          <Button
+                            onClick={() => setViewMode("month")}
+                            variant={viewMode === "month" ? "default" : "ghost"}
+                            className={`px-4 py-2 rounded-xl text-sm font-medium transition-all duration-300 ${
+                              viewMode === "month"
+                                ? "bg-gradient-to-r from-blue-600 to-purple-600 text-white shadow-md"
+                                : "text-gray-600 hover:text-gray-800 hover:bg-gray-100"
+                            }`}
+                          >
+                            Bulan
+                          </Button>
+                          <Button
+                            onClick={() => setViewMode("week")}
+                            variant={viewMode === "week" ? "default" : "ghost"}
+                            className={`px-4 py-2 rounded-xl text-sm font-medium transition-all duration-300 ${
+                              viewMode === "week"
+                                ? "bg-gradient-to-r from-blue-600 to-purple-600 text-white shadow-md"
+                                : "text-gray-600 hover:text-gray-800 hover:bg-gray-100"
+                            }`}
+                          >
+                            Minggu
+                          </Button>
+                          <Button
+                            onClick={() => setViewMode("list")}
+                            variant={viewMode === "list" ? "default" : "ghost"}
+                            className={`px-4 py-2 rounded-xl text-sm font-medium transition-all duration-300 ${
+                              viewMode === "list"
+                                ? "bg-gradient-to-r from-blue-600 to-purple-600 text-white shadow-md"
+                                : "text-gray-600 hover:text-gray-800 hover:bg-gray-100"
+                            }`}
+                          >
+                            List
+                          </Button>
+                        </div>
+
+                        <Button
+                          onClick={handleCreateEvent}
+                          disabled={!canCreateEvent}
+                          className={`group px-6 py-3 rounded-2xl font-semibold shadow-xl transition-all duration-300 transform border-0 ${
+                            canCreateEvent
+                              ? "bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white hover:shadow-blue-500/25 hover:scale-105"
+                              : "bg-gray-300 text-gray-500 cursor-not-allowed"
+                          }`}
+                          title={
+                            !canCreateEvent
+                              ? "Buat kalender terlebih dahulu"
+                              : ""
+                          }
+                        >
+                          <Plus
+                            className={`mr-2 h-5 w-5 transition-transform duration-300 ${
+                              canCreateEvent ? "group-hover:rotate-90" : ""
+                            }`}
+                          />
+                          Tambah Event
+                        </Button>
+
+                        <div className="px-4 py-2 bg-gradient-to-r from-blue-500/10 to-blue-600/10 backdrop-blur-sm border border-blue-200/50 text-blue-700 rounded-2xl text-sm font-semibold shadow-lg">
+                          <span className="flex items-center gap-2">
+                            <div className="w-2 h-2 bg-blue-500 rounded-full animate-pulse"></div>
+                            {allEvents.length} Events
+                          </span>
+                        </div>
+                        <div className="flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-purple-500/10 to-purple-600/10 backdrop-blur-sm border border-purple-200/50 text-purple-700 rounded-2xl text-sm font-semibold shadow-lg">
+                          <Timer className="h-4 w-4" />
+                          <span>
+                            {calculateMonthlyDuration(allEvents, selectedDate)}
+                          </span>
+                        </div>
+                      </div>
+                    </CardTitle>
+                  </CardHeader>
+                </Card>
+
+                {/* Content based on view mode */}
                 {viewMode === "month" ? (
                   <Card className="group shadow-2xl border-0 bg-white/80 backdrop-blur-xl rounded-[2rem] overflow-hidden hover:shadow-3xl transition-all duration-500 hover:scale-[1.02]">
                     <div className="absolute inset-0 bg-gradient-to-br from-white/20 via-white/10 to-transparent pointer-events-none"></div>
-                    <CardHeader className="relative pb-8 bg-gradient-to-br from-blue-50/80 to-purple-50/80 backdrop-blur-sm border-b border-white/20">
-                      <CardTitle className="text-4xl font-black text-gray-800 flex flex-col lg:flex-row lg:items-center justify-between gap-4">
-                        <div className="flex items-center gap-4">
-                          <div className="p-3 bg-gradient-to-br from-blue-500 to-purple-600 rounded-2xl shadow-lg">
-                            <CalendarIcon className="h-8 w-8 text-white" />
-                          </div>
-                          <span className="bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent tracking-tight">
-                            {format(selectedDate, "MMMM yyyy", {
-                              locale: localeId,
-                            })}
-                          </span>
-                        </div>
-                        <div className="flex items-center gap-3 flex-wrap">
-                          {/* View Mode Toggle */}
-                          <div className="flex items-center bg-white/80 backdrop-blur-sm rounded-2xl p-1 shadow-lg border border-gray-200">
-                            <Button
-                              onClick={() => setViewMode("month")}
-                              variant={
-                                viewMode === "month" ? "default" : "ghost"
-                              }
-                              className={`px-4 py-2 rounded-xl text-sm font-medium transition-all duration-300 ${
-                                viewMode === "month"
-                                  ? "bg-gradient-to-r from-blue-600 to-purple-600 text-white shadow-md"
-                                  : "text-gray-600 hover:text-gray-800 hover:bg-gray-100"
-                              }`}
-                            >
-                              Bulan
-                            </Button>
-                            <Button
-                              onClick={() => setViewMode("week")}
-                              variant={
-                                viewMode === "week" ? "default" : "ghost"
-                              }
-                              className={`px-4 py-2 rounded-xl text-sm font-medium transition-all duration-300 ${
-                                viewMode === "week"
-                                  ? "bg-gradient-to-r from-blue-600 to-purple-600 text-white shadow-md"
-                                  : "text-gray-600 hover:text-gray-800 hover:bg-gray-100"
-                              }`}
-                            >
-                              Minggu
-                            </Button>
-                            <Button
-                              onClick={() => setViewMode("list")}
-                              variant={
-                                viewMode === "list" ? "default" : "ghost"
-                              }
-                              className={`px-4 py-2 rounded-xl text-sm font-medium transition-all duration-300 ${
-                                viewMode === "list"
-                                  ? "bg-gradient-to-r from-blue-600 to-purple-600 text-white shadow-md"
-                                  : "text-gray-600 hover:text-gray-800 hover:bg-gray-100"
-                              }`}
-                            >
-                              List
-                            </Button>
-                          </div>
-
-                          <Button
-                            onClick={handleCreateEvent}
-                            disabled={!canCreateEvent}
-                            className={`group px-6 py-3 rounded-2xl font-semibold shadow-xl transition-all duration-300 transform border-0 ${
-                              canCreateEvent
-                                ? "bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white hover:shadow-blue-500/25 hover:scale-105"
-                                : "bg-gray-300 text-gray-500 cursor-not-allowed"
-                            }`}
-                            title={
-                              !canCreateEvent
-                                ? "Buat kalender terlebih dahulu"
-                                : ""
-                            }
-                          >
-                            <Plus
-                              className={`mr-2 h-5 w-5 transition-transform duration-300 ${
-                                canCreateEvent ? "group-hover:rotate-90" : ""
-                              }`}
-                            />
-                            Tambah Event
-                          </Button>
-
-                          <div className="px-4 py-2 bg-gradient-to-r from-blue-500/10 to-blue-600/10 backdrop-blur-sm border border-blue-200/50 text-blue-700 rounded-2xl text-sm font-semibold shadow-lg">
-                            <span className="flex items-center gap-2">
-                              <div className="w-2 h-2 bg-blue-500 rounded-full animate-pulse"></div>
-                              {allEvents.length} Events
-                            </span>
-                          </div>
-                          <div className="flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-purple-500/10 to-purple-600/10 backdrop-blur-sm border border-purple-200/50 text-purple-700 rounded-2xl text-sm font-semibold shadow-lg">
-                            <Timer className="h-4 w-4" />
-                            <span>
-                              {calculateMonthlyDuration(
-                                allEvents,
-                                selectedDate
-                              )}
-                            </span>
-                          </div>
-                        </div>
-                      </CardTitle>
-                    </CardHeader>
                     <CardContent className="p-12">
                       <CalendarPrimitive
                         mode="single"
@@ -783,102 +788,6 @@ export function Calendar() {
                 ) : viewMode === "week" ? (
                   <Card className="group shadow-2xl border-0 bg-white/80 backdrop-blur-xl rounded-[2rem] overflow-hidden hover:shadow-3xl transition-all duration-500 hover:scale-[1.02]">
                     <div className="absolute inset-0 bg-gradient-to-br from-white/20 via-white/10 to-transparent pointer-events-none"></div>
-                    <CardHeader className="relative pb-8 bg-gradient-to-br from-blue-50/80 to-purple-50/80 backdrop-blur-sm border-b border-white/20">
-                      <CardTitle className="text-4xl font-black text-gray-800 flex flex-col lg:flex-row lg:items-center justify-between gap-4">
-                        <div className="flex items-center gap-4">
-                          <div className="p-3 bg-gradient-to-br from-blue-500 to-purple-600 rounded-2xl shadow-lg">
-                            <CalendarIcon className="h-8 w-8 text-white" />
-                          </div>
-                          <span className="bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent tracking-tight">
-                            {format(selectedDate, "d MMMM yyyy", {
-                              locale: localeId,
-                            })}
-                          </span>
-                        </div>
-                        <div className="flex items-center gap-3 flex-wrap">
-                          {/* View Mode Toggle */}
-                          <div className="flex items-center bg-white/80 backdrop-blur-sm rounded-2xl p-1 shadow-lg border border-gray-200">
-                            <Button
-                              onClick={() => setViewMode("month")}
-                              variant={
-                                viewMode === "month" ? "default" : "ghost"
-                              }
-                              className={`px-4 py-2 rounded-xl text-sm font-medium transition-all duration-300 ${
-                                viewMode === "month"
-                                  ? "bg-gradient-to-r from-blue-600 to-purple-600 text-white shadow-md"
-                                  : "text-gray-600 hover:text-gray-800 hover:bg-gray-100"
-                              }`}
-                            >
-                              Bulan
-                            </Button>
-                            <Button
-                              onClick={() => setViewMode("week")}
-                              variant={
-                                viewMode === "week" ? "default" : "ghost"
-                              }
-                              className={`px-4 py-2 rounded-xl text-sm font-medium transition-all duration-300 ${
-                                viewMode === "week"
-                                  ? "bg-gradient-to-r from-blue-600 to-purple-600 text-white shadow-md"
-                                  : "text-gray-600 hover:text-gray-800 hover:bg-gray-100"
-                              }`}
-                            >
-                              Minggu
-                            </Button>
-                            <Button
-                              onClick={() => setViewMode("list")}
-                              variant={
-                                viewMode === "list" ? "default" : "ghost"
-                              }
-                              className={`px-4 py-2 rounded-xl text-sm font-medium transition-all duration-300 ${
-                                viewMode === "list"
-                                  ? "bg-gradient-to-r from-blue-600 to-purple-600 text-white shadow-md"
-                                  : "text-gray-600 hover:text-gray-800 hover:bg-gray-100"
-                              }`}
-                            >
-                              List
-                            </Button>
-                          </div>
-
-                          <Button
-                            onClick={handleCreateEvent}
-                            disabled={!canCreateEvent}
-                            className={`group px-6 py-3 rounded-2xl font-semibold shadow-xl transition-all duration-300 transform border-0 ${
-                              canCreateEvent
-                                ? "bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white hover:shadow-blue-500/25 hover:scale-105"
-                                : "bg-gray-300 text-gray-500 cursor-not-allowed"
-                            }`}
-                            title={
-                              !canCreateEvent
-                                ? "Buat kalender terlebih dahulu"
-                                : ""
-                            }
-                          >
-                            <Plus
-                              className={`mr-2 h-5 w-5 transition-transform duration-300 ${
-                                canCreateEvent ? "group-hover:rotate-90" : ""
-                              }`}
-                            />
-                            Tambah Event
-                          </Button>
-
-                          <div className="px-4 py-2 bg-gradient-to-r from-blue-500/10 to-blue-600/10 backdrop-blur-sm border border-blue-200/50 text-blue-700 rounded-2xl text-sm font-semibold shadow-lg">
-                            <span className="flex items-center gap-2">
-                              <div className="w-2 h-2 bg-blue-500 rounded-full animate-pulse"></div>
-                              {allEvents.length} Events
-                            </span>
-                          </div>
-                          <div className="flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-purple-500/10 to-purple-600/10 backdrop-blur-sm border border-purple-200/50 text-purple-700 rounded-2xl text-sm font-semibold shadow-lg">
-                            <Timer className="h-4 w-4" />
-                            <span>
-                              {calculateMonthlyDuration(
-                                allEvents,
-                                selectedDate
-                              )}
-                            </span>
-                          </div>
-                        </div>
-                      </CardTitle>
-                    </CardHeader>
                     <CardContent className="p-6">
                       <WeekView
                         selectedDate={selectedDate}
