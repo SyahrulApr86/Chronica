@@ -220,8 +220,11 @@ export function Calendar() {
   };
 
   const handleDeleteEvent = (eventId: string) => {
+    console.log("Calendar: handleDeleteEvent called with ID:", eventId);
+    console.log("Calendar: Setting eventToDelete to:", eventId);
     setEventToDelete(eventId);
     setIsDeleteDialogOpen(true);
+    console.log("Calendar: Delete dialog should now be open");
   };
 
   const confirmDeleteEvent = async () => {

@@ -26,6 +26,26 @@ export function EventList({
     return `${start} - ${end}`;
   };
 
+  const handleDeleteClick = (event: CalendarEvent) => {
+    console.log("EventList: Delete button clicked for event:", event);
+    console.log("EventList: Event ID:", event.id);
+    console.log("EventList: onEventDelete function:", onEventDelete);
+
+    if (!event.id) {
+      console.error("EventList: Event ID is missing!");
+      alert("Error: Event ID tidak ditemukan");
+      return;
+    }
+
+    if (!onEventDelete) {
+      console.error("EventList: onEventDelete function is not provided!");
+      alert("Error: Function delete tidak tersedia");
+      return;
+    }
+
+    onEventDelete(event.id);
+  };
+
   return (
     <div className="space-y-4">
       {events.length === 0 ? (
@@ -72,7 +92,7 @@ export function EventList({
                   variant="ghost"
                   size="sm"
                   className="h-8 w-8 p-0 rounded-xl hover:bg-red-50"
-                  onClick={() => onEventDelete(event.id!)}
+                  onClick={() => handleDeleteClick(event)}
                 >
                   <Trash2 className="h-4 w-4 text-red-600" />
                 </Button>
