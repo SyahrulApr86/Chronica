@@ -221,7 +221,20 @@ export const useEventStore = create<EventStore>((set, get) => ({
 
       if (!response.ok) {
         const errorData = await response.json();
-        throw new Error(errorData.message || "Failed to create event");
+
+        // Parse nested error JSON if it exists
+        let errorMessage = errorData.message || "Failed to create event";
+        if (errorData.error && typeof errorData.error === "string") {
+          try {
+            const parsedError = JSON.parse(errorData.error);
+            errorMessage = parsedError.message || errorMessage;
+          } catch (e) {
+            // If parsing fails, use the original error message
+            errorMessage = errorData.error;
+          }
+        }
+
+        throw new Error(errorMessage);
       }
 
       const newEvent = await response.json();
@@ -274,7 +287,20 @@ export const useEventStore = create<EventStore>((set, get) => ({
 
       if (!response.ok) {
         const errorData = await response.json();
-        throw new Error(errorData.message || "Failed to update event");
+
+        // Parse nested error JSON if it exists
+        let errorMessage = errorData.message || "Failed to update event";
+        if (errorData.error && typeof errorData.error === "string") {
+          try {
+            const parsedError = JSON.parse(errorData.error);
+            errorMessage = parsedError.message || errorMessage;
+          } catch (e) {
+            // If parsing fails, use the original error message
+            errorMessage = errorData.error;
+          }
+        }
+
+        throw new Error(errorMessage);
       }
 
       const updatedEvent = await response.json();
