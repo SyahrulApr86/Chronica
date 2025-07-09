@@ -6,6 +6,12 @@ export interface RecurrenceRule {
   daysOfWeek?: number[];
 }
 
+export interface Calendar {
+  id: string;
+  name: string;
+  color: string;
+}
+
 export interface CalendarEvent {
   id?: string;
   title: string;
@@ -16,6 +22,7 @@ export interface CalendarEvent {
   location?: string;
   color: string;
   calendarId: string;
+  calendar?: Calendar;
   allowOverlap: boolean;
   isRecurring: boolean;
   recurringPattern?: string;
@@ -23,4 +30,4 @@ export interface CalendarEvent {
   recurrenceRule?: RecurrenceRule;
 }
 
-export default CalendarEvent; 
+export default CalendarEvent;
