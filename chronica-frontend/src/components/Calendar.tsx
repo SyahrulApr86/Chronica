@@ -219,50 +219,58 @@ export function Calendar() {
   // Show unauthenticated state with beautiful purple background
   if (!user) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-slate-900 via-purple-900 to-indigo-900 flex items-center justify-center p-6">
-        <div className="w-full max-w-lg">
-          {/* Main Welcome Card */}
-          <Card className="group shadow-3xl border-0 bg-white/10 backdrop-blur-xl rounded-[2rem] overflow-hidden hover:shadow-3xl transition-all duration-500">
-            <div className="absolute inset-0 bg-gradient-to-br from-white/20 via-white/10 to-transparent pointer-events-none"></div>
+      <>
+        <div className="min-h-screen bg-gradient-to-br from-slate-900 via-purple-900 to-indigo-900 flex items-center justify-center p-6">
+          <div className="w-full max-w-lg">
+            {/* Main Welcome Card */}
+            <Card className="group shadow-3xl border-0 bg-white/10 backdrop-blur-xl rounded-[2rem] overflow-hidden hover:shadow-3xl transition-all duration-500">
+              <div className="absolute inset-0 bg-gradient-to-br from-white/20 via-white/10 to-transparent pointer-events-none"></div>
 
-            <CardContent className="relative p-8 text-center">
-              {/* Logo and Icon */}
-              <div className="relative group mb-8">
-                <div className="absolute -inset-4 bg-gradient-to-r from-purple-500 to-pink-500 rounded-full blur-lg opacity-75 animate-pulse"></div>
-                <div className="relative p-6 bg-gradient-to-br from-purple-600 to-pink-600 rounded-2xl shadow-2xl">
-                  <CalendarIcon className="h-16 w-16 text-white mx-auto" />
+              <CardContent className="relative p-8 text-center">
+                {/* Logo and Icon */}
+                <div className="relative group mb-8">
+                  <div className="absolute -inset-4 bg-gradient-to-r from-purple-500 to-pink-500 rounded-full blur-lg opacity-75 animate-pulse"></div>
+                  <div className="relative p-6 bg-gradient-to-br from-purple-600 to-pink-600 rounded-2xl shadow-2xl">
+                    <CalendarIcon className="h-16 w-16 text-white mx-auto" />
+                  </div>
                 </div>
-              </div>
 
-              {/* Title */}
-              <h1 className="text-5xl font-black text-transparent bg-clip-text bg-gradient-to-r from-white via-purple-200 to-pink-200 mb-6">
-                Chronica
-              </h1>
+                {/* Title */}
+                <h1 className="text-5xl font-black text-transparent bg-clip-text bg-gradient-to-r from-white via-purple-200 to-pink-200 mb-6">
+                  Chronica
+                </h1>
 
-              {/* Description */}
-              <p className="text-gray-300 mb-8 text-lg leading-relaxed">
-                Kelola jadwal dan event Anda dengan mudah dan elegan
-              </p>
+                {/* Description */}
+                <p className="text-gray-300 mb-8 text-lg leading-relaxed">
+                  Kelola jadwal dan event Anda dengan mudah dan elegan
+                </p>
 
-              {/* Login Button */}
-              <Button
-                onClick={() => setIsAuthDialogOpen(true)}
-                className="w-full bg-gradient-to-r from-purple-600 to-pink-600 text-white rounded-2xl shadow-lg hover:shadow-xl transition-all duration-200 py-4 text-lg font-semibold hover:scale-105 mb-6"
-              >
-                Masuk untuk Memulai
-              </Button>
+                {/* Login Button */}
+                <Button
+                  onClick={() => setIsAuthDialogOpen(true)}
+                  className="w-full bg-gradient-to-r from-purple-600 to-pink-600 text-white rounded-2xl shadow-lg hover:shadow-xl transition-all duration-200 py-4 text-lg font-semibold hover:scale-105 mb-6"
+                >
+                  Masuk untuk Memulai
+                </Button>
 
-              {/* Helper Text */}
-              <div className="flex items-center justify-center gap-2 text-gray-400">
-                <div className="w-2 h-2 bg-purple-400 rounded-full animate-pulse"></div>
-                <span className="text-sm">
-                  Klik tombol di atas untuk memulai
-                </span>
-              </div>
-            </CardContent>
-          </Card>
+                {/* Helper Text */}
+                <div className="flex items-center justify-center gap-2 text-gray-400">
+                  <div className="w-2 h-2 bg-purple-400 rounded-full animate-pulse"></div>
+                  <span className="text-sm">
+                    Klik tombol di atas untuk memulai
+                  </span>
+                </div>
+              </CardContent>
+            </Card>
+          </div>
         </div>
-      </div>
+
+        {/* AuthDialog for unauthenticated users */}
+        <AuthDialog
+          isOpen={isAuthDialogOpen}
+          onClose={() => setIsAuthDialogOpen(false)}
+        />
+      </>
     );
   }
 
