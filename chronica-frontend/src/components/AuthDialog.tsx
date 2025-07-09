@@ -33,6 +33,7 @@ export function AuthDialog({ isOpen, onClose }: AuthDialogProps) {
   const { register, login, isLoading, error, setError } = useAuthStore();
   const [showPassword, setShowPassword] = useState(false);
   const [showRegisterPassword, setShowRegisterPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
   const [loginData, setLoginData] = useState({
     emailOrUsername: "",
@@ -44,6 +45,7 @@ export function AuthDialog({ isOpen, onClose }: AuthDialogProps) {
     username: "",
     name: "",
     password: "",
+    confirmPassword: "",
   });
 
   const handleLogin = async (e: React.FormEvent) => {
@@ -58,6 +60,13 @@ export function AuthDialog({ isOpen, onClose }: AuthDialogProps) {
 
   const handleRegister = async (e: React.FormEvent) => {
     e.preventDefault();
+
+    // Validasi konfirmasi password
+    if (registerData.password !== registerData.confirmPassword) {
+      setError("Password dan konfirmasi password tidak sama");
+      return;
+    }
+
     try {
       await register(
         registerData.email,
@@ -74,12 +83,36 @@ export function AuthDialog({ isOpen, onClose }: AuthDialogProps) {
   const handleDialogOpenChange = (open: boolean) => {
     if (!open) {
       setError(null); // Clear any errors when closing dialog
+      // Reset form data when closing dialog
+      setLoginData({
+        emailOrUsername: "",
+        password: "",
+      });
+      setRegisterData({
+        email: "",
+        username: "",
+        name: "",
+        password: "",
+        confirmPassword: "",
+      });
       onClose();
     }
   };
 
   const handleTabChange = () => {
     setError(null); // Clear errors when switching tabs
+    // Reset form data when switching tabs
+    setLoginData({
+      emailOrUsername: "",
+      password: "",
+    });
+    setRegisterData({
+      email: "",
+      username: "",
+      name: "",
+      password: "",
+      confirmPassword: "",
+    });
   };
 
   return (
@@ -365,6 +398,48 @@ export function AuthDialog({ isOpen, onClose }: AuthDialogProps) {
                         className="absolute inset-y-0 right-0 pr-3 flex items-center text-gray-400 hover:text-gray-600"
                       >
                         {showRegisterPassword ? (
+                          <EyeOff className="h-5 w-5" />
+                        ) : (
+                          <Eye className="h-5 w-5" />
+                        )}
+                      </button>
+                    </div>
+                  </div>
+
+                  <div className="space-y-2">
+                    <Label
+                      htmlFor="registerConfirmPassword"
+                      className="text-sm font-medium text-gray-700"
+                    >
+                      Konfirmasi Password *
+                    </Label>
+                    <div className="relative">
+                      <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                        <Lock className="h-5 w-5 text-gray-400" />
+                      </div>
+                      <Input
+                        id="registerConfirmPassword"
+                        type={showConfirmPassword ? "text" : "password"}
+                        value={registerData.confirmPassword}
+                        onChange={(e) =>
+                          setRegisterData({
+                            ...registerData,
+                            confirmPassword: e.target.value,
+                          })
+                        }
+                        placeholder="Ulangi password yang sama"
+                        className="pl-12 pr-12 h-12 sm:h-14 rounded-2xl border-gray-200/50 bg-white/50 backdrop-blur-sm focus:border-purple-500 focus:ring-purple-500/20 focus:bg-white/80 transition-all duration-300 text-sm sm:text-base shadow-sm"
+                        required
+                        minLength={6}
+                      />
+                      <button
+                        type="button"
+                        onClick={() =>
+                          setShowConfirmPassword(!showConfirmPassword)
+                        }
+                        className="absolute inset-y-0 right-0 pr-3 flex items-center text-gray-400 hover:text-gray-600"
+                      >
+                        {showConfirmPassword ? (
                           <EyeOff className="h-5 w-5" />
                         ) : (
                           <Eye className="h-5 w-5" />
