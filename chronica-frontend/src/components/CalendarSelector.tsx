@@ -20,6 +20,7 @@ import {
   Trash2,
   Check,
 } from "lucide-react";
+import { useEventStore } from "@/store/eventStore";
 
 interface Calendar {
   id: string;
@@ -82,6 +83,14 @@ export function CalendarSelector({
     description: "",
     color: "#3b82f6",
   });
+
+  // Get events from store to calculate real-time count
+  const { events } = useEventStore();
+
+  // Function to get event count for a specific calendar
+  const getEventCount = (calendarId: string): number => {
+    return events.filter((event) => event.calendarId === calendarId).length;
+  };
 
   const handleCreateCalendar = () => {
     if (formData.name.trim()) {
@@ -249,7 +258,7 @@ export function CalendarSelector({
                       )}
                     </div>
                     <div className="flex items-center gap-2 text-sm text-gray-600">
-                      <span>{calendar._count?.events || 0} events</span>
+                      <span>{getEventCount(calendar.id)} events</span>
                       {calendar.description && (
                         <>
                           <span>•</span>
@@ -287,20 +296,19 @@ export function CalendarSelector({
                   >
                     <Edit className="h-4 w-4 text-blue-600" />
                   </Button>
-                  {calendars.length > 1 &&
-                    (calendar._count?.events || 0) === 0 && (
-                      <Button
-                        size="sm"
-                        variant="ghost"
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          onCalendarDelete(calendar.id);
-                        }}
-                        className="h-8 w-8 p-0 hover:bg-red-100"
-                      >
-                        <Trash2 className="h-4 w-4 text-red-600" />
-                      </Button>
-                    )}
+                  {calendars.length > 1 && getEventCount(calendar.id) === 0 && (
+                    <Button
+                      size="sm"
+                      variant="ghost"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        onCalendarDelete(calendar.id);
+                      }}
+                      className="h-8 w-8 p-0 hover:bg-red-100"
+                    >
+                      <Trash2 className="h-4 w-4 text-red-600" />
+                    </Button>
+                  )}
                 </div>
               </div>
             ))
