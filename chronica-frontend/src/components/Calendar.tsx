@@ -4,7 +4,12 @@ import React, { useState, useEffect } from "react";
 import { Calendar as CalendarPrimitive } from "@/components/ui/calendar";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Dialog, DialogContent, DialogTitle } from "@/components/ui/dialog";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
 import {
   Plus,
   LogOut,
@@ -220,11 +225,8 @@ export function Calendar() {
   };
 
   const handleDeleteEvent = (eventId: string) => {
-    console.log("Calendar: handleDeleteEvent called with ID:", eventId);
-    console.log("Calendar: Setting eventToDelete to:", eventId);
     setEventToDelete(eventId);
     setIsDeleteDialogOpen(true);
-    console.log("Calendar: Delete dialog should now be open");
   };
 
   const confirmDeleteEvent = async () => {
@@ -911,6 +913,46 @@ export function Calendar() {
           isOpen={isAuthDialogOpen}
           onClose={() => setIsAuthDialogOpen(false)}
         />
+
+        {/* Delete Confirmation Dialog */}
+        <Dialog open={isDeleteDialogOpen} onOpenChange={setIsDeleteDialogOpen}>
+          <DialogContent className="sm:max-w-md bg-white/95 backdrop-blur-xl border-0 shadow-2xl rounded-[2rem] overflow-hidden">
+            <div className="absolute inset-0 bg-gradient-to-br from-red-50/80 to-pink-50/80 pointer-events-none"></div>
+
+            <div className="relative z-10">
+              <DialogHeader className="text-center space-y-4 pb-6">
+                <div className="mx-auto w-16 h-16 bg-gradient-to-br from-red-500 to-red-600 rounded-2xl flex items-center justify-center shadow-xl">
+                  <AlertTriangle className="h-8 w-8 text-white" />
+                </div>
+                <DialogTitle className="text-2xl font-bold text-gray-800">
+                  Hapus Event
+                </DialogTitle>
+                <p className="text-gray-600">
+                  Apakah Anda yakin ingin menghapus event ini?
+                </p>
+                <p className="text-sm text-red-600 font-medium">
+                  Tindakan ini tidak dapat dibatalkan.
+                </p>
+              </DialogHeader>
+
+              <div className="flex gap-3 pt-4">
+                <Button
+                  onClick={cancelDeleteEvent}
+                  variant="outline"
+                  className="flex-1 h-12 rounded-xl border-gray-200 hover:bg-gray-50 font-medium"
+                >
+                  Batal
+                </Button>
+                <Button
+                  onClick={confirmDeleteEvent}
+                  className="flex-1 h-12 rounded-xl bg-gradient-to-r from-red-500 to-red-600 hover:from-red-600 hover:to-red-700 text-white font-medium shadow-lg hover:shadow-red-500/25"
+                >
+                  Hapus
+                </Button>
+              </div>
+            </div>
+          </DialogContent>
+        </Dialog>
       </div>
     </ClientOnly>
   );

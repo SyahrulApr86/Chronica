@@ -238,27 +238,7 @@ export function EventsListView({
                     </Button>
                     {onEventDelete && (
                       <Button
-                        onClick={() => {
-                          console.log(
-                            "EventsListView: Delete button clicked for event:",
-                            event
-                          );
-                          console.log("EventsListView: Event ID:", event.id);
-                          console.log(
-                            "EventsListView: onEventDelete function:",
-                            onEventDelete
-                          );
-
-                          if (!event.id) {
-                            console.error(
-                              "EventsListView: Event ID is missing!"
-                            );
-                            alert("Error: Event ID tidak ditemukan");
-                            return;
-                          }
-
-                          onEventDelete(event.id);
-                        }}
+                        onClick={() => event.id && onEventDelete(event.id)}
                         variant="ghost"
                         size="sm"
                         className="h-8 w-8 p-0 rounded-lg hover:bg-red-100 hover:text-red-600"
