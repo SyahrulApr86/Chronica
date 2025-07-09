@@ -7,7 +7,7 @@
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
-    "prepare": "cd .. && git config core.hooksPath .husky"
+    "setup:dev": "cd .. && git config core.hooksPath .husky"
   },
   "dependencies": {
     "@hookform/resolvers": "^5.0.1",
