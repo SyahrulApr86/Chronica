@@ -1,0 +1,5 @@
+#!/usr/bin/env sh
+# Frontend pre-commit hook
+cd chronica-frontend
+echo "Running TypeScript check and ESLint fix in chronica-frontend..."
+tsc -b && npx eslint . --fix 
