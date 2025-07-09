@@ -2,7 +2,6 @@
 
 import React from "react";
 import { format } from "date-fns";
-import { id as localeId } from "date-fns/locale";
 import { Button } from "./ui/button";
 import { Edit, Trash2 } from "lucide-react";
 import type { CalendarEvent } from "@/types/event";

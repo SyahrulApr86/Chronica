@@ -60,8 +60,7 @@ export function Calendar() {
   );
   const [viewMode, setViewMode] = useState<"month" | "week" | "list">("month");
 
-  const { events, allEvents, fetchEvents, fetchAllEvents, isLoading } =
-    useEventStore();
+  const { events, fetchEvents, isLoading } = useEventStore();
   const { user, token, logout } = useAuthStore();
   const {
     calendars,
@@ -73,9 +72,7 @@ export function Calendar() {
     fetchCalendars,
   } = useCalendarStore();
 
-  const [selectedEvent, setSelectedEvent] = useState<CalendarEvent | undefined>(
-    undefined
-  );
+  const [, setSelectedEvent] = useState<CalendarEvent | undefined>(undefined);
 
   useEffect(() => {
     setHasMounted(true);
@@ -99,18 +96,8 @@ export function Calendar() {
     if (user && token && selectedCalendar) {
       // Fetch events for selected calendar
       fetchEvents(token);
-      // Fetch all events for statistics
-      fetchAllEvents(token);
     }
-  }, [
-    user,
-    token,
-    selectedDate,
-    selectedCalendar,
-    viewMode,
-    fetchEvents,
-    fetchAllEvents,
-  ]);
+  }, [user, token, selectedDate, selectedCalendar, viewMode, fetchEvents]);
 
   // Don't allow creating events if no calendar selected or no calendars exist
   const canCreateEvent = selectedCalendar !== null && calendars.length > 0;
@@ -585,7 +572,7 @@ export function Calendar() {
                     )}
                     {viewMode === "list" && (
                       <EventsListView
-                        events={allEvents}
+                        events={events}
                         onEventEdit={handleEditEvent}
                         selectedDate={selectedDate}
                       />
