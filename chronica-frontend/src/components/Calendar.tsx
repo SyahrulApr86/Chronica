@@ -26,6 +26,7 @@ import { EventDialog } from "./EventDialog";
 import { EventList } from "./EventList";
 import { AuthDialog } from "./AuthDialog";
 import { WeekView } from "./WeekView";
+import { EventsListView } from "./EventsListView";
 import { useEventStore } from "@/store/eventStore";
 import { useAuthStore, useAuthHydration } from "@/store/authStore";
 import { useCalendarStore } from "@/store/calendarStore";
@@ -118,7 +119,7 @@ export function Calendar() {
   const [isEventDialogOpen, setIsEventDialogOpen] = useState(false);
   const [isAuthDialogOpen, setIsAuthDialogOpen] = useState(false);
   const [editingEvent, setEditingEvent] = useState(null);
-  const [viewMode, setViewMode] = useState<"month" | "week">("month");
+  const [viewMode, setViewMode] = useState<"month" | "week" | "list">("month");
 
   const { events, allEvents, fetchEvents, fetchAllEvents, isLoading } =
     useEventStore();
@@ -225,6 +226,25 @@ export function Calendar() {
   const handleEventClick = (event: any) => {
     setEditingEvent(event);
     setIsEventDialogOpen(true);
+  };
+
+  const handleDeleteEvent = async (eventId: string) => {
+    try {
+      const response = await fetch(`/api/events/${eventId}`, {
+        method: "DELETE",
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+
+      if (response.ok) {
+        // Refresh events after deletion
+        fetchEvents(format(selectedDate, "yyyy-MM-dd"));
+        fetchAllEvents(user?.id || "");
+      }
+    } catch (error) {
+      console.error("Error deleting event:", error);
+    }
   };
 
   // Show loading screen while rehydrating
@@ -624,6 +644,19 @@ export function Calendar() {
                             >
                               Minggu
                             </Button>
+                            <Button
+                              onClick={() => setViewMode("list")}
+                              variant={
+                                viewMode === "list" ? "default" : "ghost"
+                              }
+                              className={`px-4 py-2 rounded-xl text-sm font-medium transition-all duration-300 ${
+                                viewMode === "list"
+                                  ? "bg-gradient-to-r from-blue-600 to-purple-600 text-white shadow-md"
+                                  : "text-gray-600 hover:text-gray-800 hover:bg-gray-100"
+                              }`}
+                            >
+                              List
+                            </Button>
                           </div>
 
                           <Button
@@ -746,7 +779,7 @@ export function Calendar() {
                       />
                     </CardContent>
                   </Card>
-                ) : (
+                ) : viewMode === "week" ? (
                   <Card className="group shadow-2xl border-0 bg-white/80 backdrop-blur-xl rounded-[2rem] overflow-hidden hover:shadow-3xl transition-all duration-500 hover:scale-[1.02]">
                     <div className="absolute inset-0 bg-gradient-to-br from-white/20 via-white/10 to-transparent pointer-events-none"></div>
                     <CardHeader className="relative pb-8 bg-gradient-to-br from-blue-50/80 to-purple-50/80 backdrop-blur-sm border-b border-white/20">
@@ -789,6 +822,19 @@ export function Calendar() {
                               }`}
                             >
                               Minggu
+                            </Button>
+                            <Button
+                              onClick={() => setViewMode("list")}
+                              variant={
+                                viewMode === "list" ? "default" : "ghost"
+                              }
+                              className={`px-4 py-2 rounded-xl text-sm font-medium transition-all duration-300 ${
+                                viewMode === "list"
+                                  ? "bg-gradient-to-r from-blue-600 to-purple-600 text-white shadow-md"
+                                  : "text-gray-600 hover:text-gray-800 hover:bg-gray-100"
+                              }`}
+                            >
+                              List
                             </Button>
                           </div>
 
@@ -842,6 +888,13 @@ export function Calendar() {
                       />
                     </CardContent>
                   </Card>
+                ) : (
+                  <EventsListView
+                    events={allEvents}
+                    selectedDate={selectedDate}
+                    onEventEdit={handleEditEvent}
+                    onEventDelete={handleDeleteEvent}
+                  />
                 )}
               </div>
             </>
