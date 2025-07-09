@@ -243,18 +243,28 @@ export function EventDialog({
         count: undefined,
       });
     } else {
-      // Create mode
+      // Create mode - use selectedDate for both date and time
       const today = formatDateForInput(selectedDate);
+
+      // Extract hour and minute from selectedDate
+      const startHour = selectedDate.getHours().toString().padStart(2, "0");
+      const startMinute = selectedDate.getMinutes().toString().padStart(2, "0");
+
+      // Calculate end time (1 hour later)
+      const endDateTime = new Date(selectedDate);
+      endDateTime.setHours(selectedDate.getHours() + 1);
+      const endHour = endDateTime.getHours().toString().padStart(2, "0");
+      const endMinute = endDateTime.getMinutes().toString().padStart(2, "0");
 
       setFormData({
         title: "",
         description: "",
         startDate: today,
-        startHour: "09",
-        startMinute: "00",
+        startHour: startHour,
+        startMinute: startMinute,
         endDate: today,
-        endHour: "10",
-        endMinute: "00",
+        endHour: endHour,
+        endMinute: endMinute,
         allDay: false,
         location: "",
         color: "#3b82f6",
