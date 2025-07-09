@@ -155,10 +155,10 @@ docker build -t chronica-backend -f Dockerfile --target production .
 
 ### Manual Production Setup
 
-1. Install production dependencies only:
+1. Install production dependencies only (git hooks automatically skipped):
 
 ```bash
-NODE_ENV=production HUSKY=0 npm ci --omit=dev
+HUSKY=0 npm ci --omit=dev
 ```
 
 2. Build the application:
